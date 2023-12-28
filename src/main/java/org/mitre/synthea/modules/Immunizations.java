@@ -2,14 +2,12 @@ package org.mitre.synthea.modules;
 
 import com.google.gson.Gson;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import org.immregistries.vfa.connect.ConnectFactory;
+import org.immregistries.vfa.connect.model.*;
 import org.mitre.synthea.helpers.Attributes;
 import org.mitre.synthea.helpers.Attributes.Inventory;
 import org.mitre.synthea.helpers.Utilities;
@@ -18,20 +16,72 @@ import org.mitre.synthea.world.concepts.HealthRecord;
 import org.mitre.synthea.world.concepts.HealthRecord.Code;
 
 /**
- * This is a complete, but fairly simplistic approach to synthesizing immunizations. It is encounter
- * driven; whenever an encounter occurs, the doctor checks for due immunizations and gives them. In
- * at least one case (HPV) this means that the immunization schedule isn't strictly followed since
- * the encounter schedule doesn't match the immunization schedule (e.g., 11yrs, 11yrs2mo, 11yrs6mo)
- * -- but in most cases they do line up. This module also assumes perfect doctors and compliant
- * patients. Every patient eventually receives every recommended immunization (unless they die
- * first). This module also does not implement any deviations or contraindications based on patient
- * conditions. For now, we've avoided specific brand names, preferring the general CVX codes.
+ * CUSTOMIZED for industry project
+ * added performEncounterWithForecaster method
+ * TODO map forecasting objects
+ * TODO test
+ * TODO maybe move to another class and refactor all calls to immunizationSchedule object
+ *
  */
 public class Immunizations {
   public static final String IMMUNIZATIONS = "immunizations";
 
   @SuppressWarnings({ "unchecked", "rawtypes" })
   private static final Map<String, Map> immunizationSchedule = loadImmunizationSchedule();
+
+
+  @SuppressWarnings({ "unchecked", "rawtypes" })
+  /**
+   * ONLY NEW METHOD FETCHING IMMUNIZATION FORECASTER RECOMMENDATION
+   * TODO MAP objects
+   */
+  public static void performEncounterWithForecaster(Person person, long time) throws Exception {
+    Software software = new Software();
+    software.setServiceUrl("https://sabbia.westus2.cloudapp.azure.com/lonestar/");
+    software.setService(Service.LSVF);
+    TestCase testCase = new TestCase();
+//    testCase.setDateSet(new Date(time));
+    testCase.setPatientDob(new Date((Long) person.attributes.get("Person.BirthDate")));
+    SoftwareResult softwareResult = new SoftwareResult();
+    ConnectFactory.createConnecter(software).queryForForecast(testCase,softwareResult);
+    List<ForecastEngineIssue> forecastEngineIssues = softwareResult.getIssueList();
+    Map<String, List<Long>> immunizationsGiven;
+    if (person.attributes.containsKey(IMMUNIZATIONS)) {
+      immunizationsGiven = (Map<String, List<Long>>) person.attributes.get(IMMUNIZATIONS);
+    } else {
+      immunizationsGiven = new HashMap<String, List<Long>>();
+      person.attributes.put(IMMUNIZATIONS, immunizationsGiven);
+    }
+
+    {
+      // logging immunization strings to compare and do mapping TODO remove
+      for (String immunization : immunizationSchedule.keySet()) {
+        System.out.println("LOGGING IMMUNIZATION STRING : " + immunization + "\n" );
+      }
+    }
+
+    for (ForecastEngineIssue engineIssue : forecastEngineIssues) {
+      // TODO map forecastEngineIssues to actual Immunization immunizations here
+      String immunization = "";
+
+      //Ignoring this step selecting the manual blocks on criterias
+//      int series = immunizationDue(immunization, person, time, immunizationsGiven);
+      List<Long> history = null;
+      if (immunizationsGiven.containsKey(immunization)) {
+        history = immunizationsGiven.get(immunization);
+      } else {
+        history = new ArrayList<Long>();
+        immunizationsGiven.put(immunization, history);
+      }
+      history.add(time);
+      HealthRecord.Immunization entry = person.record.immunization(time, immunization);
+      Map code = (Map) immunizationSchedule.get(immunization).get("code");
+      HealthRecord.Code immCode = new HealthRecord.Code(code.get("system").toString(),
+              code.get("code").toString(), code.get("display").toString());
+      entry.codes.add(immCode);
+      entry.series = history.size() + 1;
+    }
+  }
 
   @SuppressWarnings("rawtypes")
   private static Map loadImmunizationSchedule() {
@@ -54,28 +104,33 @@ public class Immunizations {
    * @param time - the current simulation time.
    */
   @SuppressWarnings({ "unchecked", "rawtypes" })
-  public static void performEncounter(Person person, long time) {
-    Map<String, List<Long>> immunizationsGiven;
-    if (person.attributes.containsKey(IMMUNIZATIONS)) {
-      immunizationsGiven = (Map<String, List<Long>>) person.attributes.get(IMMUNIZATIONS);
-    } else {
-      immunizationsGiven = new HashMap<String, List<Long>>();
-      person.attributes.put(IMMUNIZATIONS, immunizationsGiven);
-    }
+  public static void performEncounter(Person person, long time) throws Exception {
+    /**
+     * New code connecting to forecaster
+     */
+    performEncounterWithForecaster(person,time);
 
-    for (String immunization : immunizationSchedule.keySet()) {
-      int series = immunizationDue(immunization, person, time, immunizationsGiven);
-      if (series > 0) {
-        List<Long> history = immunizationsGiven.get(immunization);
-        history.add(time);
-        HealthRecord.Immunization entry = person.record.immunization(time, immunization);
-        Map code = (Map) immunizationSchedule.get(immunization).get("code");
-        HealthRecord.Code immCode = new HealthRecord.Code(code.get("system").toString(),
-            code.get("code").toString(), code.get("display").toString());
-        entry.codes.add(immCode);
-        entry.series = series;
-      }
-    }
+//    Map<String, List<Long>> immunizationsGiven;
+//    if (person.attributes.containsKey(IMMUNIZATIONS)) {
+//      immunizationsGiven = (Map<String, List<Long>>) person.attributes.get(IMMUNIZATIONS);
+//    } else {
+//      immunizationsGiven = new HashMap<String, List<Long>>();
+//      person.attributes.put(IMMUNIZATIONS, immunizationsGiven);
+//    }
+//
+//    for (String immunization : immunizationSchedule.keySet()) {
+//      int series = immunizationDue(immunization, person, time, immunizationsGiven);
+//      if (series > 0) {
+//        List<Long> history = immunizationsGiven.get(immunization);
+//        history.add(time);
+//        HealthRecord.Immunization entry = person.record.immunization(time, immunization);
+//        Map code = (Map) immunizationSchedule.get(immunization).get("code");
+//        HealthRecord.Code immCode = new HealthRecord.Code(code.get("system").toString(),
+//            code.get("code").toString(), code.get("display").toString());
+//        entry.codes.add(immCode);
+//        entry.series = series;
+//      }
+//    }
   }
 
   /**

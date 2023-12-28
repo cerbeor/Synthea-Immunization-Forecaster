@@ -50,6 +50,8 @@ jacoco {
 }
 
 dependencies {
+    // Forecast engine connecto
+  implementation 'org.immregistries:ForecastConnector:3.20.2'
   // This dependency is found on compile classpath of this component and consumers.
   implementation 'com.google.code.gson:gson:2.9.0'
   implementation 'com.jayway.jsonpath:json-path:2.7.0'
@@ -100,8 +102,8 @@ dependencies {
 
   // get rid of SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
   // if we switch to a real logging framework we may want to switch this
-  implementation "org.slf4j:slf4j-api:2.0.0"
-  //implementation "org.slf4j:slf4j-nop:1.7.9" // SLF4J seems to already be provided by org.apache.logging.log4j
+//  implementation "org.slf4j:slf4j-api:2.0.0"
+  implementation "org.slf4j:slf4j-nop:1.7.9" // SLF4J seems to already be provided by org.apache.logging.log4j
 
   // ensure transitive dependencies do not use vulnerable log4j
   implementation "org.apache.logging.log4j:log4j-core", {
