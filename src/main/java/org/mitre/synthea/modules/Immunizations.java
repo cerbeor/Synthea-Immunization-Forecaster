@@ -35,16 +35,19 @@ public class Immunizations {
    * ONLY NEW METHOD FETCHING IMMUNIZATION FORECASTER RECOMMENDATION
    * TODO MAP objects
    */
-  public static void performEncounterWithForecaster(Person person, long time) throws Exception {
+  public static void performEncounterWithForecaster(Person person, long time) {
     Software software = new Software();
     software.setServiceUrl("https://sabbia.westus2.cloudapp.azure.com/lonestar/");
     software.setService(Service.LSVF);
+
     TestCase testCase = new TestCase();
-//    testCase.setDateSet(new Date(time));
-    testCase.setPatientDob(new Date((Long) person.attributes.get("Person.BirthDate")));
-    SoftwareResult softwareResult = new SoftwareResult();
-    ConnectFactory.createConnecter(software).queryForForecast(testCase,softwareResult);
-    List<ForecastEngineIssue> forecastEngineIssues = softwareResult.getIssueList();
+    testCase.setDateSet(DateSet.FIXED);
+    testCase.setEvalDate(new Date(time));
+    testCase.setPatientDob(new Date((Long) person.attributes.get("birthdate")));
+
+    /**
+     * Reading patient history
+     */
     Map<String, List<Long>> immunizationsGiven;
     if (person.attributes.containsKey(IMMUNIZATIONS)) {
       immunizationsGiven = (Map<String, List<Long>>) person.attributes.get(IMMUNIZATIONS);
@@ -53,33 +56,64 @@ public class Immunizations {
       person.attributes.put(IMMUNIZATIONS, immunizationsGiven);
     }
 
-    {
-      // logging immunization strings to compare and do mapping TODO remove
-      for (String immunization : immunizationSchedule.keySet()) {
-        System.out.println("LOGGING IMMUNIZATION STRING : " + immunization + "\n" );
+    List<TestEvent> testEvents = new ArrayList<>(immunizationsGiven.size());
+    testCase.setTestEventList(testEvents);
+    for (Map.Entry<String, List<Long>> immunizationEntry: immunizationsGiven.entrySet()) {
+      for (Long eventTime: immunizationEntry.getValue()) {
+        TestEvent testEvent = new TestEvent();
+        Event event = new Event();
+        event.setVaccineCvx(immunizationEntry.getKey());
+        testEvent.setEvent(event);
+        testEvent.setEventDate(new Date(eventTime));
+        testEvents.add(testEvent);
       }
     }
 
-    for (ForecastEngineIssue engineIssue : forecastEngineIssues) {
-      // TODO map forecastEngineIssues to actual Immunization immunizations here
-      String immunization = "";
+    SoftwareResult softwareResult = new SoftwareResult();
+    softwareResult.setTestCase(testCase);
+    List<ForecastActual> forecastActuals;
+    try {
+      /**
+       * querying forecaster
+       */
+      forecastActuals = ConnectFactory.createConnecter(software).queryForForecast(testCase,softwareResult);
+      /**
+       * currently getting empty results, TODO investigate
+       */
+//      System.out.println(forecastActuals.size());
+//      System.out.println(softwareResult.getSoftwareResultStatus());
+//      System.out.println(softwareResult.getTestCase());
+//      System.out.println(softwareResult.getIssueList().get(0));
 
-      //Ignoring this step selecting the manual blocks on criterias
-//      int series = immunizationDue(immunization, person, time, immunizationsGiven);
-      List<Long> history = null;
-      if (immunizationsGiven.containsKey(immunization)) {
-        history = immunizationsGiven.get(immunization);
-      } else {
-        history = new ArrayList<Long>();
-        immunizationsGiven.put(immunization, history);
+
+      for (ForecastActual forecastActual : forecastActuals) {
+//        System.out.println(forecastActual);
+        /**
+         * named immunization in original code
+         */
+        String immunizationKey = forecastActual.getVaccineCvx();
+
+        /**
+         * getting specific history on cvx, name
+         */
+        List<Long> history = null;
+        if (immunizationsGiven.containsKey(immunizationKey)) {
+          history = immunizationsGiven.get(immunizationKey);
+        } else {
+          history = new ArrayList<Long>();
+          immunizationsGiven.put(immunizationKey, history);
+        }
+        history.add(time);
+        HealthRecord.Immunization entry = person.record.immunization(time, immunizationKey);
+        Map code = (Map) immunizationSchedule.get(immunizationKey).get("code");
+        HealthRecord.Code immCode = new HealthRecord.Code(code.get("system").toString(),
+                code.get("code").toString(), code.get("display").toString());
+        entry.codes.add(immCode);
+        entry.series = history.size() + 1;
       }
-      history.add(time);
-      HealthRecord.Immunization entry = person.record.immunization(time, immunization);
-      Map code = (Map) immunizationSchedule.get(immunization).get("code");
-      HealthRecord.Code immCode = new HealthRecord.Code(code.get("system").toString(),
-              code.get("code").toString(), code.get("display").toString());
-      entry.codes.add(immCode);
-      entry.series = history.size() + 1;
+    } catch (Exception exception) {
+      exception.printStackTrace();
+      System.err.println(exception.getMessage());
     }
   }
 
@@ -104,46 +138,63 @@ public class Immunizations {
    * @param time - the current simulation time.
    */
   @SuppressWarnings({ "unchecked", "rawtypes" })
-  public static void performEncounter(Person person, long time) throws Exception {
+  public static void performEncounter(Person person, long time){
+    {
+      // logging immunization strings to compare and do mapping TODO remove
+      Gson g = new Gson();
+      System.out.println("LOGGING IMMUNIZATION History : " + g.toJson(person.attributes.get(IMMUNIZATIONS)) );
+//      System.out.println("LOGGING IMMUNIZATION SCHEDULE : " + g.toJson(immunizationSchedule.get("hib")) + "\n" );
+//      for (String key : person.attributes.keySet()) {
+//        System.out.println("LOGGING PERSON ATTRIBUTES  key : " + key + "\n" );
+//      }
+    }
     /**
      * New code connecting to forecaster
      */
     performEncounterWithForecaster(person,time);
 
-//    Map<String, List<Long>> immunizationsGiven;
-//    if (person.attributes.containsKey(IMMUNIZATIONS)) {
-//      immunizationsGiven = (Map<String, List<Long>>) person.attributes.get(IMMUNIZATIONS);
-//    } else {
-//      immunizationsGiven = new HashMap<String, List<Long>>();
-//      person.attributes.put(IMMUNIZATIONS, immunizationsGiven);
-//    }
-//
-//    for (String immunization : immunizationSchedule.keySet()) {
-//      int series = immunizationDue(immunization, person, time, immunizationsGiven);
-//      if (series > 0) {
-//        List<Long> history = immunizationsGiven.get(immunization);
-//        history.add(time);
-//        HealthRecord.Immunization entry = person.record.immunization(time, immunization);
-//        Map code = (Map) immunizationSchedule.get(immunization).get("code");
-//        HealthRecord.Code immCode = new HealthRecord.Code(code.get("system").toString(),
-//            code.get("code").toString(), code.get("display").toString());
-//        entry.codes.add(immCode);
-//        entry.series = series;
-//      }
-//    }
+    /**
+     * old code
+     */
+//    performEncounterDeprecated(person,time);
   }
 
-  /**
-   * Return whether or not the specified immunization is due.
-   *
-   * @param immunization The immunization to give
-   * @param person The person to receive the immunization
-   * @param time The time the immunization would be given
-   * @param immunizationsGiven The history of immunizations
-   * @return -1 if the immunization should not be given, otherwise a positive integer,
-   *     where the value is the series. For example, 1 if this is the first time the
-   *     vaccine was administered; 2 if this is the second time, et cetera.
-   */
+  public static void performEncounterDeprecated(Person person, long time){
+    Map<String, List<Long>> immunizationsGiven;
+    if (person.attributes.containsKey(IMMUNIZATIONS)) {
+      immunizationsGiven = (Map<String, List<Long>>) person.attributes.get(IMMUNIZATIONS);
+    } else {
+      immunizationsGiven = new HashMap<String, List<Long>>();
+      person.attributes.put(IMMUNIZATIONS, immunizationsGiven);
+    }
+
+    for (String immunization : immunizationSchedule.keySet()) {
+      int series = immunizationDue(immunization, person, time, immunizationsGiven);
+      if (series > 0) {
+        List<Long> history = immunizationsGiven.get(immunization);
+        history.add(time);
+        HealthRecord.Immunization entry = person.record.immunization(time, immunization);
+        Map code = (Map) immunizationSchedule.get(immunization).get("code");
+        HealthRecord.Code immCode = new HealthRecord.Code(code.get("system").toString(),
+                code.get("code").toString(), code.get("display").toString());
+        entry.codes.add(immCode);
+        entry.series = series;
+      }
+    }
+  }
+
+
+    /**
+     * Return whether or not the specified immunization is due.
+     *
+     * @param immunization The immunization to give
+     * @param person The person to receive the immunization
+     * @param time The time the immunization would be given
+     * @param immunizationsGiven The history of immunizations
+     * @return -1 if the immunization should not be given, otherwise a positive integer,
+     *     where the value is the series. For example, 1 if this is the first time the
+     *     vaccine was administered; 2 if this is the second time, et cetera.
+     */
   @SuppressWarnings({ "rawtypes", "unchecked" })
   public static int immunizationDue(String immunization, Person person, long time,
       Map<String, List<Long>> immunizationsGiven) {
