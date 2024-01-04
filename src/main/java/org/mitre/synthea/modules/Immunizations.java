@@ -7,6 +7,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.immregistries.vfa.connect.ConnectFactory;
+import org.immregistries.vfa.connect.ConnectorInterface;
 import org.immregistries.vfa.connect.model.*;
 import org.mitre.synthea.helpers.Attributes;
 import org.mitre.synthea.helpers.Attributes.Inventory;
@@ -36,14 +37,13 @@ public class Immunizations {
    * TODO MAP objects
    */
   public static void performEncounterWithForecaster(Person person, long time) {
-    Software software = new Software();
-    software.setServiceUrl("https://sabbia.westus2.cloudapp.azure.com/lonestar/");
-    software.setService(Service.LSVF);
+
 
     TestCase testCase = new TestCase();
     testCase.setDateSet(DateSet.FIXED);
     testCase.setEvalDate(new Date(time));
     testCase.setPatientDob(new Date((Long) person.attributes.get("birthdate")));
+    testCase.setPatientSex("M"); // TODO read from attributes
 
     /**
      * Reading patient history
@@ -76,18 +76,24 @@ public class Immunizations {
       /**
        * querying forecaster
        */
-      forecastActuals = ConnectFactory.createConnecter(software).queryForForecast(testCase,softwareResult);
+      Software software = new Software();
+      software.setServiceUrl("https://sabbia.westus2.cloudapp.azure.com/lonestar/forecast");
+      software.setService(Service.LSVF);
+      ConnectorInterface connectorInterface =  ConnectFactory.createConnecter(software);
+      connectorInterface.setLogText(true);
+
+      forecastActuals = connectorInterface.queryForForecast(testCase,softwareResult);
       /**
        * currently getting empty results, TODO investigate
        */
-//      System.out.println(forecastActuals.size());
-//      System.out.println(softwareResult.getSoftwareResultStatus());
-//      System.out.println(softwareResult.getTestCase());
+      System.out.println(forecastActuals.size());
+      System.out.println(softwareResult.getSoftwareResultStatus());
+      System.out.println(softwareResult.getLogText());
+      System.out.println(softwareResult);
 //      System.out.println(softwareResult.getIssueList().get(0));
 
 
       for (ForecastActual forecastActual : forecastActuals) {
-//        System.out.println(forecastActual);
         /**
          * named immunization in original code
          */
