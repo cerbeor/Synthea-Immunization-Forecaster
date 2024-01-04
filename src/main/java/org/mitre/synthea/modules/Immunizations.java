@@ -86,10 +86,10 @@ public class Immunizations {
       /**
        * currently getting empty results, TODO investigate
        */
-      System.out.println(forecastActuals.size());
-      System.out.println(softwareResult.getSoftwareResultStatus());
+//      System.out.println(forecastActuals.size());
+//      System.out.println(softwareResult.getSoftwareResultStatus());
       System.out.println(softwareResult.getLogText());
-      System.out.println(softwareResult);
+//      System.out.println(softwareResult);
 //      System.out.println(softwareResult.getIssueList().get(0));
 
 
@@ -97,7 +97,7 @@ public class Immunizations {
         /**
          * named immunization in original code
          */
-        String immunizationKey = forecastActual.getVaccineCvx();
+        String immunizationKey = forecastActual.getVaccineCvx(); // TODO take actual synthea immunization key
 
         /**
          * getting specific history on cvx, name
@@ -111,11 +111,17 @@ public class Immunizations {
         }
         history.add(time);
         HealthRecord.Immunization entry = person.record.immunization(time, immunizationKey);
+        if(immunizationSchedule.get(immunizationKey) == null) {
+          immunizationSchedule.put(immunizationKey, new HashMap<>());
+        }
         Map code = (Map) immunizationSchedule.get(immunizationKey).get("code");
-        HealthRecord.Code immCode = new HealthRecord.Code(code.get("system").toString(),
-                code.get("code").toString(), code.get("display").toString());
-        entry.codes.add(immCode);
-        entry.series = history.size() + 1;
+
+        if (code != null) {
+          HealthRecord.Code immCode = new HealthRecord.Code(code.get("system").toString(),
+                  code.get("code").toString(), code.get("display").toString());
+          entry.codes.add(immCode);
+          entry.series = history.size() + 1;
+        }
       }
     } catch (Exception exception) {
       exception.printStackTrace();

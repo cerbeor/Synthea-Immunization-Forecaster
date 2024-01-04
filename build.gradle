@@ -52,7 +52,7 @@ jacoco {
 dependencies {
   implementation group: 'com.google.code.gson', name: 'gson', version: '2.7'
     // Forecast engine connector
-  implementation 'org.immregistries:ForecastConnector:3.20.2'
+  implementation 'org.immregistries:ForecastConnector:3.20.3'
   // This dependency is found on compile classpath of this component and consumers.
   implementation 'com.google.code.gson:gson:2.9.0'
   implementation 'com.jayway.jsonpath:json-path:2.7.0'
