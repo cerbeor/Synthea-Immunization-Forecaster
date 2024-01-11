@@ -37,8 +37,6 @@ public class Immunizations {
    * TODO MAP objects
    */
   public static void performEncounterWithForecaster(Person person, long time) {
-
-
     TestCase testCase = new TestCase();
     testCase.setDateSet(DateSet.FIXED);
     testCase.setEvalDate(new Date(time));
@@ -56,6 +54,9 @@ public class Immunizations {
       person.attributes.put(IMMUNIZATIONS, immunizationsGiven);
     }
 
+    /**
+     * Giving immunization history to forecaster
+     */
     List<TestEvent> testEvents = new ArrayList<>(immunizationsGiven.size());
     testCase.setTestEventList(testEvents);
     for (Map.Entry<String, List<Long>> immunizationEntry: immunizationsGiven.entrySet()) {
@@ -79,25 +80,37 @@ public class Immunizations {
       Software software = new Software();
       software.setServiceUrl("https://sabbia.westus2.cloudapp.azure.com/lonestar/forecast");
       software.setService(Service.LSVF);
-      ConnectorInterface connectorInterface =  ConnectFactory.createConnecter(software);
+      ConnectorInterface connectorInterface = ConnectFactory.createConnecter(software);
       connectorInterface.setLogText(true);
 
       forecastActuals = connectorInterface.queryForForecast(testCase,softwareResult);
       /**
        * currently getting empty results, TODO investigate
        */
-//      System.out.println(forecastActuals.size());
-//      System.out.println(softwareResult.getSoftwareResultStatus());
-      System.out.println(softwareResult.getLogText());
-//      System.out.println(softwareResult);
-//      System.out.println(softwareResult.getIssueList().get(0));
-
+//      System.out.println("Forecast length: " + forecastActuals.size());
+//      System.out.println(softwareResult.getLogText());
+//      String log = softwareResult.getLogText().split("VACCINATIONS RECOMMENDED ")[1].split("\nVACCCINATIONS RECOMMENDED AFTER ")[0];
+//      log = log.strip();
+//      System.out.println(log);
+//      System.out.println("log length = " + (log.split("\n").length - 1));
 
       for (ForecastActual forecastActual : forecastActuals) {
         /**
+         * Filtering Finished forecast, and only when due date is not passed
+         * TODO add probability if for early administration
+         */
+        if (forecastActual.getAdminStatus().equals("F") || forecastActual.getDueDate().after(new Date(time))) {
+          break;
+        }
+//        System.out.println(forecastActual);
+//        System.out.println(forecastActual.getVaccineGroup().getLabel() +  " Adminlabel " + forecastActual.getAdmin().getLabel() + " | " + forecastActual.getAdminStatus());
+//        System.out.println(forecastActual.getAdmin().toString());
+//        System.out.println(i + " EXPLANATION: " + forecastActual.getExplanationHtml());
+
+        /**
          * named immunization in original code
          */
-        String immunizationKey = forecastActual.getVaccineCvx(); // TODO take actual synthea immunization key
+        String immunizationKey = forecastActual.getVaccineGroup().getLabel(); // TODO take actual synthea immunization key
 
         /**
          * getting specific history on cvx, name
@@ -111,17 +124,12 @@ public class Immunizations {
         }
         history.add(time);
         HealthRecord.Immunization entry = person.record.immunization(time, immunizationKey);
-        if(immunizationSchedule.get(immunizationKey) == null) {
-          immunizationSchedule.put(immunizationKey, new HashMap<>());
-        }
-        Map code = (Map) immunizationSchedule.get(immunizationKey).get("code");
-
-        if (code != null) {
-          HealthRecord.Code immCode = new HealthRecord.Code(code.get("system").toString(),
-                  code.get("code").toString(), code.get("display").toString());
-          entry.codes.add(immCode);
-          entry.series = history.size() + 1;
-        }
+        HealthRecord.Code immCode = new HealthRecord.Code(
+                "http://hl7.org/fhir/sid/cvx",
+                forecastActual.getVaccineGroup().getVaccineCvx(),
+                forecastActual.getVaccineGroup().getLabel());
+        entry.codes.add(immCode);
+        entry.series = history.size() + 1;
       }
     } catch (Exception exception) {
       exception.printStackTrace();
@@ -154,8 +162,9 @@ public class Immunizations {
     {
       // logging immunization strings to compare and do mapping TODO remove
       Gson g = new Gson();
-      System.out.println("LOGGING IMMUNIZATION History : " + g.toJson(person.attributes.get(IMMUNIZATIONS)) );
-//      System.out.println("LOGGING IMMUNIZATION SCHEDULE : " + g.toJson(immunizationSchedule.get("hib")) + "\n" );
+//      System.out.println("LOGGING IMMUNIZATION History : " + g.toJson(person.attributes.get(IMMUNIZATIONS)) );
+//      System.out.println("LOGGING IMMUNIZATION SCHEDULE keys : " + g.toJson(immunizationSchedule.keySet()) + "\n" );
+//      System.out.println("LOGGING All codes " + g.toJson(getAllCodes()) + "\n" );
 //      for (String key : person.attributes.keySet()) {
 //        System.out.println("LOGGING PERSON ATTRIBUTES  key : " + key + "\n" );
 //      }
@@ -164,7 +173,6 @@ public class Immunizations {
      * New code connecting to forecaster
      */
     performEncounterWithForecaster(person,time);
-
     /**
      * old code
      */
