@@ -34,15 +34,8 @@ public class Immunizations {
   @SuppressWarnings({ "unchecked", "rawtypes" })
   /**
    * ONLY NEW METHOD FETCHING IMMUNIZATION FORECASTER RECOMMENDATION
-   * TODO MAP objects
    */
   public static void performEncounterWithForecaster(Person person, long time) {
-    TestCase testCase = new TestCase();
-    testCase.setDateSet(DateSet.FIXED);
-    testCase.setEvalDate(new Date(time));
-    testCase.setPatientDob(new Date((Long) person.attributes.get("birthdate")));
-    testCase.setPatientSex("M"); // TODO read from attributes
-
     /**
      * Reading patient history
      */
@@ -54,40 +47,16 @@ public class Immunizations {
       person.attributes.put(IMMUNIZATIONS, immunizationsGiven);
     }
 
-    /**
-     * Giving immunization history to forecaster
-     */
-    List<TestEvent> testEvents = new ArrayList<>(immunizationsGiven.size());
-    testCase.setTestEventList(testEvents);
-    for (Map.Entry<String, List<Long>> immunizationEntry: immunizationsGiven.entrySet()) {
-      for (Long eventTime: immunizationEntry.getValue()) {
-        TestEvent testEvent = new TestEvent();
-        Event event = new Event();
-        event.setVaccineCvx(immunizationEntry.getKey());
-        testEvent.setEvent(event);
-        testEvent.setEventDate(new Date(eventTime));
-        testEvents.add(testEvent);
-      }
-    }
-
-    SoftwareResult softwareResult = new SoftwareResult();
-    softwareResult.setTestCase(testCase);
-    List<ForecastActual> forecastActuals;
     try {
       /**
-       * querying forecaster
+       * Allows logs to be accessible here
        */
-      Software software = new Software();
-      software.setServiceUrl("https://sabbia.westus2.cloudapp.azure.com/lonestar/forecast");
-      software.setService(Service.LSVF);
-      ConnectorInterface connectorInterface = ConnectFactory.createConnecter(software);
-      connectorInterface.setLogText(true);
-
-      forecastActuals = connectorInterface.queryForForecast(testCase,softwareResult);
+      SoftwareResult softwareResult = new SoftwareResult();
       /**
-       * currently getting empty results, TODO investigate
+       * Querying forecaster
        */
-//      System.out.println("Forecast length: " + forecastActuals.size());
+      List<ForecastActual> forecastActuals = queryForecaster(person,time,immunizationsGiven,softwareResult);
+//      System.out.println("Forecast length: " + forecastActuals.size()); TODO remove useless logs
 //      System.out.println(softwareResult.getLogText());
 //      String log = softwareResult.getLogText().split("VACCINATIONS RECOMMENDED ")[1].split("\nVACCCINATIONS RECOMMENDED AFTER ")[0];
 //      log = log.strip();
@@ -137,6 +106,44 @@ public class Immunizations {
     }
   }
 
+  private static List<ForecastActual> queryForecaster(Person person, long time, Map<String, List<Long>> immunizationsGiven, SoftwareResult softwareResult) throws Exception {
+    TestCase testCase = new TestCase();
+    testCase.setDateSet(DateSet.FIXED);
+    testCase.setEvalDate(new Date(time));
+    testCase.setPatientDob(new Date((Long) person.attributes.get("birthdate")));
+    testCase.setPatientSex((String) person.attributes.get("gender"));
+
+    /**
+     * Giving immunization history to forecaster
+     */
+    List<TestEvent> testEvents = new ArrayList<>(immunizationsGiven.size());
+    testCase.setTestEventList(testEvents);
+    for (Map.Entry<String, List<Long>> immunizationEntry: immunizationsGiven.entrySet()) {
+      for (Long eventTime: immunizationEntry.getValue()) {
+        TestEvent testEvent = new TestEvent();
+        Event event = new Event();
+        event.setVaccineCvx(immunizationEntry.getKey());
+        testEvent.setEvent(event);
+        testEvent.setEventDate(new Date(eventTime));
+        testEvents.add(testEvent);
+      }
+    }
+
+    softwareResult.setTestCase(testCase);
+
+    /**
+     * querying forecaster
+     */
+    Software software = new Software();
+    software.setServiceUrl("https://sabbia.westus2.cloudapp.azure.com/lonestar/forecast");
+    software.setService(Service.LSVF);
+    ConnectorInterface connectorInterface = ConnectFactory.createConnecter(software);
+    connectorInterface.setLogText(true);
+
+    return connectorInterface.queryForForecast(testCase,softwareResult);
+
+  }
+
   @SuppressWarnings("rawtypes")
   private static Map loadImmunizationSchedule() {
     String filename = "immunization_schedule.json";
@@ -162,11 +169,12 @@ public class Immunizations {
     {
       // logging immunization strings to compare and do mapping TODO remove
       Gson g = new Gson();
+      System.out.println("LOGGING IMMUNIZATION History : " + g.toJson(person.attributes.get("gender")) );
 //      System.out.println("LOGGING IMMUNIZATION History : " + g.toJson(person.attributes.get(IMMUNIZATIONS)) );
 //      System.out.println("LOGGING IMMUNIZATION SCHEDULE keys : " + g.toJson(immunizationSchedule.keySet()) + "\n" );
 //      System.out.println("LOGGING All codes " + g.toJson(getAllCodes()) + "\n" );
 //      for (String key : person.attributes.keySet()) {
-//        System.out.println("LOGGING PERSON ATTRIBUTES  key : " + key + "\n" );
+//        System.out.println("LOGGING PERSON ATTRIBUTES  key : " + key );
 //      }
     }
     /**
