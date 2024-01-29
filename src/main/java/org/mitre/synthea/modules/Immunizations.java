@@ -57,7 +57,7 @@ public class Immunizations {
        */
       List<ForecastActual> forecastActuals = queryForecaster(person,time,immunizationsGiven,softwareResult);
 //      System.out.println("Forecast length: " + forecastActuals.size()); TODO remove useless logs
-//      System.out.println(softwareResult.getLogText());
+      System.out.println(softwareResult.getLogText());
 //      String log = softwareResult.getLogText().split("VACCINATIONS RECOMMENDED ")[1].split("\nVACCCINATIONS RECOMMENDED AFTER ")[0];
 //      log = log.strip();
 //      System.out.println(log);
@@ -66,13 +66,18 @@ public class Immunizations {
       for (ForecastActual forecastActual : forecastActuals) {
         /**
          * Filtering Finished forecast, and only when due date is not passed
-         * TODO add probability if for early administration
+         * TODO add probability if for early administration : Change date on the immunization ressource or plan an encounter ?
          */
         if (forecastActual.getAdminStatus().equals("F") || forecastActual.getDueDate().after(new Date(time))) {
           break;
         }
+      }
+
+      forecastActuals = checkForCombination(forecastActuals);
+
+      for (ForecastActual forecastActual : forecastActuals) {
 //        System.out.println(forecastActual);
-//        System.out.println(forecastActual.getVaccineGroup().getLabel() +  " Adminlabel " + forecastActual.getAdmin().getLabel() + " | " + forecastActual.getAdminStatus());
+        System.out.println(forecastActual.getVaccineGroup().getLabel() + " cvx code "+ forecastActual.getVaccineGroup().getVaccineCvx() +  " Adminlabel " + forecastActual.getAdmin().getLabel() + " | " + forecastActual.getAdminStatus());
 //        System.out.println(forecastActual.getAdmin().toString());
 //        System.out.println(i + " EXPLANATION: " + forecastActual.getExplanationHtml());
 
@@ -104,6 +109,37 @@ public class Immunizations {
       exception.printStackTrace();
       System.err.println(exception.getMessage());
     }
+  }
+
+  private static List<ForecastActual> checkForCombination(List<ForecastActual> forecastActualList) {
+    List<Integer> index = new ArrayList<>();
+    List<String> immunizationList = new ArrayList<>();
+    for (ForecastActual forecastActual : forecastActualList) {
+      immunizationList.add(forecastActual.getVaccineGroup().getVaccineCvx());
+    }
+
+    List<String> pentacelList = List.of("89","17","45");
+    for (String vaccin : pentacelList) {
+      if (immunizationList.contains(vaccin)){
+        for (String immunization : immunizationList) {
+          if (immunization == vaccin) {index.add(immunizationList.indexOf(immunization)); break;}
+        }
+      }
+      else break;
+    }
+    
+    index.sort((a, b) -> Integer.compare(b, a));
+    if (index.size()==3){
+      ForecastActual newVaccine = new ForecastActual();
+      newVaccine.setAdminStatus("N");
+      newVaccine.setVaccineGroup(new VaccineGroup(120,"DTaP-IPV-Hib","120"));
+      forecastActualList.add(newVaccine);
+      for (int ind : index) {immunizationList.remove(ind);forecastActualList.remove(ind);}
+      System.out.println("\n Fusion OK \n");
+
+    }
+
+      return forecastActualList;
   }
 
   private static List<ForecastActual> queryForecaster(Person person, long time, Map<String, List<Long>> immunizationsGiven, SoftwareResult softwareResult) throws Exception {
