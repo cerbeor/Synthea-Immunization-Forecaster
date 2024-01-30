@@ -33,7 +33,7 @@ public class Immunizations {
 
   @SuppressWarnings({ "unchecked", "rawtypes" })
   /**
-   * ONLY NEW METHOD FETCHING IMMUNIZATION FORECASTER RECOMMENDATION
+   * NEW METHOD FETCHING IMMUNIZATION FORECASTER RECOMMENDATION
    */
   public static void performEncounterWithForecaster(Person person, long time) {
     /**
@@ -57,7 +57,7 @@ public class Immunizations {
        */
       List<ForecastActual> forecastActuals = queryForecaster(person,time,immunizationsGiven,softwareResult);
 //      System.out.println("Forecast length: " + forecastActuals.size()); TODO remove useless logs
-      System.out.println(softwareResult.getLogText());
+//      System.out.println(softwareResult.getLogText());
 //      String log = softwareResult.getLogText().split("VACCINATIONS RECOMMENDED ")[1].split("\nVACCCINATIONS RECOMMENDED AFTER ")[0];
 //      log = log.strip();
 //      System.out.println(log);
@@ -72,6 +72,19 @@ public class Immunizations {
           break;
         }
       }
+        /**
+         * Filtering the result of the forecaster (some vaccines are duplicated)
+         */
+        List<Integer> vaccineGroupIdList = new ArrayList<>();
+        Iterator<ForecastActual> iterator = forecastActuals.iterator();
+        while (iterator.hasNext()) {
+            ForecastActual forecastActual = iterator.next();
+            if (vaccineGroupIdList.contains(forecastActual.getVaccineGroup().getVaccineGroupId())) {
+                iterator.remove();
+            } else {
+                vaccineGroupIdList.add(forecastActual.getVaccineGroup().getVaccineGroupId());
+            }
+        }
 
       forecastActuals = checkForCombination(forecastActuals);
 
@@ -112,35 +125,60 @@ public class Immunizations {
   }
 
   private static List<ForecastActual> checkForCombination(List<ForecastActual> forecastActualList) {
-    List<Integer> index = new ArrayList<>();
+    List<List<String>> listOfCombinations = new ArrayList<>();
+    listOfCombinations.add(List.of("120", "DTaP-IPV-Hib", "20", "10", "48"));
+    listOfCombinations.add(List.of("03", "MMR", "05", "07", "06"));
+    listOfCombinations.add(List.of("94", "MMRV", "03", "21"));
+
     List<String> immunizationList = new ArrayList<>();
     for (ForecastActual forecastActual : forecastActualList) {
-      immunizationList.add(forecastActual.getVaccineGroup().getVaccineCvx());
+        immunizationList.add(forecastActual.getVaccineGroup().getVaccineCvx());
     }
 
-    List<String> pentacelList = List.of("89","17","45");
-    for (String vaccin : pentacelList) {
-      if (immunizationList.contains(vaccin)){
-        for (String immunization : immunizationList) {
-          if (immunization == vaccin) {index.add(immunizationList.indexOf(immunization)); break;}
+    for (List<String> combinationVaccine : listOfCombinations) {
+        List<Integer> index = new ArrayList<>();
+
+        for (String cvxCode : combinationVaccine.subList(2, combinationVaccine.size())) {
+            if (immunizationList.contains(cvxCode)) {
+                for (String immunization : immunizationList) {
+                    if (immunization.equals(cvxCode)) {
+                        index.add(immunizationList.indexOf(immunization));
+                        break;
+                    }
+                }
+            } else {
+                break;
+            }
         }
-      }
-      else break;
-    }
-    
-    index.sort((a, b) -> Integer.compare(b, a));
-    if (index.size()==3){
-      ForecastActual newVaccine = new ForecastActual();
-      newVaccine.setAdminStatus("N");
-      newVaccine.setVaccineGroup(new VaccineGroup(120,"DTaP-IPV-Hib","120"));
-      forecastActualList.add(newVaccine);
-      for (int ind : index) {immunizationList.remove(ind);forecastActualList.remove(ind);}
-      System.out.println("\n Fusion OK \n");
 
+        index.sort((a, b) -> Integer.compare(b, a));
+
+        if (index.size() == combinationVaccine.size() - 2) {
+            // System.out.println("Vaccine combination"+combinationVaccine.get(1));
+            if (!immunizationList.contains(combinationVaccine.get(0))) {
+                ForecastActual newVaccine = new ForecastActual();
+                newVaccine.setAdminStatus("N");
+                newVaccine.setVaccineGroup(new VaccineGroup(Integer.parseInt(combinationVaccine.get(0)),combinationVaccine.get(1), combinationVaccine.get(0)));
+                forecastActualList.add(newVaccine);
+            }
+
+            Iterator<Integer> iterator = index.iterator();
+            while (iterator.hasNext()) {
+                int ind = iterator.next();
+                immunizationList.remove(ind);
+                iterator.remove(); // Safe removal while iterating
+            }
+
+            Iterator<ForecastActual> forecastActualIterator = forecastActualList.iterator();
+            while (forecastActualIterator.hasNext()) {
+                forecastActualIterator.next();
+                forecastActualIterator.remove(); // Safe removal while iterating
+            }
+        }
     }
 
-      return forecastActualList;
-  }
+    return forecastActualList;
+}
 
   private static List<ForecastActual> queryForecaster(Person person, long time, Map<String, List<Long>> immunizationsGiven, SoftwareResult softwareResult) throws Exception {
     TestCase testCase = new TestCase();
