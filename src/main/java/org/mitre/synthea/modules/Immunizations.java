@@ -62,16 +62,6 @@ public class Immunizations {
 //      log = log.strip();
 //      System.out.println(log);
 //      System.out.println("log length = " + (log.split("\n").length - 1));
-
-      for (ForecastActual forecastActual : forecastActuals) {
-        /**
-         * Filtering Finished forecast, and only when due date is not passed
-         * TODO add probability if for early administration : Change date on the immunization ressource or plan an encounter ?
-         */
-        if (forecastActual.getAdminStatus().equals("F") || forecastActual.getDueDate().after(new Date(time))) {
-          break;
-        }
-      }
         /**
          * Filtering the result of the forecaster (some vaccines are duplicated)
          */
@@ -89,6 +79,16 @@ public class Immunizations {
       forecastActuals = checkForCombination(forecastActuals);
 
       for (ForecastActual forecastActual : forecastActuals) {
+        /**
+         * Filtering Finished forecast, and only when due date is not passed
+         * TODO add probability if for early administration : Change date on the immunization ressource or plan an encounter ?
+         */
+        if ( forecastActual.getAdminStatus().equals(Admin.FINISHED.getAdminStatus())
+                || forecastActual.getAdminStatus().equals(Admin.NOT_RECOMMENDED.getAdminStatus())
+                || forecastActual.getAdminStatus().equals(Admin.COMPLETE_FOR_SEASON.getAdminStatus())
+                || forecastActual.getDueDate().after(new Date(time + 24*3600))) {
+          break;
+        }
 //        System.out.println(forecastActual);
         System.out.println(forecastActual.getVaccineGroup().getLabel() + " cvx code "+ forecastActual.getVaccineGroup().getVaccineCvx() +  " Adminlabel " + forecastActual.getAdmin().getLabel() + " | " + forecastActual.getAdminStatus());
 //        System.out.println(forecastActual.getAdmin().toString());
@@ -97,7 +97,7 @@ public class Immunizations {
         /**
          * named immunization in original code
          */
-        String immunizationKey = forecastActual.getVaccineGroup().getLabel(); // TODO take actual synthea immunization key
+        String immunizationKey = forecastActual.getVaccineGroup().getVaccineCvx();
 
         /**
          * getting specific history on cvx, name
@@ -192,11 +192,18 @@ public class Immunizations {
      */
     List<TestEvent> testEvents = new ArrayList<>(immunizationsGiven.size());
     testCase.setTestEventList(testEvents);
+
+    int eventId = 0;
     for (Map.Entry<String, List<Long>> immunizationEntry: immunizationsGiven.entrySet()) {
+      if (immunizationEntry.getKey().equals("covid19")) {
+        break;
+      }
       for (Long eventTime: immunizationEntry.getValue()) {
         TestEvent testEvent = new TestEvent();
         Event event = new Event();
+        event.setEventId(eventId++);
         event.setVaccineCvx(immunizationEntry.getKey());
+        event.setEventType(EventType.VACCINATION);
         testEvent.setEvent(event);
         testEvent.setEventDate(new Date(eventTime));
         testEvents.add(testEvent);
@@ -243,7 +250,7 @@ public class Immunizations {
     {
       // logging immunization strings to compare and do mapping TODO remove
       Gson g = new Gson();
-      System.out.println("LOGGING IMMUNIZATION History : " + g.toJson(person.attributes.get("gender")) );
+//      System.out.println("LOGGING IMMUNIZATION History : " + g.toJson(person.attributes.get("gender")) );
 //      System.out.println("LOGGING IMMUNIZATION History : " + g.toJson(person.attributes.get(IMMUNIZATIONS)) );
 //      System.out.println("LOGGING IMMUNIZATION SCHEDULE keys : " + g.toJson(immunizationSchedule.keySet()) + "\n" );
 //      System.out.println("LOGGING All codes " + g.toJson(getAllCodes()) + "\n" );
