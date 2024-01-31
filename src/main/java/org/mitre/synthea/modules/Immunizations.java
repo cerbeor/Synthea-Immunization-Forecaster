@@ -73,6 +73,7 @@ public class Immunizations {
                 iterator.remove();
             } else {
                 vaccineGroupIdList.add(forecastActual.getVaccineGroup().getVaccineGroupId());
+                //System.out.println(forecastActual.getVaccineGroup().getLabel() + " cvx code "+ forecastActual.getVaccineGroup().getVaccineCvx() +  " Adminlabel " + forecastActual.getAdmin().getLabel() + " | " + forecastActual.getAdminStatus());
             }
         }
 
@@ -135,9 +136,9 @@ public class Immunizations {
         immunizationList.add(forecastActual.getVaccineGroup().getVaccineCvx());
     }
 
+    List<Integer> index = new ArrayList<>();
     for (List<String> combinationVaccine : listOfCombinations) {
-        List<Integer> index = new ArrayList<>();
-
+      index.clear();
         for (String cvxCode : combinationVaccine.subList(2, combinationVaccine.size())) {
             if (immunizationList.contains(cvxCode)) {
                 for (String immunization : immunizationList) {
@@ -154,7 +155,6 @@ public class Immunizations {
         index.sort((a, b) -> Integer.compare(b, a));
 
         if (index.size() == combinationVaccine.size() - 2) {
-            // System.out.println("Vaccine combination"+combinationVaccine.get(1));
             if (!immunizationList.contains(combinationVaccine.get(0))) {
                 ForecastActual newVaccine = new ForecastActual();
                 newVaccine.setAdminStatus("N");
@@ -166,17 +166,15 @@ public class Immunizations {
             while (iterator.hasNext()) {
                 int ind = iterator.next();
                 immunizationList.remove(ind);
-                iterator.remove(); // Safe removal while iterating
-            }
-
-            Iterator<ForecastActual> forecastActualIterator = forecastActualList.iterator();
-            while (forecastActualIterator.hasNext()) {
-                forecastActualIterator.next();
-                forecastActualIterator.remove(); // Safe removal while iterating
+                forecastActualList.remove(ind);
+                iterator.remove(); 
             }
         }
     }
-
+    System.out.println("\n Ending");
+    for (ForecastActual forecastActual : forecastActualList) {
+      System.out.println(forecastActual.getVaccineGroup().getLabel() + " cvx code "+ forecastActual.getVaccineGroup().getVaccineCvx() +  " Adminlabel " + forecastActual.getAdmin().getLabel() + " | " + forecastActual.getAdminStatus());
+    }
     return forecastActualList;
 }
 
