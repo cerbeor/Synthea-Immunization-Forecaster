@@ -82,15 +82,21 @@ public class Immunizations {
 
       forecastActuals = checkForCombination(forecastActuals);
 
+      Random random;
+      int randomNumber;
+
       for (ForecastActual forecastActual : forecastActuals) {
         /**
          * Filtering Finished forecast, and only when due date is not passed
          * TODO add probability if for early administration : Change date on the immunization ressource or plan an encounter ?
          */
+        random = new Random();
+        randomNumber = random.nextInt(100);
         if ( forecastActual.getAdminStatus().equals(Admin.FINISHED.getAdminStatus())
                 || forecastActual.getAdminStatus().equals(Admin.NOT_RECOMMENDED.getAdminStatus())
                 || forecastActual.getAdminStatus().equals(Admin.COMPLETE_FOR_SEASON.getAdminStatus())
-                || forecastActual.getDueDate().after(new Date(time + 24*3600))) {
+                || forecastActual.getDueDate().after(new Date(time + 24*3600))
+                || randomNumber < 2) {          // 2% is an arbitrary number for skipping all the immunizations at once.
           break;
         }
 //        System.out.println(forecastActual);
@@ -103,24 +109,43 @@ public class Immunizations {
          */
         String immunizationKey = forecastActual.getVaccineGroup().getVaccineCvx();
 
-        /**
-         * getting specific history on cvx, name
-         */
-        List<Long> history = null;
-        if (immunizationsGiven.containsKey(immunizationKey)) {
-          history = immunizationsGiven.get(immunizationKey);
-        } else {
-          history = new ArrayList<Long>();
-          immunizationsGiven.put(immunizationKey, history);
+        random = new Random();
+        randomNumber = random.nextInt(100);
+        boolean get_immunization = true;
+
+        if (Objects.equals(immunizationKey, "88")) { // for influenza
+          if (person.ageInYears(time) >= 65 && randomNumber >= 75) {
+            // 75% is the target vaccination coverage by the WHO for older people (https://www.who.int/europe/news-room/fact-sheets/item/influenza-vaccination-coverage-and-effectiveness)
+            get_immunization = false;
+          } else if (randomNumber >= 15) {
+            // 15% is an arbitrary number
+            get_immunization = false;
+          }
+        } else if (randomNumber < 5) { // other immunization
+          // 5% is an arbitrary number
+          get_immunization = false;
         }
-        history.add(time);
-        HealthRecord.Immunization entry = person.record.immunization(time, immunizationKey);
-        HealthRecord.Code immCode = new HealthRecord.Code(
-                "http://hl7.org/fhir/sid/cvx",
-                forecastActual.getVaccineGroup().getVaccineCvx(),
-                forecastActual.getVaccineGroup().getLabel());
-        entry.codes.add(immCode);
-        entry.series = history.size() + 1;
+
+        if (get_immunization) {
+          /**
+           * getting specific history on cvx, name
+           */
+          List<Long> history = null;
+          if (immunizationsGiven.containsKey(immunizationKey)) {
+            history = immunizationsGiven.get(immunizationKey);
+          } else {
+            history = new ArrayList<Long>();
+            immunizationsGiven.put(immunizationKey, history);
+          }
+          history.add(time);
+          HealthRecord.Immunization entry = person.record.immunization(time, immunizationKey);
+          HealthRecord.Code immCode = new HealthRecord.Code(
+                  "http://hl7.org/fhir/sid/cvx",
+                  forecastActual.getVaccineGroup().getVaccineCvx(),
+                  forecastActual.getVaccineGroup().getLabel());
+          entry.codes.add(immCode);
+          entry.series = history.size() + 1;
+        }
       }
     } catch (Exception exception) {
       exception.printStackTrace();
