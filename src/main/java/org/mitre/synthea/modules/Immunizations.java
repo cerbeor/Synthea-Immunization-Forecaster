@@ -94,7 +94,7 @@ public class Immunizations {
           break;
         }
 //        System.out.println(forecastActual);
-        System.out.println(forecastActual.getVaccineGroup().getLabel() + " cvx code "+ forecastActual.getVaccineGroup().getVaccineCvx() +  " Adminlabel " + forecastActual.getAdmin().getLabel() + " | " + forecastActual.getAdminStatus());
+//        System.out.println(forecastActual.getVaccineGroup().getLabel() + " cvx code "+ forecastActual.getVaccineGroup().getVaccineCvx() +  " Adminlabel " + forecastActual.getAdmin().getLabel() + " | " + forecastActual.getAdminStatus());
 //        System.out.println(forecastActual.getAdmin().toString());
 //        System.out.println(i + " EXPLANATION: " + forecastActual.getExplanationHtml());
 
@@ -150,9 +150,8 @@ public class Immunizations {
                         break;
                     }
                 }
-            } else {
-                break;
-            }
+            } 
+            else { break;}
         }
 
         index.sort((a, b) -> Integer.compare(b, a));
@@ -174,7 +173,6 @@ public class Immunizations {
             }
         }
     }
-    System.out.println("\n Ending");
     for (ForecastActual forecastActual : forecastActualList) {
       System.out.println(forecastActual.getVaccineGroup().getLabel() + " cvx code "+ forecastActual.getVaccineGroup().getVaccineCvx() +  " Adminlabel " + forecastActual.getAdmin().getLabel() + " | " + forecastActual.getAdminStatus());
     }
