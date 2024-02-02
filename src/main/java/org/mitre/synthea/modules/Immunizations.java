@@ -66,16 +66,19 @@ public class Immunizations {
          * Filtering the result of the forecaster (some vaccines are duplicated)
          */
         List<Integer> vaccineGroupIdList = new ArrayList<>();
+        List<String> vaccineCvxList = new ArrayList<>();
         Iterator<ForecastActual> iterator = forecastActuals.iterator();
         while (iterator.hasNext()) {
             ForecastActual forecastActual = iterator.next();
-            if (vaccineGroupIdList.contains(forecastActual.getVaccineGroup().getVaccineGroupId())) {
+            if (vaccineGroupIdList.contains(forecastActual.getVaccineGroup().getVaccineGroupId()) || vaccineCvxList.contains(forecastActual.getVaccineGroup().getVaccineCvx())) {
                 iterator.remove();
             } else {
                 vaccineGroupIdList.add(forecastActual.getVaccineGroup().getVaccineGroupId());
-                //System.out.println(forecastActual.getVaccineGroup().getLabel() + " cvx code "+ forecastActual.getVaccineGroup().getVaccineCvx() +  " Adminlabel " + forecastActual.getAdmin().getLabel() + " | " + forecastActual.getAdminStatus());
-            }
-        }
+                vaccineCvxList.add(forecastActual.getVaccineGroup().getVaccineCvx());
+              }
+        };
+        vaccineGroupIdList = null;
+        vaccineCvxList = null;
 
       forecastActuals = checkForCombination(forecastActuals);
 
