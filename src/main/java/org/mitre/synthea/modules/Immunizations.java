@@ -70,7 +70,9 @@ public class Immunizations {
         Iterator<ForecastActual> iterator = forecastActuals.iterator();
         while (iterator.hasNext()) {
             ForecastActual forecastActual = iterator.next();
-            if (vaccineGroupIdList.contains(forecastActual.getVaccineGroup().getVaccineGroupId()) || vaccineCvxList.contains(forecastActual.getVaccineGroup().getVaccineCvx())) {
+            if (vaccineGroupIdList.contains(forecastActual.getVaccineGroup().getVaccineGroupId()) 
+            || vaccineCvxList.contains(forecastActual.getVaccineGroup().getVaccineCvx())
+            || forecastActual.getVaccineGroup().getLabel().equals("DTaP, Tdap or Td")) {
                 iterator.remove();
             } else {
                 vaccineGroupIdList.add(forecastActual.getVaccineGroup().getVaccineGroupId());
