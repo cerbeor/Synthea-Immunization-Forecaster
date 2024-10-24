@@ -34,6 +34,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.apache.commons.lang3.Range;
 import org.mitre.synthea.engine.Logic;
@@ -666,5 +668,10 @@ public class Utilities {
         }
       }
     }
+  }
+
+  public static String convertTimeToString(long time) {
+      SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+      return sdf.format(new Date(time));
   }
 }

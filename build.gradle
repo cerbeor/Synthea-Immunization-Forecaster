@@ -424,3 +424,7 @@ signing {
   required { project.hasProperty('signing.keyId') }
   sign publishing.publications.synthea
 }
+
+shadowJar {
+    zip64 true
+}
