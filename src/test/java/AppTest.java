@@ -3,7 +3,6 @@ import java.io.File;
 import java.io.PrintStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
@@ -16,6 +15,15 @@ import org.mitre.synthea.helpers.Config;
 import org.mitre.synthea.helpers.Utilities;
 import org.mitre.synthea.world.agents.PayerManager;
 import org.mitre.synthea.world.geography.Location;
+import org.mitre.synthea.world.agents.Person;  
+import org.immregistries.vfa.connect.model.ForecastActual;  
+import org.immregistries.vfa.connect.model.SoftwareResult;  
+import java.util.List;  
+import java.util.Map;  
+import java.util.HashMap;  
+import java.util.Arrays; 
+
+import org.mitre.synthea.modules.Immunizations;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class AppTest {
@@ -251,4 +259,32 @@ public class AppTest {
     System.out.println(output);
   }
 
+  @Test
+  public void testQueryForecasterWithNewCDS() {
+      try {
+          // Step 1: Set up mock data
+          Person mockPerson = new Person(0L);
+          mockPerson.attributes.put("birthdate", 315569952000L); // Example birthdate in milliseconds
+          mockPerson.attributes.put("gender", "male");
+
+          Map<String, List<Long>> immunizationsGiven = new HashMap<>();
+          immunizationsGiven.put("140", Arrays.asList(1609459200000L)); // Mock immunization history
+
+          SoftwareResult softwareResult = new SoftwareResult();
+
+          // Step 2: Invoke queryForecaster
+          List<ForecastActual> forecast = Immunizations.queryForecaster(mockPerson, System.currentTimeMillis(), immunizationsGiven, softwareResult);
+
+          // Step 3: Validate the output using assertions
+          Assert.assertNotNull(forecast);
+          Assert.assertFalse(forecast.isEmpty());
+          // Additional assertions can be added to validate the properties of forecastActual
+
+          System.out.println("Forecast Result: " + forecast);
+
+      } catch (Exception e) {
+          e.printStackTrace();
+          Assert.fail("Exception during testQueryForecasterWithNewCDS: " + e.getMessage());
+      }
+    }
 }
