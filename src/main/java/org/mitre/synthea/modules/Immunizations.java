@@ -287,15 +287,19 @@ public class Immunizations {
 
     System.out.println("Envoi de la requête à l'URL : http://localhost:9999/fhir/$immds-forecast");
 
-    HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+    HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());  // In this case, Java does not directly allow receiving the response in JsonObject format using the standard HTTP API. By default, the response is received as a string.
     String responseBody = response.body();
 
-    System.out.println("responseBody :" + responseBody);
+    System.out.println("responseBody (string):" + responseBody);
 
-    // Parse the response of the CDS: Json to ForecastActual format 
+    // Parse the response of the CDS: from string to Json to ForecastActual format 
+    // Maybe not useful (rf Julie & Clement) ??
     Gson gson = new Gson();
-    JsonObject responseJson = gson.fromJson(responseBody, JsonObject.class); // Json response
-    List<ForecastActual> forecastActuals = new ArrayList<>(); // Final format
+    JsonObject responseJson = gson.fromJson(responseBody, JsonObject.class); // From string response to Json response
+
+    System.out.println("responseJson (JSON):" + responseBody);
+
+    List<ForecastActual> forecastActuals = new ArrayList<>(); // From Json to ForecastActual format
 
     JsonArray recommendations = responseJson.getAsJsonArray("parameter");
     for (JsonElement element : recommendations) {
@@ -309,12 +313,12 @@ public class Immunizations {
                 JsonArray vaccineCodes = recObject.getAsJsonArray("vaccineCode");
                 if (vaccineCodes != null && vaccineCodes.size() > 0) {
                     JsonObject vaccineCodeObj = vaccineCodes.get(0).getAsJsonObject();
-                    JsonArray codings = vaccineCodeObj.getAsJsonArray("coding");
+                    JsonArray codings = vaccineCodeObj.getAsJsonArray("coding");  // Fetch vaccine coding information
                     if (codings != null && codings.size() > 0) {
                         JsonObject codingObj = codings.get(0).getAsJsonObject();
                         forecastActual.setAdminStatus(recObject.getAsJsonObject("forecastStatus").get("coding").getAsJsonArray().get(0).getAsJsonObject().get("code").getAsString());
                         VaccineGroup vaccineGroup = new VaccineGroup();
-                        vaccineGroup.setVaccineCvx(codingObj.get("code").getAsString());
+                        vaccineGroup.setVaccineCvx(codingObj.get("code").getAsString());  // Set Vaccine CVX code
                         vaccineGroup.setLabel(codingObj.get("display").getAsString());
                         forecastActual.setVaccineGroup(vaccineGroup);
                     }
