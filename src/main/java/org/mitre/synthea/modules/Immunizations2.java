@@ -14,7 +14,7 @@ import org.mitre.synthea.world.agents.Person;
 
 public class Immunizations2 {
     public static ImmunizationRecommendation queryForecaster2(Person person, long time, Map<String, List<Long>> immunizationsGiven) throws Exception {
-        // This fonction isgoing to ask the new CDS the Immunization Recommendation of the patient 
+        // This fonction is going to ask the new CDS the Immunization Recommendation of the patient 
 
         System.out.println("person :" + person);
         System.out.println("time :" + time);

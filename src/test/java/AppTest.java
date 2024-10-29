@@ -12,19 +12,22 @@ import org.junit.runners.MethodSorters;
 import org.mitre.synthea.TestHelper;
 import org.mitre.synthea.engine.Generator;
 import org.mitre.synthea.helpers.Config;
-import org.mitre.synthea.helpers.Utilities;
 import org.mitre.synthea.world.agents.PayerManager;
 import org.mitre.synthea.world.geography.Location;
+
+import ca.uhn.fhir.context.FhirContext;
+
 import org.mitre.synthea.world.agents.Person;  
-import org.immregistries.vfa.connect.model.ForecastActual;  
-import org.immregistries.vfa.connect.model.SoftwareResult;  
 import java.util.List;  
 import java.util.Map;  
 import java.util.HashMap;  
-import java.util.Arrays; 
+import java.util.Arrays;
 
-import org.mitre.synthea.modules.Immunizations2;
+import org.mitre.synthea.modules.Immunizations2;   // Temporary new Immunization file 
 import org.hl7.fhir.r4.model.ImmunizationRecommendation;
+import org.hl7.fhir.r4.model.CodeableConcept;
+import org.hl7.fhir.r4.model.Coding;
+
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class AppTest {
@@ -261,7 +264,7 @@ public class AppTest {
   }
 
   @Test
-  public void testQueryForecasterWithNewCDS() {
+  public void testQueryForecaster2WithNewCDS() {
       try {
           // Step 1: Set up mock data
           Person mockPerson = new Person(0L);
@@ -282,12 +285,45 @@ public class AppTest {
           Assert.assertNotNull("ImmunizationRecommendation should not be null", recommendation);
           Assert.assertFalse("Recommendation list should not be empty", recommendation.getRecommendation().isEmpty());
 
-          // Additional assertions can be added to validate the properties of the recommendation
-          System.out.println("ImmunizationRecommendation: " + recommendation);
+          // Step 4: Serialize (= format transformation) and print the ImmunizationRecommendation
+          // Here we transform a Java object into a readable object 
+          FhirContext ctx = FhirContext.forR4();
+          String recommendationJson = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(recommendation);
+          System.out.println("ImmunizationRecommendation as JSON:\n" + recommendationJson);
+
+          // Alternatively, print specific properties
+          System.out.println("ImmunizationRecommendation Details:");
+          for (ImmunizationRecommendation.ImmunizationRecommendationRecommendationComponent recComponent : recommendation.getRecommendation()) {
+              // Print forecast status
+              CodeableConcept forecastStatus = recComponent.getForecastStatus();
+              if (forecastStatus != null && !forecastStatus.getCoding().isEmpty()) {
+                  Coding statusCoding = forecastStatus.getCodingFirstRep();
+                  System.out.println("Forecast Status Code: " + statusCoding.getCode());
+                  System.out.println("Forecast Status Display: " + statusCoding.getDisplay());
+              }
+
+              // Print vaccine codes
+              for (CodeableConcept vaccineCode : recComponent.getVaccineCode()) {
+                  if (!vaccineCode.getCoding().isEmpty()) {
+                      Coding vaccineCoding = vaccineCode.getCodingFirstRep();
+                      System.out.println("Vaccine Code: " + vaccineCoding.getCode());
+                      System.out.println("Vaccine Display: " + vaccineCoding.getDisplay());
+                  }
+              }
+
+              // Print recommended date
+              List<ImmunizationRecommendation.ImmunizationRecommendationRecommendationDateCriterionComponent> dateCriteria = recComponent.getDateCriterion();
+              for (ImmunizationRecommendation.ImmunizationRecommendationRecommendationDateCriterionComponent dateCriterion : dateCriteria) {
+                  System.out.println("Date Criterion: " + dateCriterion.getCode().getCodingFirstRep().getCode() +
+                          " - " + dateCriterion.getValue());
+              }
+
+              System.out.println("----------------------------------------");
+          }
 
       } catch (Exception e) {
           e.printStackTrace();
           Assert.fail("Exception during testQueryForecasterWithNewCDS: " + e.getMessage());
       }
-  }
+  } 
 }
