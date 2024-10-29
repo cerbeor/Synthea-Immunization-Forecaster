@@ -46,11 +46,91 @@ public class Immunizations {
   private static final Map<String, Map> immunizationSchedule = loadImmunizationSchedule();
 
 
+  /**
+   * NEW METHOD FETCHING IMMUNIZATION FORECASTER RECOMMENDATION
+   */
+  @SuppressWarnings({ "unchecked", "rawtypes" })
+  public static void performEncounterWithNewCDS(Person person, long time) {
+    /**
+     * Reading patient history
+     */
+    Map<String, List<Long>> immunizationsGiven;
+    if (person.attributes.containsKey(IMMUNIZATIONS)) {
+      immunizationsGiven = (Map<String, List<Long>>) person.attributes.get(IMMUNIZATIONS);
+    } else {
+      immunizationsGiven = new HashMap<String, List<Long>>();
+      person.attributes.put(IMMUNIZATIONS, immunizationsGiven);
+    }
+
+    try {
+
+      /**
+       * Querying forecaster
+       */
+      ImmunizationRecommendation immunizationRecommendation = Immunizations2.queryForecaster2(person, time, immunizationsGiven);
+      immunizationRecommendation = checkForCombination(immunizationRecommendation);
+
+
+      if(immunizationRecommendation != null){
+        for (ImmunizationRecommendation.ImmunizationRecommendationRecommendationComponent recommendation : immunizationRecommendation.getRecommendation()) {
+          String immunizationKey = recommendation.getVaccineCode().get(0).getCodingFirstRep().getCode(); // CVX code
+          Date dueDate = recommendation.getDateCriterionFirstRep().getValue();  // Recommended due date
+
+          // Decide whether to administer the vaccine
+          Random random = new Random();
+          int randomNumber = random.nextInt(100);
+          boolean getImmunization = true;
+
+          if (Objects.equals(immunizationKey, "88")) { // for influenza
+            if (person.ageInYears(time) >= 65 && randomNumber >= 75) {
+              // 75% is the target vaccination coverage by the WHO for older people (https://www.who.int/europe/news-room/fact-sheets/item/influenza-vaccination-coverage-and-effectiveness)
+              getImmunization = false;
+            } else if (randomNumber >= 15) {
+              // 15% is an arbitrary number
+              getImmunization = false;
+            }
+          } else if (randomNumber < 5) { // other immunization
+            // 5% is an arbitrary number
+            getImmunization = false;
+          }
+
+          if (getImmunization) {
+            /**
+             * getting specific history on cvx, name
+             */
+            List<Long> history = null;
+            if (immunizationsGiven.containsKey(immunizationKey)) {
+              history = immunizationsGiven.get(immunizationKey);
+            } else {
+              history = new ArrayList<Long>();
+              immunizationsGiven.put(immunizationKey, history);
+            }
+            history.add(time);
+            HealthRecord.Immunization entry = person.record.immunization(time, immunizationKey);
+            HealthRecord.Code immCode = new HealthRecord.Code(
+                    "http://hl7.org/fhir/sid/cvx",
+                    immunizationKey,
+                    recommendation.getVaccineCode().get(0).getCodingFirstRep().getDisplay());
+            entry.codes.add(immCode);
+            entry.series = history.size() + 1;
+          }
+        }
+
+      } else {
+        System.err.println("No immunization recommendation returned from CDS server.");
+      }
+
+    } catch (Exception exception) {
+      exception.printStackTrace();
+      System.err.println(exception.getMessage());
+    }
+  }
+
   @SuppressWarnings({ "unchecked", "rawtypes" })
   /**
    * NEW METHOD FETCHING IMMUNIZATION FORECASTER RECOMMENDATION
    */
-  public static void performEncounterWithForecaster(Person person, long time) {
+  public static void performEncounterWithForecasterDepreciated(Person person, long time) {
     /**
      * Reading patient history
      */
@@ -97,7 +177,7 @@ public class Immunizations {
         vaccineGroupIdList = null;
         vaccineCvxList = null;
 
-      forecastActuals = checkForCombination(forecastActuals);
+      forecastActuals = checkForCombinationDepreciated(forecastActuals);
 
       Random random;
       int randomNumber;
@@ -170,7 +250,14 @@ public class Immunizations {
     }
   }
 
-  private static List<ForecastActual> checkForCombination(List<ForecastActual> forecastActualList) {
+  /**
+   * Temporary method to check for combination of vaccines : to be replaced by the real method
+   */
+  private static ImmunizationRecommendation checkForCombination(ImmunizationRecommendation immunizationRecommendation){
+    return immunizationRecommendation;
+  }
+
+  private static List<ForecastActual> checkForCombinationDepreciated(List<ForecastActual> forecastActualList) {
     List<List<String>> listOfCombinations = new ArrayList<>();
     listOfCombinations.add(List.of("120", "DTaP-IPV-Hib", "20", "10", "48"));
     listOfCombinations.add(List.of("03", "MMR", "05", "07", "06"));
@@ -371,7 +458,7 @@ public class Immunizations {
     /**
      * New code connecting to forecaster
      */
-    performEncounterWithForecaster(person,time);
+    performEncounterWithNewCDS(person,time);
     /**
      * old code
      */

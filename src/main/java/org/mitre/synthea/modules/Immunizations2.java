@@ -32,10 +32,18 @@ public class Immunizations2 {
             .setName("assessmentDate")
             .setValue(new DateType(new Date(time)));
 
+        // Convert patient gender to FHIR format
+        String patientGender = person.attributes.get("gender").toString();
+        if (patientGender.equals("M")) {
+            patientGender = "male";
+        } else if (patientGender.equals("F")) {
+            patientGender = "female";
+        }
+
         // Create Patient resource
         Patient patient = new Patient();
         patient.setId("example");
-        patient.setGender(Enumerations.AdministrativeGender.fromCode((String) person.attributes.get("gender")));
+        patient.setGender(Enumerations.AdministrativeGender.fromCode((patientGender)));
         patient.setBirthDate(new Date((Long) person.attributes.get("birthdate")));
 
         // Add patient parameter
