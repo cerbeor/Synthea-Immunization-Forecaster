@@ -222,6 +222,9 @@ public class Immunizations {
 }
 
   public static List<ForecastActual> queryForecaster(Person person, long time, Map<String, List<Long>> immunizationsGiven, SoftwareResult softwareResult) throws Exception {
+    // This function is used to query the CDS (Clinical Decision Support) to get the forecast of the immunizations to be given to the person.
+    // softwareResult is not use -> need to be remove yes 
+
     System.out.println("person :" + person);
     System.out.println("time :" + time);
     System.out.println("immunizationsGiven :" + immunizationsGiven);

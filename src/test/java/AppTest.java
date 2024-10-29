@@ -23,7 +23,8 @@ import java.util.Map;
 import java.util.HashMap;  
 import java.util.Arrays; 
 
-import org.mitre.synthea.modules.Immunizations;
+import org.mitre.synthea.modules.Immunizations2;
+import org.hl7.fhir.r4.model.ImmunizationRecommendation;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class AppTest {
@@ -270,21 +271,23 @@ public class AppTest {
           Map<String, List<Long>> immunizationsGiven = new HashMap<>();
           immunizationsGiven.put("140", Arrays.asList(1609459200000L)); // Mock immunization history
 
-          SoftwareResult softwareResult = new SoftwareResult();
-
           // Step 2: Invoke queryForecaster
-          List<ForecastActual> forecast = Immunizations.queryForecaster(mockPerson, System.currentTimeMillis(), immunizationsGiven, softwareResult);
+          ImmunizationRecommendation recommendation = Immunizations2.queryForecaster2(
+                  mockPerson,
+                  System.currentTimeMillis(),
+                  immunizationsGiven
+          );
 
           // Step 3: Validate the output using assertions
-          Assert.assertNotNull(forecast);
-          Assert.assertFalse(forecast.isEmpty());
-          // Additional assertions can be added to validate the properties of forecastActual
+          Assert.assertNotNull("ImmunizationRecommendation should not be null", recommendation);
+          Assert.assertFalse("Recommendation list should not be empty", recommendation.getRecommendation().isEmpty());
 
-          System.out.println("Forecast Result: " + forecast);
+          // Additional assertions can be added to validate the properties of the recommendation
+          System.out.println("ImmunizationRecommendation: " + recommendation);
 
       } catch (Exception e) {
           e.printStackTrace();
           Assert.fail("Exception during testQueryForecasterWithNewCDS: " + e.getMessage());
       }
-    }
+  }
 }
