@@ -51,11 +51,11 @@ public class CodebaseTest {
         String cvxCode = "162";  // Example of a valid CVX
         Code cvxCodeObj = codeMap.getCodeForCodeset(CodesetType.VACCINATION_CVX_CODE, cvxCode);
         
-        assertNotNull("Le code CVX devrait exister dans le CodeMap", cvxCodeObj);
+        assertNotNull("The CVX code should exist in the CodeMap", cvxCodeObj);
 
         // Tests the NDC linked to the CVX
         String relatedNDC = codeMap.getRelatedValueTest(cvxCodeObj, CodesetType.VACCINATION_NDC_CODE_UNIT_OF_USE);
-        assertNotNull("Le NDC lié devrait exister pour ce CVX", relatedNDC);
+        assertNotNull("The related NDC should exist for this CVX", relatedNDC);
         assertEquals("00005-0100-01", relatedNDC);
     }
 
