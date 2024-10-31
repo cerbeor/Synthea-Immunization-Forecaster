@@ -1,6 +1,9 @@
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+
+import java.util.List;
 
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
@@ -57,6 +60,28 @@ public class CodebaseTest {
         String relatedNDC = codeMap.getRelatedValueTest(cvxCodeObj, CodesetType.VACCINATION_NDC_CODE_UNIT_OF_USE);
         assertNotNull("The related NDC should exist for this CVX", relatedNDC);
         assertEquals("00005-0100-01", relatedNDC);
+    }
+
+
+    @Test
+    public void testGetRelatedNDCsForCVX_ExistingCVX() {
+        String cvxCode = "162";  // Example of a valid CVX
+        Code cvxCodeObj = codeMap.getCodeForCodeset(CodesetType.VACCINATION_CVX_CODE, cvxCode);
+        
+        assertNotNull("The CVX code should exist in the CodeMap", cvxCodeObj);
+
+        // Tests the NDCs linked to the CVX
+        List<String> relatedNDCs = codeMap.getRelatedValues(cvxCodeObj, CodesetType.VACCINATION_NDC_CODE_UNIT_OF_USE);
+        
+        assertNotNull("The related NDCs list should not be null", relatedNDCs);
+        assertFalse("The related NDCs list should not be empty for this CVX", relatedNDCs.isEmpty());
+
+        assertEquals(1, relatedNDCs.size());
+        assertEquals("00005-0100-01", relatedNDCs.get(0));
+
+        // Optionally check specific expected NDCs
+        // Uncomment the line below and replace with actual expected values as needed
+        // assertTrue("Expected NDC should be in the related NDCs list", relatedNDCs.contains("00005-0100-01"));
     }
 
 }

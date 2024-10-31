@@ -120,6 +120,36 @@ public class CodeMap {
 
 
 
+
+  public List<String> getRelatedValues(Code codeIn, CodesetType desiredType) {
+      List<String> relatedValues = new ArrayList<>(); // Using a list to store multiple values
+      if (codeIn == null) {
+          return relatedValues; // Returns an empty list if codeIn is null
+      }
+      if (desiredType == null) {
+          return relatedValues; // Returns an empty list if desiredType is null
+      }
+      Reference r = codeIn.getReference();
+      if (r == null) {
+          return relatedValues; // Returns an empty list if the reference is null
+      }
+
+      List<LinkTo> linkList = r.getLinkTo();
+      for (LinkTo link : linkList) {
+          if (desiredType.equals(CodesetType.getByTypeCode(link.getCodeset()))) {
+              relatedValues.add(link.getValue()); // Adds each related value to the list
+          }
+      }
+
+      return relatedValues; // Returns the list of related values
+  }
+
+
+
+// 
+
+
+
     
 
   public String getRelatedValue(Code codeIn, CodesetType desiredType) {
