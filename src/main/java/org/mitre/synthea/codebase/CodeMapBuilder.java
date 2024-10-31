@@ -48,7 +48,7 @@ public enum CodeMapBuilder {
 
   CodeMap findAndReadCodeMapIntoMemory() {
     CodeMap cm;
-    String file = "Compiled.xml";
+    String file = "./src/test/resources/Compiled.xml";
     InputStream is;
     try {
       is = getCodeMapFromSameDirAsJar(file);

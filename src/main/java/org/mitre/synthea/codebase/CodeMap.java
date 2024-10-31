@@ -40,58 +40,76 @@ public class CodeMap {
     return productCodes;
   }
 
-  // public String getRelatedValue(Code codeIn, CodesetType desiredType) {
-  //   String relatedValue = "";
-  //   if (codeIn == null) {
-  //     return relatedValue;
-  //   }
-  //   if (desiredType == null) {
-  //     return relatedValue;
-  //   }
-  //   Reference r = codeIn.getReference();
-  //   if (r == null) {
-  //     return relatedValue;
-  //   }
+  // New 
 
-  //   List<LinkTo> linkList = r.getLinkTo();
-  //   for (LinkTo link : linkList) {
-  //     if (desiredType.equals(CodesetType.getByTypeCode(link.getCodeset()))) {
-  //       relatedValue = link.getValue();
-  //       break;
-  //     }
-  //   }
-
-  //   return relatedValue;
-  // }
+    /**
+   * Retrieves drug details based on a specified National Drug Code (NDC).
+   * 
+   * This method looks up the provided NDC within the default CodeMap, retrieving 
+   * relevant details if the code is found, including the drug label, description, 
+   * and status. If no drug is found for the given NDC, an error message is returned.
+   *
+   * @param ndcCode the NDC code to search for
+   * @return a formatted string with drug details (label, description, status) if found; 
+   *         otherwise, an error message indicating no drug was found
+   */
 
 
-  public String getRelatedValue(Code codeIn, CodesetType desiredType) { 
+  public static String getDrugDetailsByNDC(String ndcCode) {
+    CodeMap codeMap = CodeMapBuilder.INSTANCE.getDefaultCodeMap();
+    Code ndcCodeObj = codeMap.getCodeForCodeset(CodesetType.VACCINATION_NDC_CODE_UNIT_OF_USE, ndcCode);
+    
+    if (ndcCodeObj != null) {
+        String drugLabel = ndcCodeObj.getLabel();
+        String description = ndcCodeObj.getDescription();
+        String status = ndcCodeObj.getCodeStatus().getStatus();
+        return String.format("Drug: %s\nDescription: %s\nStatus: %s", drugLabel, description, status);
+    } else {
+        return "No drug found for NDC " + ndcCode;
+    }
+
+  }
+
+  
+  /**
+   * Retrieves the related value from a given code's reference links based on a specified codeset type.
+   * 
+   * This method checks the input code for an existing reference and searches its links for a match
+   * with the desired codeset type. If a match is found, the associated value is returned; otherwise,
+   * an empty string is returned.
+   *
+   * @param codeIn      the code to retrieve the related value from
+   * @param desiredType the codeset type to match in the reference links
+   * @return the related value if found; otherwise, an empty string
+   */
+
+  public String getRelatedValueTest(Code codeIn, CodesetType desiredType) { 
     String relatedValue = "";
     if (codeIn == null) {
-        logger.warn("Le code d'entrée est nul.");
+        logger.warn("The input code is null.");
         return relatedValue;
     }
     if (desiredType == null) {
-        logger.warn("Le type désiré est nul.");
+        logger.warn("The desired type is null.");
         return relatedValue;
     }
 
     Reference r = codeIn.getReference();
     if (r == null) {
-        logger.warn("Aucune référence trouvée pour le code: {}", codeIn.getValue());
+        logger.warn("No reference found for the code: {}", codeIn.getValue());
         return relatedValue;
     }
 
     List<LinkTo> linkList = r.getLinkTo();
     if (linkList.isEmpty()) {
-        logger.warn("Aucun lien trouvé dans la référence pour le code: {}", codeIn.getValue());
+        logger.warn("No links found in the reference for the code: {}", codeIn.getValue());
     } else {
         for (LinkTo link : linkList) {
             CodesetType linkCodesetType = CodesetType.getByTypeCode(link.getCodeset());
-            logger.info("Vérification du lien {} pour le code: {} avec codeset type: {}", link.getValue(), codeIn.getValue(), linkCodesetType);
+            logger.info("Checking link {} for the code: {} with codeset type: {}", link.getValue(), codeIn.getValue(), linkCodesetType);
             if (desiredType.equals(linkCodesetType)) {
                 relatedValue = link.getValue();
-                logger.info("Valeur trouvée : {}", relatedValue);
+                logger.info("Value found: {}", relatedValue);
                 break;
             }
         }
@@ -99,6 +117,35 @@ public class CodeMap {
 
     return relatedValue;
 }
+
+
+
+    
+
+  public String getRelatedValue(Code codeIn, CodesetType desiredType) {
+    String relatedValue = "";
+    if (codeIn == null) {
+      return relatedValue;
+    }
+    if (desiredType == null) {
+      return relatedValue;
+    }
+    Reference r = codeIn.getReference();
+    if (r == null) {
+      return relatedValue;
+    }
+
+    List<LinkTo> linkList = r.getLinkTo();
+    for (LinkTo link : linkList) {
+      if (desiredType.equals(CodesetType.getByTypeCode(link.getCodeset()))) {
+        relatedValue = link.getValue();
+        break;
+      }
+    }
+
+    return relatedValue;
+  }
+
 
 
   public Code getProductFor(String vaccineCvx, String vaccineMvx, String adminDate) {
