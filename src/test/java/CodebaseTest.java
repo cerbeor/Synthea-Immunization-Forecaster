@@ -79,8 +79,6 @@ public class CodebaseTest {
         assertEquals(1, relatedNDCs.size());
         assertEquals("00005-0100-01", relatedNDCs.get(0));
 
-        // Optionally check specific expected NDCs
-        // Uncomment the line below and replace with actual expected values as needed
         // assertTrue("Expected NDC should be in the related NDCs list", relatedNDCs.contains("00005-0100-01"));
     }
 
