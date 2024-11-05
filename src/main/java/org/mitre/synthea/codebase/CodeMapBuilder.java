@@ -46,9 +46,9 @@ public enum CodeMapBuilder {
     return getCodeMap(is);
   }
 
-  CodeMap findAndReadCodeMapIntoMemory() {
+  CodeMap findAndReadCodeMapIntoMemory(String path) {
     CodeMap cm;
-    String file = "./src/test/resources/Compiled.xml";
+    String file = path;
     InputStream is;
     try {
       is = getCodeMapFromSameDirAsJar(file);
@@ -74,9 +74,30 @@ public enum CodeMapBuilder {
     return getCompiledCodeMap();
   }
 
+
+  public CodeMap getDefaultCodeMap(String path) {
+    return getCompiledCodeMap(path);
+  }
+
   public CodeMap getCompiledCodeMap() {
     if (preBuilt == null) {
-      this.preBuilt = findAndReadCodeMapIntoMemory();
+      this.preBuilt = findAndReadCodeMapIntoMemory("./src/test/resources/Compiled.xml");
+    }
+    return preBuilt;
+  }
+
+
+    /**
+   * Retrieves the compiled CodeMap, loading it into memory if not already loaded.
+   * If the CodeMap has not been previously loaded, it reads from the specified file path.
+   *
+   * @param path the file path to the compiled CodeMap XML file
+   * @return the loaded CodeMap object
+   */
+
+  public CodeMap getCompiledCodeMap(String path) {
+    if (preBuilt == null) {
+      this.preBuilt = findAndReadCodeMapIntoMemory(path);
     }
     return preBuilt;
   }

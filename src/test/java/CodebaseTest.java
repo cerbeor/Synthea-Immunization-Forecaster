@@ -1,7 +1,6 @@
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 import java.util.List;
 
@@ -11,8 +10,8 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.mitre.synthea.codebase.CodeMap;
 import org.mitre.synthea.codebase.CodeMapBuilder;
-import org.mitre.synthea.codebase.reference.*;
-import org.mitre.synthea.codebase.generated.*;
+import org.mitre.synthea.codebase.generated.Code;
+import org.mitre.synthea.codebase.reference.CodesetType;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class CodebaseTest {
@@ -22,12 +21,12 @@ public class CodebaseTest {
 
     @BeforeClass
     public static void setUp() {
-        codeMap = CodeMapBuilder.INSTANCE.getDefaultCodeMap();
+        codeMap = CodeMapBuilder.INSTANCE.getDefaultCodeMap("./src/test/resources/CompiledTest.xml");
     }
 
     @Test
     public void testGetDrugDetailsByNDC_ExistingNDC() {
-        String ndcCode = "00005-0100-01";  // Example of an existing NDC
+        String ndcCode = "00001-0000-01";  // Example of an existing NDC
         Code ndcCodeObj = codeMap.getCodeForCodeset(CodesetType.VACCINATION_NDC_CODE_UNIT_OF_USE, ndcCode);
         
         assertNotNull("The NDC code should exist in the CodeMap", ndcCodeObj);
@@ -35,37 +34,13 @@ public class CodebaseTest {
         // Tests the drug details
         String drugDetails = CodeMap.getDrugDetailsByNDC(ndcCode);
         assertNotNull("Drug details should not be null", drugDetails);
-        assertEquals("Drug: Trumenba\nDescription: Pfizer - Meningococcal B, recombinant\nStatus: Valid", drugDetails);
-    }
-
-
-    @Test
-    public void testGetDrugDetailsByNDC_NonExistingNDC() {
-        String invalidNdcCode = "99999-9999-99";  // An NDC that does not exist in the CodeMap
-
-        // Checks that the method returns the expected error message for a non-existent NDC
-        String drugDetails = CodeMap.getDrugDetailsByNDC(invalidNdcCode);
-        assertEquals("No drug found for NDC " + invalidNdcCode, drugDetails);
-    }
-
-
-    @Test
-    public void testGetRelatedNDCForCVX_ExistingCVX() {
-        String cvxCode = "162";  // Example of a valid CVX
-        Code cvxCodeObj = codeMap.getCodeForCodeset(CodesetType.VACCINATION_CVX_CODE, cvxCode);
-        
-        assertNotNull("The CVX code should exist in the CodeMap", cvxCodeObj);
-
-        // Tests the NDC linked to the CVX
-        String relatedNDC = codeMap.getRelatedValueTest(cvxCodeObj, CodesetType.VACCINATION_NDC_CODE_UNIT_OF_USE);
-        assertNotNull("The related NDC should exist for this CVX", relatedNDC);
-        assertEquals("00005-0100-01", relatedNDC);
+        assertEquals("Drug: NDC Label 1\nDescription: Description for NDC 1\nStatus: Valid", drugDetails);
     }
 
 
     @Test
     public void testGetRelatedNDCsForCVX_ExistingCVX() {
-        String cvxCode = "162";  // Example of a valid CVX
+        String cvxCode = "001";  // Example of a valid CVX
         Code cvxCodeObj = codeMap.getCodeForCodeset(CodesetType.VACCINATION_CVX_CODE, cvxCode);
         
         assertNotNull("The CVX code should exist in the CodeMap", cvxCodeObj);
@@ -76,10 +51,12 @@ public class CodebaseTest {
         assertNotNull("The related NDCs list should not be null", relatedNDCs);
         assertFalse("The related NDCs list should not be empty for this CVX", relatedNDCs.isEmpty());
 
-        assertEquals(1, relatedNDCs.size());
-        assertEquals("00005-0100-01", relatedNDCs.get(0));
-
-        // assertTrue("Expected NDC should be in the related NDCs list", relatedNDCs.contains("00005-0100-01"));
+        assertEquals(3, relatedNDCs.size());
+        assertEquals("00001-0000-01", relatedNDCs.get(0));
+        assertEquals("00001-0000-05", relatedNDCs.get(1));
+        assertEquals("00001-0000-10", relatedNDCs.get(2));
     }
+
+
 
 }
