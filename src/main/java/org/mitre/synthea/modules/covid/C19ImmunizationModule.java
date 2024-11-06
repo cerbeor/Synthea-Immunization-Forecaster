@@ -266,6 +266,10 @@ public class C19ImmunizationModule extends Module {
       person.attributes.put(C19_VACCINE_STATUS, status);
     }
 
+    if ((boolean) person.attributes.get(Person.ANTIVAX)){
+      status = VaccinationStatus.NEVER_GOING_TO_GET_SHOT;
+    }
+
     switch (status) {
       case NOT_ELIGIBLE:
         if (eligibleForShot(person, time)) {
