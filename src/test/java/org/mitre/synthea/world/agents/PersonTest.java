@@ -98,7 +98,7 @@ public class PersonTest {
     Generator generator = new Generator(opts);
     RandomNumberGenerator random = new DefaultRandomNumberGenerator(0);
     Map<String, Object> demoAttributes = generator.randomDemographics(random);
-    Person original = generator.createPerson(0, demoAttributes);
+    Person original = generator.createPerson(0, demoAttributes, 0);
 
     Person rehydrated = serializeAndDeserialize(original);
 
@@ -212,7 +212,7 @@ public class PersonTest {
       Config.set("exporter.baseDirectory", tempOutputFolder.toString());
 
       Generator generator = new Generator(options);
-      generator.generatePerson(0, 42L);
+      generator.generatePerson(0, 42L, 0);
 
       File expectedExportFolder = tempOutputFolder.toPath().resolve("text").toFile();
       assertTrue(expectedExportFolder.exists() && expectedExportFolder.isDirectory());
@@ -261,7 +261,7 @@ public class PersonTest {
       File tempOutputFolder = tempFolder.newFolder();
       Config.set("exporter.baseDirectory", tempOutputFolder.toString());
 
-      generator.generatePerson(0, 42L);
+      generator.generatePerson(0, 42L, 0);
 
       // Check that the output files exist
       File expectedExportFolder = tempOutputFolder.toPath().resolve("text").toFile();
@@ -301,7 +301,7 @@ public class PersonTest {
       File tempOutputFolder = tempFolder.newFolder();
       Config.set("exporter.baseDirectory", tempOutputFolder.toString());
 
-      generator.generatePerson(0, 42L);
+      generator.generatePerson(0, 42L, 0);
 
       // Check that the output files exist
       File expectedExportFolder = tempOutputFolder.toPath().resolve("fhir").toFile();
@@ -351,7 +351,7 @@ public class PersonTest {
       File tempOutputFolder = tempFolder.newFolder();
       Config.set("exporter.baseDirectory", tempOutputFolder.toString());
 
-      generator.generatePerson(0, 42L);
+      generator.generatePerson(0, 42L, 0);
 
       // Check that the output files exist
       File expectedExportFolder = tempOutputFolder.toPath().resolve("fhir_stu3").toFile();
@@ -401,7 +401,7 @@ public class PersonTest {
       File tempOutputFolder = tempFolder.newFolder();
       Config.set("exporter.baseDirectory", tempOutputFolder.toString());
 
-      generator.generatePerson(0, 42L);
+      generator.generatePerson(0, 42L, 0);
 
       // Check that the output files exist
       File expectedExportFolder = tempOutputFolder.toPath().resolve("fhir_dstu2").toFile();
@@ -451,7 +451,7 @@ public class PersonTest {
       File tempOutputFolder = tempFolder.newFolder();
       Config.set("exporter.baseDirectory", tempOutputFolder.toString());
 
-      generator.generatePerson(0, 42L);
+      generator.generatePerson(0, 42L, 0);
 
       // Check that the output files exist
       File expectedExportFolder = tempOutputFolder.toPath().resolve("ccda").toFile();
@@ -496,7 +496,7 @@ public class PersonTest {
     List<Future<Person>> generatedPatients = new ArrayList<>(10);
     ExecutorService threadPool = Executors.newFixedThreadPool(8);
     for (int i = 0; i < 10; i++) {
-      generatedPatients.add(threadPool.submit(() -> generator.generatePerson(0, 42L)));
+      generatedPatients.add(threadPool.submit(() -> generator.generatePerson(0, 42L, 0)));
     }
     threadPool.shutdown();
     while (!threadPool.awaitTermination(30, TimeUnit.SECONDS)) {

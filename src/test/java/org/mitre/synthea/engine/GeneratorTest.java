@@ -277,7 +277,7 @@ public class GeneratorTest {
       long personSeed = UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE;
       RandomNumberGenerator random = new DefaultRandomNumberGenerator(personSeed);
       Map<String, Object> demoAttributes = generator.randomDemographics(random);
-      people[i] = generator.createPerson(personSeed, demoAttributes);
+      people[i] = generator.createPerson(personSeed, demoAttributes, 0);
       generator.recordPerson(people[i], i);
     }
 
@@ -338,7 +338,7 @@ public class GeneratorTest {
       long personSeed = UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE;
       RandomNumberGenerator random = new DefaultRandomNumberGenerator(personSeed);
       Map<String, Object> demoAttributes = generator.randomDemographics(random);
-      people[i] = generator.createPerson(personSeed, demoAttributes);
+      people[i] = generator.createPerson(personSeed, demoAttributes, 0);
       //generator.recordPerson(people[i], i);
     }
 

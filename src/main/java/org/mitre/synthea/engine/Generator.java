@@ -82,6 +82,7 @@ public class Generator {
   private Exporter.ExporterRuntimeOptions exporterRuntimeOptions;
   public static EntityManager entityManager;
   public final int threadPoolSize;
+  public AtomicInteger  antivaxCount = new AtomicInteger(0);
 
   /**
    * Used only for testing and debugging. Populate this field to keep track of all patients
@@ -142,6 +143,8 @@ public class Generator {
     public int daysToTravelForward = -1;
     /** Path to a module defining which patients should be kept and exported. */
     public Path keepPatientsModulePath;
+    /** Number of individuals to assign as antivax (default 0), for immunization module */
+    public double antivaxPercentage = 0;
   }
 
   /**
@@ -380,11 +383,11 @@ public class Generator {
       for (int i = 0; i < this.options.population; i++) {
         final int index = i;
         final long seed = this.populationRandom.randLong();
-        threadPool.submit(() -> generatePerson(index, seed));
+        threadPool.submit(() -> generatePerson(index, seed, options.antivaxPercentage));
       }
     } else {
       // we have a single fixed seed to generate, don't bother with threadpool
-      generatePerson(0, this.options.singlePersonSeed);
+      generatePerson(0, this.options.singlePersonSeed, options.antivaxPercentage);
     }
 
     try {
@@ -416,6 +419,10 @@ public class Generator {
             stats.get("alive").get(), stats.get("dead").get());
     System.out.printf("RNG=%d\n", this.populationRandom.getCount());
     System.out.printf("Clinician RNG=%d\n", this.clinicianRandom.getCount());
+    System.out.printf("Antivax patients: %d out of %d (%.2f%%)\n",
+            antivaxCount.get(), totalGeneratedPopulation.get(),
+            ((double) antivaxCount.get() / totalGeneratedPopulation.get()) * 100);
+
 
     if (this.metrics != null) {
       metrics.printStats(totalGeneratedPopulation.get(), Module.getModules(getModulePredicate()));
@@ -436,7 +443,7 @@ public class Generator {
   public Person generatePerson(int index) {
     // System.currentTimeMillis is not unique enough
     long personSeed = UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE;
-    return generatePerson(index, personSeed);
+    return generatePerson(index, personSeed, 0);
   }
 
   /**
@@ -452,7 +459,7 @@ public class Generator {
    *          Seed for the random person
    * @return generated Person
    */
-  public Person generatePerson(int index, long personSeed) {
+  public Person generatePerson(int index, long personSeed, double antivaxPercentage) {
 
     Person person = new Person(personSeed);
     boolean wasExported = true;
@@ -475,7 +482,7 @@ public class Generator {
 
       do {
         tryNumber++;
-        person = createPerson(personSeed, demoAttributes);
+        person = createPerson(personSeed, demoAttributes, antivaxPercentage);
         long finishTime = person.lastUpdated + timestep;
 
         boolean isAlive = person.alive(finishTime);
@@ -650,7 +657,7 @@ public class Generator {
    * @param demoAttributes Demographic attributes for the new person, {@link #randomDemographics}
    * @return the new person
    */
-  public Person createPerson(long personSeed, Map<String, Object> demoAttributes) {
+  public Person createPerson(long personSeed, Map<String, Object> demoAttributes, double antivaxPercentage) {
 
     // Initialize person.
     Person person = new Person(personSeed);
@@ -659,6 +666,14 @@ public class Generator {
     person.attributes.put(Person.LOCATION, this.location);
     person.lastUpdated = (long) demoAttributes.get(Person.BIRTHDATE);
     location.setSocialDeterminants(person);
+
+    // Randomly assign antivax based on the antivaxPercentage
+    if (person.randInt(100) < antivaxPercentage) {
+      person.attributes.put(Person.ANTIVAX, true);
+      antivaxCount.incrementAndGet();
+    } else {
+      person.attributes.put(Person.ANTIVAX, false);
+    }
 
     LifecycleModule.birth(person, person.lastUpdated);
 

@@ -13,6 +13,10 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import org.hl7.fhir.r4.model.*;
+import org.hl7.fhir.r4.model.DateType;
+import org.immregistries.vfa.connect.ConnectFactory;
+import org.immregistries.vfa.connect.ConnectorInterface;
 import org.immregistries.vfa.connect.model.*;
 import org.mitre.synthea.helpers.Attributes;
 import org.mitre.synthea.helpers.Attributes.Inventory;
@@ -27,9 +31,6 @@ import org.mitre.synthea.world.concepts.HealthRecord.Code;
  */
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
-import org.hl7.fhir.r4.model.Bundle;
-import org.hl7.fhir.r4.model.ImmunizationRecommendation;
-import org.hl7.fhir.r4.model.Patient;
 
 /**
  * CUSTOMIZED for industry project
@@ -65,9 +66,9 @@ public class Immunizations {
     try {
 
       /**
-       * Querying forecaster
+       * Querying new CDS
        */
-      ImmunizationRecommendation immunizationRecommendation = Immunizations2.queryForecaster2(person, time, immunizationsGiven);
+      ImmunizationRecommendation immunizationRecommendation = queryForecaster(person, time, immunizationsGiven);
       immunizationRecommendation = checkForCombination(immunizationRecommendation);
 
 
@@ -81,17 +82,22 @@ public class Immunizations {
           int randomNumber = random.nextInt(100);
           boolean getImmunization = true;
 
-          if (Objects.equals(immunizationKey, "88")) { // for influenza
-            if (person.ageInYears(time) >= 65 && randomNumber >= 75) {
-              // 75% is the target vaccination coverage by the WHO for older people (https://www.who.int/europe/news-room/fact-sheets/item/influenza-vaccination-coverage-and-effectiveness)
-              getImmunization = false;
-            } else if (randomNumber >= 15) {
-              // 15% is an arbitrary number
+          // If antivax person
+          if ((boolean) person.attributes.get(Person.ANTIVAX)){
+            getImmunization = false;
+          } else {
+            if (Objects.equals(immunizationKey, "88")) { // for influenza
+              if (person.ageInYears(time) >= 65 && randomNumber >= 75) {
+                // 75% is the target vaccination coverage by the WHO for older people (https://www.who.int/europe/news-room/fact-sheets/item/influenza-vaccination-coverage-and-effectiveness)
+                getImmunization = false;
+              } else if (randomNumber >= 15) {
+                // 15% is an arbitrary number
+                getImmunization = false;
+              }
+            } else if (randomNumber < 5) { // other immunization
+              // 5% is an arbitrary number
               getImmunization = false;
             }
-          } else if (randomNumber < 5) { // other immunization
-            // 5% is an arbitrary number
-            getImmunization = false;
           }
 
           if (getImmunization) {
@@ -150,7 +156,7 @@ public class Immunizations {
       /**
        * Querying forecaster
        */
-      List<ForecastActual> forecastActuals = queryForecaster(person,time,immunizationsGiven,softwareResult);
+      List<ForecastActual> forecastActuals = queryForecasterDepreciated(person,time,immunizationsGiven,softwareResult);
 //      System.out.println("Forecast length: " + forecastActuals.size()); TODO remove useless logs
 //      System.out.println(softwareResult.getLogText());
 //      String log = softwareResult.getLogText().split("VACCINATIONS RECOMMENDED ")[1].split("\nVACCCINATIONS RECOMMENDED AFTER ")[0];
@@ -308,118 +314,86 @@ public class Immunizations {
     return forecastActualList;
 }
 
-  public static List<ForecastActual> queryForecaster(Person person, long time, Map<String, List<Long>> immunizationsGiven, SoftwareResult softwareResult) throws Exception {
-    // This function is used to query the CDS (Clinical Decision Support) to get the forecast of the immunizations to be given to the person.
-    // softwareResult is not use -> need to be remove yes 
+  public static ImmunizationRecommendation queryForecaster(Person person, long time, Map<String, List<Long>> immunizationsGiven) throws Exception {
+    // This fonction is going to ask the new CDS the Immunization Recommendation of the patient
 
-    System.out.println("person :" + person);
-    System.out.println("time :" + time);
-    System.out.println("immunizationsGiven :" + immunizationsGiven);
+//        System.out.println("person :" + person);
+//        System.out.println("time :" + time);
+//        System.out.println("immunizationsGiven :" + immunizationsGiven);
 
-    // Create the request for the CDS
-    JsonObject request = new JsonObject();  // Request Object
-    request.addProperty("resourceType", "Parameters");
+    // Create FHIR context and client
+    FhirContext ctx = FhirContext.forR4();
+    IGenericClient client = ctx.newRestfulGenericClient("http://localhost:9999/fhir");
 
-    JsonArray parameters = new JsonArray();
+    // Build the Parameters resource
+    Parameters parameters = new Parameters();
 
-    JsonObject assessmentDate = new JsonObject();
-    assessmentDate.addProperty("name", "assessmentDate");
-    assessmentDate.addProperty("valueDate", Utilities.convertTimeToString(time));
-    parameters.add(assessmentDate);
+    // Add assessmentDate parameter
+    parameters.addParameter()
+            .setName("assessmentDate")
+            .setValue(new DateType(new Date(time)));
 
-    JsonObject patientParam = new JsonObject();
-    patientParam.addProperty("name", "patient");
-    JsonObject patientResource = new JsonObject();
-    patientResource.addProperty("resourceType", "Patient");
-    patientResource.addProperty("id", "example");
-    patientResource.addProperty("gender", (String) person.attributes.get("gender")); // From java class object to Json
-    patientResource.addProperty("birthDate", Utilities.convertTimeToString((Long) person.attributes.get("birthdate")));
-    patientParam.add("resource", patientResource);
-    parameters.add(patientParam);
+    // Convert patient gender to FHIR format
+    String patientGender = person.attributes.get("gender").toString();
+    if (patientGender.equals("M")) {
+      patientGender = "male";
+    } else if (patientGender.equals("F")) {
+      patientGender = "female";
+    }
 
-    // Json object for immunizationGiven 
+    // Create Patient resource
+    Patient patient = new Patient();
+    patient.setId("example");
+    patient.setGender(Enumerations.AdministrativeGender.fromCode((patientGender)));
+    patient.setBirthDate(new Date((Long) person.attributes.get("birthdate")));
+
+    // Add patient parameter
+    parameters.addParameter()
+            .setName("patient")
+            .setResource(patient);
+
+    // Add immunization parameters
     for (Map.Entry<String, List<Long>> immunizationEntry : immunizationsGiven.entrySet()) {
+      String vaccineCodeStr = immunizationEntry.getKey();
       for (Long eventTime : immunizationEntry.getValue()) {
-        JsonObject immunizationParam = new JsonObject();
-        immunizationParam.addProperty("name", "immunization");
-        JsonObject immunizationResource = new JsonObject();
-        immunizationResource.addProperty("resourceType", "Immunization");
-        immunizationResource.addProperty("status", "completed");
-        immunizationResource.addProperty("id", "imm-" + eventTime);
+        Immunization immunization = new Immunization();
+        immunization.setStatus(Immunization.ImmunizationStatus.COMPLETED);
+        immunization.setId("imm-" + eventTime);
 
-        JsonObject vaccineCode = new JsonObject();
-        JsonArray coding = new JsonArray();
-        JsonObject code = new JsonObject();
-        code.addProperty("system", "http://hl7.org/fhir/sid/cvx"); // Code system
-        code.addProperty("code", immunizationEntry.getKey());
-        coding.add(code);
-        vaccineCode.add("coding", coding);
-        immunizationResource.add("vaccineCode", vaccineCode);
+        CodeableConcept vaccineCode = new CodeableConcept();
+        vaccineCode.addCoding()
+                .setSystem("http://hl7.org/fhir/sid/cvx")
+                .setCode(vaccineCodeStr);
+        immunization.setVaccineCode(vaccineCode);
 
-        immunizationResource.addProperty("occurrenceDateTime", Utilities.convertTimeToString(eventTime));
-        immunizationParam.add("resource", immunizationResource);
-        parameters.add(immunizationParam);
+        immunization.setOccurrence(new DateTimeType(new Date(eventTime)));
+
+        parameters.addParameter()
+                .setName("immunization")
+                .setResource(immunization);
       }
     }
 
-    // !!!! Maybe add more patient information ---> need to be checked !!!!
-    // Already have the required information for the forecast
-    System.out.println("parameters :" + parameters);
-    request.add("parameter", parameters);
+    // Invoke the $immds-forecast operation
+    Parameters out = client
+            .operation()
+            .onServer()
+            .named("$immds-forecast")
+            .withParameters(parameters)
+            .execute();
 
-    // Send the request to the CDS
-    HttpClient client = HttpClient.newHttpClient();
-    HttpRequest httpRequest = HttpRequest.newBuilder()
-            .uri(URI.create("http://localhost:9999/fhir/$immds-forecast"))
-            .header("Content-Type", "application/fhir+json")
-            .POST(HttpRequest.BodyPublishers.ofString(request.toString()))
-            .build();
-
-    System.out.println("Envoi de la requête à l'URL : http://localhost:9999/fhir/$immds-forecast");
-
-    HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());  // In this case, Java does not directly allow receiving the response in JsonObject format using the standard HTTP API. By default, the response is received as a string.
-    String responseBody = response.body();
-
-    System.out.println("responseBody (string):" + responseBody);
-
-    // Parse the response of the CDS: from string to Json to ForecastActual format 
-    // Maybe not useful (rf Julie & Clement) ??
-    Gson gson = new Gson();
-    JsonObject responseJson = gson.fromJson(responseBody, JsonObject.class); // From string response to Json response
-
-    System.out.println("responseJson (JSON):" + responseBody);
-
-    List<ForecastActual> forecastActuals = new ArrayList<>(); // From Json to ForecastActual format
-
-    JsonArray recommendations = responseJson.getAsJsonArray("parameter");
-    for (JsonElement element : recommendations) {
-        JsonObject recommendation = element.getAsJsonObject().getAsJsonObject("resource");
-        if (recommendation != null && "ImmunizationRecommendation".equals(recommendation.get("resourceType").getAsString())) {
-            JsonArray recommendationArray = recommendation.getAsJsonArray("recommendation");
-            for (JsonElement recElement : recommendationArray) {
-                JsonObject recObject = recElement.getAsJsonObject();
-                ForecastActual forecastActual = new ForecastActual();
-                
-                JsonArray vaccineCodes = recObject.getAsJsonArray("vaccineCode");
-                if (vaccineCodes != null && vaccineCodes.size() > 0) {
-                    JsonObject vaccineCodeObj = vaccineCodes.get(0).getAsJsonObject();
-                    JsonArray codings = vaccineCodeObj.getAsJsonArray("coding");  // Fetch vaccine coding information
-                    if (codings != null && codings.size() > 0) {
-                        JsonObject codingObj = codings.get(0).getAsJsonObject();
-                        forecastActual.setAdminStatus(recObject.getAsJsonObject("forecastStatus").get("coding").getAsJsonArray().get(0).getAsJsonObject().get("code").getAsString());
-                        VaccineGroup vaccineGroup = new VaccineGroup();
-                        vaccineGroup.setVaccineCvx(codingObj.get("code").getAsString());  // Set Vaccine CVX code
-                        vaccineGroup.setLabel(codingObj.get("display").getAsString());
-                        forecastActual.setVaccineGroup(vaccineGroup);
-                    }
-                }
-                forecastActuals.add(forecastActual);
-            }
-        }
+    // Fetch the ImmunizationRecommendation from the response
+    ImmunizationRecommendation immunizationRecommendation = null;
+    for (Parameters.ParametersParameterComponent parameter : out.getParameter()) {
+      if (parameter.getName().equals("recommendation") && parameter.hasResource() && parameter.getResource() instanceof ImmunizationRecommendation) {
+        immunizationRecommendation = (ImmunizationRecommendation) parameter.getResource();
+        break;
+      }
     }
 
-    return forecastActuals; 
-}
+    // Return the ImmunizationRecommendation resource
+    return immunizationRecommendation;
+  }
   
 
   @SuppressWarnings("rawtypes")
@@ -434,6 +408,51 @@ public class Immunizations {
       e.printStackTrace();
       throw new ExceptionInInitializerError(e);
     }
+  }
+
+  private static List<ForecastActual> queryForecasterDepreciated(Person person, long time, Map<String, List<Long>> immunizationsGiven, SoftwareResult softwareResult) throws Exception {
+    TestCase testCase = new TestCase();
+    testCase.setDateSet(DateSet.FIXED);
+    testCase.setEvalDate(new Date(time));
+    testCase.setPatientDob(new Date((Long) person.attributes.get("birthdate")));
+    testCase.setPatientSex((String) person.attributes.get("gender"));
+
+    /**
+     * Giving immunization history to forecaster
+     */
+    List<TestEvent> testEvents = new ArrayList<>(immunizationsGiven.size());
+    testCase.setTestEventList(testEvents);
+
+    int eventId = 0;
+    for (Map.Entry<String, List<Long>> immunizationEntry: immunizationsGiven.entrySet()) {
+      if (immunizationEntry.getKey().equals("covid19")) {
+        break;
+      }
+      for (Long eventTime: immunizationEntry.getValue()) {
+        TestEvent testEvent = new TestEvent();
+        Event event = new Event();
+        event.setEventId(eventId++);
+        event.setVaccineCvx(immunizationEntry.getKey());
+        event.setEventType(EventType.VACCINATION);
+        testEvent.setEvent(event);
+        testEvent.setEventDate(new Date(eventTime));
+        testEvents.add(testEvent);
+      }
+    }
+
+    softwareResult.setTestCase(testCase);
+
+    /**
+     * querying forecaster
+     */
+    Software software = new Software();
+    software.setServiceUrl("https://sabbia.westus2.cloudapp.azure.com/lonestar/forecast");
+    software.setService(Service.LSVF);
+    ConnectorInterface connectorInterface = ConnectFactory.createConnecter(software);
+    connectorInterface.setLogText(true);
+
+    return connectorInterface.queryForForecast(testCase,softwareResult);
+
   }
 
   /**

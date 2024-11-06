@@ -41,6 +41,7 @@ public class App {
     System.out.println("         [-t updateTimePeriodInDays]");
     System.out.println("         [-f fixedRecordPath]");
     System.out.println("         [-k keepMatchingPatientsPath]");
+    System.out.println("         [-antivaxPercentage antivaxPercentage]");
     System.out.println("         [--config*=value]");
     System.out.println("          * any setting from src/main/resources/synthea.properties");
     System.out.println("Examples:");
@@ -63,7 +64,6 @@ public class App {
   public static void main(String[] args) throws Exception {
     Generator.GeneratorOptions options = new Generator.GeneratorOptions();
     Exporter.ExporterRuntimeOptions exportOptions = new Exporter.ExporterRuntimeOptions();
-
     boolean validArgs = true;
     boolean overrideFutureDateError = false;
     if (args != null && args.length > 0) {
@@ -234,6 +234,13 @@ public class App {
               throw new FileNotFoundException(String.format(
                   "Specified IG directory (%s) does not exist", value));
             }
+          } else if (currArg.equals("-antivaxPercentage")) {
+            String value = argsQ.poll();
+            options.antivaxPercentage = Double.parseDouble(value);
+            if (options.antivaxPercentage < 0 || options.antivaxPercentage > 100) {
+              throw new IllegalArgumentException("Antivax percentage must be between 0 and 100.");
+            }
+            System.out.println("Antivax percentage: " + options.antivaxPercentage);
           } else if (currArg.startsWith("--")) {
             String configSetting;
             String value;
