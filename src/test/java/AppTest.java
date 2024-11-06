@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.HashMap;  
 import java.util.Arrays;
 
-import org.mitre.synthea.modules.Immunizations2;   // Temporary new Immunization file 
+import org.mitre.synthea.modules.Immunizations;   // Temporary new Immunization file
 import org.hl7.fhir.r4.model.ImmunizationRecommendation;
 import org.hl7.fhir.r4.model.CodeableConcept;
 import org.hl7.fhir.r4.model.Coding;
@@ -275,7 +275,7 @@ public class AppTest {
           immunizationsGiven.put("140", Arrays.asList(1609459200000L)); // Mock immunization history
 
           // Step 2: Invoke queryForecaster
-          ImmunizationRecommendation recommendation = Immunizations2.queryForecaster2(
+          ImmunizationRecommendation recommendation = Immunizations.queryForecaster(
                   mockPerson,
                   System.currentTimeMillis(),
                   immunizationsGiven
