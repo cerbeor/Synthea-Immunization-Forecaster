@@ -13,6 +13,10 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import org.hl7.fhir.r4.model.*;
+import org.hl7.fhir.r4.model.DateType;
+import org.immregistries.vfa.connect.ConnectFactory;
+import org.immregistries.vfa.connect.ConnectorInterface;
 import org.immregistries.vfa.connect.model.*;
 import org.mitre.synthea.helpers.Attributes;
 import org.mitre.synthea.helpers.Attributes.Inventory;
@@ -27,9 +31,6 @@ import org.mitre.synthea.world.concepts.HealthRecord.Code;
  */
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
-import org.hl7.fhir.r4.model.Bundle;
-import org.hl7.fhir.r4.model.ImmunizationRecommendation;
-import org.hl7.fhir.r4.model.Patient;
 
 /**
  * CUSTOMIZED for industry project
@@ -65,9 +66,9 @@ public class Immunizations {
     try {
 
       /**
-       * Querying forecaster
+       * Querying new CDS
        */
-      ImmunizationRecommendation immunizationRecommendation = Immunizations2.queryForecaster2(person, time, immunizationsGiven);
+      ImmunizationRecommendation immunizationRecommendation = queryForecaster(person, time, immunizationsGiven);
       immunizationRecommendation = checkForCombination(immunizationRecommendation);
 
 
@@ -150,32 +151,32 @@ public class Immunizations {
       /**
        * Querying forecaster
        */
-      List<ForecastActual> forecastActuals = queryForecaster(person,time,immunizationsGiven,softwareResult);
+      List<ForecastActual> forecastActuals = queryForecasterDepreciated(person,time,immunizationsGiven,softwareResult);
 //      System.out.println("Forecast length: " + forecastActuals.size()); TODO remove useless logs
 //      System.out.println(softwareResult.getLogText());
 //      String log = softwareResult.getLogText().split("VACCINATIONS RECOMMENDED ")[1].split("\nVACCCINATIONS RECOMMENDED AFTER ")[0];
 //      log = log.strip();
 //      System.out.println(log);
 //      System.out.println("log length = " + (log.split("\n").length - 1));
-        /**
-         * Filtering the result of the forecaster (some vaccines are duplicated)
-         */
-        List<Integer> vaccineGroupIdList = new ArrayList<>();
-        List<String> vaccineCvxList = new ArrayList<>();
-        Iterator<ForecastActual> iterator = forecastActuals.iterator();
-        while (iterator.hasNext()) {
-            ForecastActual forecastActual = iterator.next();
-            if (vaccineGroupIdList.contains(forecastActual.getVaccineGroup().getVaccineGroupId()) 
-            || vaccineCvxList.contains(forecastActual.getVaccineGroup().getVaccineCvx())
-            || forecastActual.getVaccineGroup().getLabel().equals("DTaP, Tdap or Td")) {
-                iterator.remove();
-            } else {
-                vaccineGroupIdList.add(forecastActual.getVaccineGroup().getVaccineGroupId());
-                vaccineCvxList.add(forecastActual.getVaccineGroup().getVaccineCvx());
-              }
-        };
-        vaccineGroupIdList = null;
-        vaccineCvxList = null;
+      /**
+       * Filtering the result of the forecaster (some vaccines are duplicated)
+       */
+      List<Integer> vaccineGroupIdList = new ArrayList<>();
+      List<String> vaccineCvxList = new ArrayList<>();
+      Iterator<ForecastActual> iterator = forecastActuals.iterator();
+      while (iterator.hasNext()) {
+        ForecastActual forecastActual = iterator.next();
+        if (vaccineGroupIdList.contains(forecastActual.getVaccineGroup().getVaccineGroupId())
+                || vaccineCvxList.contains(forecastActual.getVaccineGroup().getVaccineCvx())
+                || forecastActual.getVaccineGroup().getLabel().equals("DTaP, Tdap or Td")) {
+          iterator.remove();
+        } else {
+          vaccineGroupIdList.add(forecastActual.getVaccineGroup().getVaccineGroupId());
+          vaccineCvxList.add(forecastActual.getVaccineGroup().getVaccineCvx());
+        }
+      };
+      vaccineGroupIdList = null;
+      vaccineCvxList = null;
 
       forecastActuals = checkForCombinationDepreciated(forecastActuals);
 
@@ -265,162 +266,130 @@ public class Immunizations {
 
     List<String> immunizationList = new ArrayList<>();
     for (ForecastActual forecastActual : forecastActualList) {
-        immunizationList.add(forecastActual.getVaccineGroup().getVaccineCvx());
+      immunizationList.add(forecastActual.getVaccineGroup().getVaccineCvx());
     }
 
     List<Integer> index = new ArrayList<>();
     for (List<String> combinationVaccine : listOfCombinations) {
       index.clear();
-        for (String cvxCode : combinationVaccine.subList(2, combinationVaccine.size())) {
-            if (immunizationList.contains(cvxCode)) {
-                for (String immunization : immunizationList) {
-                    if (immunization.equals(cvxCode)) {
-                        index.add(immunizationList.indexOf(immunization));
-                        break;
-                    }
-                }
-            } 
-            else { break;}
+      for (String cvxCode : combinationVaccine.subList(2, combinationVaccine.size())) {
+        if (immunizationList.contains(cvxCode)) {
+          for (String immunization : immunizationList) {
+            if (immunization.equals(cvxCode)) {
+              index.add(immunizationList.indexOf(immunization));
+              break;
+            }
+          }
+        }
+        else { break;}
+      }
+
+      index.sort((a, b) -> Integer.compare(b, a));
+
+      if (index.size() == combinationVaccine.size() - 2) {
+        if (!immunizationList.contains(combinationVaccine.get(0))) {
+          ForecastActual newVaccine = new ForecastActual();
+          newVaccine.setAdminStatus("N");
+          newVaccine.setVaccineGroup(new VaccineGroup(Integer.parseInt(combinationVaccine.get(0)),combinationVaccine.get(1), combinationVaccine.get(0)));
+          forecastActualList.add(newVaccine);
         }
 
-        index.sort((a, b) -> Integer.compare(b, a));
-
-        if (index.size() == combinationVaccine.size() - 2) {
-            if (!immunizationList.contains(combinationVaccine.get(0))) {
-                ForecastActual newVaccine = new ForecastActual();
-                newVaccine.setAdminStatus("N");
-                newVaccine.setVaccineGroup(new VaccineGroup(Integer.parseInt(combinationVaccine.get(0)),combinationVaccine.get(1), combinationVaccine.get(0)));
-                forecastActualList.add(newVaccine);
-            }
-
-            Iterator<Integer> iterator = index.iterator();
-            while (iterator.hasNext()) {
-                int ind = iterator.next();
-                immunizationList.remove(ind);
-                forecastActualList.remove(ind);
-                iterator.remove(); 
-            }
+        Iterator<Integer> iterator = index.iterator();
+        while (iterator.hasNext()) {
+          int ind = iterator.next();
+          immunizationList.remove(ind);
+          forecastActualList.remove(ind);
+          iterator.remove();
         }
+      }
     }
     for (ForecastActual forecastActual : forecastActualList) {
       System.out.println(forecastActual.getVaccineGroup().getLabel() + " cvx code "+ forecastActual.getVaccineGroup().getVaccineCvx() +  " Adminlabel " + forecastActual.getAdmin().getLabel() + " | " + forecastActual.getAdminStatus());
     }
     return forecastActualList;
-}
+  }
 
-  public static List<ForecastActual> queryForecaster(Person person, long time, Map<String, List<Long>> immunizationsGiven, SoftwareResult softwareResult) throws Exception {
-    // This function is used to query the CDS (Clinical Decision Support) to get the forecast of the immunizations to be given to the person.
-    // softwareResult is not use -> need to be remove yes 
+  public static ImmunizationRecommendation queryForecaster(Person person, long time, Map<String, List<Long>> immunizationsGiven) throws Exception {
+    // This fonction is going to ask the new CDS the Immunization Recommendation of the patient
 
-    System.out.println("person :" + person);
-    System.out.println("time :" + time);
-    System.out.println("immunizationsGiven :" + immunizationsGiven);
+//        System.out.println("person :" + person);
+//        System.out.println("time :" + time);
+//        System.out.println("immunizationsGiven :" + immunizationsGiven);
 
-    // Create the request for the CDS
-    JsonObject request = new JsonObject();  // Request Object
-    request.addProperty("resourceType", "Parameters");
+    // Create FHIR context and client
+    FhirContext ctx = FhirContext.forR4();
+    IGenericClient client = ctx.newRestfulGenericClient("http://localhost:9999/fhir");
 
-    JsonArray parameters = new JsonArray();
+    // Build the Parameters resource
+    Parameters parameters = new Parameters();
 
-    JsonObject assessmentDate = new JsonObject();
-    assessmentDate.addProperty("name", "assessmentDate");
-    assessmentDate.addProperty("valueDate", Utilities.convertTimeToString(time));
-    parameters.add(assessmentDate);
+    // Add assessmentDate parameter
+    parameters.addParameter()
+            .setName("assessmentDate")
+            .setValue(new DateType(new Date(time)));
 
-    JsonObject patientParam = new JsonObject();
-    patientParam.addProperty("name", "patient");
-    JsonObject patientResource = new JsonObject();
-    patientResource.addProperty("resourceType", "Patient");
-    patientResource.addProperty("id", "example");
-    patientResource.addProperty("gender", (String) person.attributes.get("gender")); // From java class object to Json
-    patientResource.addProperty("birthDate", Utilities.convertTimeToString((Long) person.attributes.get("birthdate")));
-    patientParam.add("resource", patientResource);
-    parameters.add(patientParam);
+    // Convert patient gender to FHIR format
+    String patientGender = person.attributes.get("gender").toString();
+    if (patientGender.equals("M")) {
+      patientGender = "male";
+    } else if (patientGender.equals("F")) {
+      patientGender = "female";
+    }
 
-    // Json object for immunizationGiven 
+    // Create Patient resource
+    Patient patient = new Patient();
+    patient.setId("example");
+    patient.setGender(Enumerations.AdministrativeGender.fromCode((patientGender)));
+    patient.setBirthDate(new Date((Long) person.attributes.get("birthdate")));
+
+    // Add patient parameter
+    parameters.addParameter()
+            .setName("patient")
+            .setResource(patient);
+
+    // Add immunization parameters
     for (Map.Entry<String, List<Long>> immunizationEntry : immunizationsGiven.entrySet()) {
+      String vaccineCodeStr = immunizationEntry.getKey();
       for (Long eventTime : immunizationEntry.getValue()) {
-        JsonObject immunizationParam = new JsonObject();
-        immunizationParam.addProperty("name", "immunization");
-        JsonObject immunizationResource = new JsonObject();
-        immunizationResource.addProperty("resourceType", "Immunization");
-        immunizationResource.addProperty("status", "completed");
-        immunizationResource.addProperty("id", "imm-" + eventTime);
+        Immunization immunization = new Immunization();
+        immunization.setStatus(Immunization.ImmunizationStatus.COMPLETED);
+        immunization.setId("imm-" + eventTime);
 
-        JsonObject vaccineCode = new JsonObject();
-        JsonArray coding = new JsonArray();
-        JsonObject code = new JsonObject();
-        code.addProperty("system", "http://hl7.org/fhir/sid/cvx"); // Code system
-        code.addProperty("code", immunizationEntry.getKey());
-        coding.add(code);
-        vaccineCode.add("coding", coding);
-        immunizationResource.add("vaccineCode", vaccineCode);
+        CodeableConcept vaccineCode = new CodeableConcept();
+        vaccineCode.addCoding()
+                .setSystem("http://hl7.org/fhir/sid/cvx")
+                .setCode(vaccineCodeStr);
+        immunization.setVaccineCode(vaccineCode);
 
-        immunizationResource.addProperty("occurrenceDateTime", Utilities.convertTimeToString(eventTime));
-        immunizationParam.add("resource", immunizationResource);
-        parameters.add(immunizationParam);
+        immunization.setOccurrence(new DateTimeType(new Date(eventTime)));
+
+        parameters.addParameter()
+                .setName("immunization")
+                .setResource(immunization);
       }
     }
 
-    // !!!! Maybe add more patient information ---> need to be checked !!!!
-    // Already have the required information for the forecast
-    System.out.println("parameters :" + parameters);
-    request.add("parameter", parameters);
+    // Invoke the $immds-forecast operation
+    Parameters out = client
+            .operation()
+            .onServer()
+            .named("$immds-forecast")
+            .withParameters(parameters)
+            .execute();
 
-    // Send the request to the CDS
-    HttpClient client = HttpClient.newHttpClient();
-    HttpRequest httpRequest = HttpRequest.newBuilder()
-            .uri(URI.create("http://localhost:9999/fhir/$immds-forecast"))
-            .header("Content-Type", "application/fhir+json")
-            .POST(HttpRequest.BodyPublishers.ofString(request.toString()))
-            .build();
-
-    System.out.println("Envoi de la requête à l'URL : http://localhost:9999/fhir/$immds-forecast");
-
-    HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());  // In this case, Java does not directly allow receiving the response in JsonObject format using the standard HTTP API. By default, the response is received as a string.
-    String responseBody = response.body();
-
-    System.out.println("responseBody (string):" + responseBody);
-
-    // Parse the response of the CDS: from string to Json to ForecastActual format 
-    // Maybe not useful (rf Julie & Clement) ??
-    Gson gson = new Gson();
-    JsonObject responseJson = gson.fromJson(responseBody, JsonObject.class); // From string response to Json response
-
-    System.out.println("responseJson (JSON):" + responseBody);
-
-    List<ForecastActual> forecastActuals = new ArrayList<>(); // From Json to ForecastActual format
-
-    JsonArray recommendations = responseJson.getAsJsonArray("parameter");
-    for (JsonElement element : recommendations) {
-        JsonObject recommendation = element.getAsJsonObject().getAsJsonObject("resource");
-        if (recommendation != null && "ImmunizationRecommendation".equals(recommendation.get("resourceType").getAsString())) {
-            JsonArray recommendationArray = recommendation.getAsJsonArray("recommendation");
-            for (JsonElement recElement : recommendationArray) {
-                JsonObject recObject = recElement.getAsJsonObject();
-                ForecastActual forecastActual = new ForecastActual();
-                
-                JsonArray vaccineCodes = recObject.getAsJsonArray("vaccineCode");
-                if (vaccineCodes != null && vaccineCodes.size() > 0) {
-                    JsonObject vaccineCodeObj = vaccineCodes.get(0).getAsJsonObject();
-                    JsonArray codings = vaccineCodeObj.getAsJsonArray("coding");  // Fetch vaccine coding information
-                    if (codings != null && codings.size() > 0) {
-                        JsonObject codingObj = codings.get(0).getAsJsonObject();
-                        forecastActual.setAdminStatus(recObject.getAsJsonObject("forecastStatus").get("coding").getAsJsonArray().get(0).getAsJsonObject().get("code").getAsString());
-                        VaccineGroup vaccineGroup = new VaccineGroup();
-                        vaccineGroup.setVaccineCvx(codingObj.get("code").getAsString());  // Set Vaccine CVX code
-                        vaccineGroup.setLabel(codingObj.get("display").getAsString());
-                        forecastActual.setVaccineGroup(vaccineGroup);
-                    }
-                }
-                forecastActuals.add(forecastActual);
-            }
-        }
+    // Fetch the ImmunizationRecommendation from the response
+    ImmunizationRecommendation immunizationRecommendation = null;
+    for (Parameters.ParametersParameterComponent parameter : out.getParameter()) {
+      if (parameter.getName().equals("recommendation") && parameter.hasResource() && parameter.getResource() instanceof ImmunizationRecommendation) {
+        immunizationRecommendation = (ImmunizationRecommendation) parameter.getResource();
+        break;
+      }
     }
 
-    return forecastActuals; 
-}
-  
+    // Return the ImmunizationRecommendation resource
+    return immunizationRecommendation;
+  }
+
 
   @SuppressWarnings("rawtypes")
   private static Map loadImmunizationSchedule() {
@@ -434,6 +403,51 @@ public class Immunizations {
       e.printStackTrace();
       throw new ExceptionInInitializerError(e);
     }
+  }
+
+  private static List<ForecastActual> queryForecasterDepreciated(Person person, long time, Map<String, List<Long>> immunizationsGiven, SoftwareResult softwareResult) throws Exception {
+    TestCase testCase = new TestCase();
+    testCase.setDateSet(DateSet.FIXED);
+    testCase.setEvalDate(new Date(time));
+    testCase.setPatientDob(new Date((Long) person.attributes.get("birthdate")));
+    testCase.setPatientSex((String) person.attributes.get("gender"));
+
+    /**
+     * Giving immunization history to forecaster
+     */
+    List<TestEvent> testEvents = new ArrayList<>(immunizationsGiven.size());
+    testCase.setTestEventList(testEvents);
+
+    int eventId = 0;
+    for (Map.Entry<String, List<Long>> immunizationEntry: immunizationsGiven.entrySet()) {
+      if (immunizationEntry.getKey().equals("covid19")) {
+        break;
+      }
+      for (Long eventTime: immunizationEntry.getValue()) {
+        TestEvent testEvent = new TestEvent();
+        Event event = new Event();
+        event.setEventId(eventId++);
+        event.setVaccineCvx(immunizationEntry.getKey());
+        event.setEventType(EventType.VACCINATION);
+        testEvent.setEvent(event);
+        testEvent.setEventDate(new Date(eventTime));
+        testEvents.add(testEvent);
+      }
+    }
+
+    softwareResult.setTestCase(testCase);
+
+    /**
+     * querying forecaster
+     */
+    Software software = new Software();
+    software.setServiceUrl("https://sabbia.westus2.cloudapp.azure.com/lonestar/forecast");
+    software.setService(Service.LSVF);
+    ConnectorInterface connectorInterface = ConnectFactory.createConnecter(software);
+    connectorInterface.setLogText(true);
+
+    return connectorInterface.queryForForecast(testCase,softwareResult);
+
   }
 
   /**
@@ -490,20 +504,20 @@ public class Immunizations {
   }
 
 
-    /**
-     * Return whether or not the specified immunization is due.
-     *
-     * @param immunization The immunization to give
-     * @param person The person to receive the immunization
-     * @param time The time the immunization would be given
-     * @param immunizationsGiven The history of immunizations
-     * @return -1 if the immunization should not be given, otherwise a positive integer,
-     *     where the value is the series. For example, 1 if this is the first time the
-     *     vaccine was administered; 2 if this is the second time, et cetera.
-     */
+  /**
+   * Return whether or not the specified immunization is due.
+   *
+   * @param immunization The immunization to give
+   * @param person The person to receive the immunization
+   * @param time The time the immunization would be given
+   * @param immunizationsGiven The history of immunizations
+   * @return -1 if the immunization should not be given, otherwise a positive integer,
+   *     where the value is the series. For example, 1 if this is the first time the
+   *     vaccine was administered; 2 if this is the second time, et cetera.
+   */
   @SuppressWarnings({ "rawtypes", "unchecked" })
   public static int immunizationDue(String immunization, Person person, long time,
-      Map<String, List<Long>> immunizationsGiven) {
+                                    Map<String, List<Long>> immunizationsGiven) {
     int ageInMonths = person.ageInMonths(time);
 
     List<Long> history = null;
@@ -576,14 +590,14 @@ public class Immunizations {
   @SuppressWarnings("rawtypes")
   public static Collection<Code> getAllCodes() {
     List<Map> rawCodes = (List<Map>) immunizationSchedule.values()
-        .stream().map(m -> (Map)m.get("code")).collect(Collectors.toList());
+            .stream().map(m -> (Map)m.get("code")).collect(Collectors.toList());
 
     List<Code> convertedCodes = new ArrayList<Code>(rawCodes.size());
 
     for (Map m : rawCodes) {
       Code immCode = new Code(m.get("system").toString(),
-                              m.get("code").toString(),
-                              m.get("display").toString());
+              m.get("code").toString(),
+              m.get("display").toString());
 
       convertedCodes.add(immCode);
     }
