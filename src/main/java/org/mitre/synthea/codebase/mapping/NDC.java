@@ -42,4 +42,31 @@ public class NDC {
         }
         return result;
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((ndcCode == null) ? 0 : ndcCode.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        NDC other = (NDC) obj;
+        if (ndcCode == null) {
+            if (other.ndcCode != null)
+                return false;
+        } else if (!ndcCode.equals(other.ndcCode))
+            return false;
+        return true;
+    }
+
+    
 }
