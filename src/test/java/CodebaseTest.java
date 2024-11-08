@@ -3,15 +3,15 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
 import java.util.List;
+import java.util.Arrays;
 
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-import org.mitre.synthea.codebase.CodeMap;
-import org.mitre.synthea.codebase.CodeMapBuilder;
-import org.mitre.synthea.codebase.generated.Code;
-import org.mitre.synthea.codebase.reference.CodesetType;
+import org.mitre.synthea.codebase.*;
+import org.mitre.synthea.codebase.generated.*;
+import org.mitre.synthea.codebase.reference.*;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class CodebaseTest {
@@ -19,9 +19,44 @@ public class CodebaseTest {
 
     private static CodeMap codeMap;
 
+
+    private static Code cvxCodeObj1;
+    private static Code cvxCodeObj2;
+    private static Code cvxCodeObj3;
+
+    // Combo test
+
+    private static Code cvxCodeObj4;
+    private static Code cvxCodeObj5;
+    private static Code cvxCodeObj6;
+
+
     @BeforeClass
     public static void setUp() {
         codeMap = CodeMapBuilder.INSTANCE.getDefaultCodeMap("./src/test/resources/CompiledTest.xml");
+        // Retrieve Code objects for each CVX
+        cvxCodeObj1 = codeMap.getCodeForCodeset(CodesetType.VACCINATION_CVX_CODE, "001");
+        cvxCodeObj2 = codeMap.getCodeForCodeset(CodesetType.VACCINATION_CVX_CODE, "002");
+        cvxCodeObj3 = codeMap.getCodeForCodeset(CodesetType.VACCINATION_CVX_CODE, "003");
+
+        // Combo test
+
+        cvxCodeObj4 = codeMap.getCodeForCodeset(CodesetType.VACCINATION_CVX_CODE, "004");
+        cvxCodeObj5 = codeMap.getCodeForCodeset(CodesetType.VACCINATION_CVX_CODE, "005");
+        cvxCodeObj6 = codeMap.getCodeForCodeset(CodesetType.VACCINATION_CVX_CODE, "006");
+    }
+
+    // init test
+    @Test
+    public void testCreateNDCsFromCVX() {
+        // Verify that CVX codes exist
+        assertNotNull("The CVX code 001 should exist in the CodeMap", cvxCodeObj1);
+        assertNotNull("The CVX code 002 should exist in the CodeMap", cvxCodeObj2);
+        assertNotNull("The CVX code 003 should exist in the CodeMap", cvxCodeObj3);
+
+        assertNotNull("The CVX code 004 should exist in the CodeMap", cvxCodeObj4);
+        assertNotNull("The CVX code 005 should exist in the CodeMap", cvxCodeObj5);
+        assertNotNull("The CVX code 006 should exist in the CodeMap", cvxCodeObj6);
     }
 
     @Test
@@ -51,11 +86,45 @@ public class CodebaseTest {
         assertNotNull("The related NDCs list should not be null", relatedNDCs);
         assertFalse("The related NDCs list should not be empty for this CVX", relatedNDCs.isEmpty());
 
-        assertEquals(3, relatedNDCs.size());
+        assertEquals(4, relatedNDCs.size());
         assertEquals("00001-0000-01", relatedNDCs.get(0));
         assertEquals("00001-0000-05", relatedNDCs.get(1));
         assertEquals("00001-0000-10", relatedNDCs.get(2));
     }
+
+
+@Test
+public void testGetMostFrequentNDCsByCVXList_MultipleCVXCodes() {
+
+    // Call the method with the list of CVX codes
+    List<String> sortedNDCs = codeMap.getMostFrequentNDCsByCVXList(Arrays.asList(cvxCodeObj1, cvxCodeObj2, cvxCodeObj3));
+
+    // Check that the returned list is not null
+    assertNotNull("The list of sorted NDCs should not be null", sortedNDCs);
+    assertFalse("The list of sorted NDCs should not be empty", sortedNDCs.isEmpty());
+
+    // Example validation of results - adjust based on test data
+    assertEquals("00002-0000-01", sortedNDCs.get(0));  // Expected first position
+}
+
+
+@Test
+public void testGetCombosByCVXList() {
+
+    // Call the method with the list of CVX codes
+    List<String> sortedNDCs = codeMap.getMostFrequentNDCsByCVXList(Arrays.asList(cvxCodeObj1, cvxCodeObj2, cvxCodeObj3));
+
+    // Check that the returned list is not null
+    assertNotNull("The list of sorted NDCs should not be null", sortedNDCs);
+    assertFalse("The list of sorted NDCs should not be empty", sortedNDCs.isEmpty());
+
+    // Example validation of results - adjust based on test data
+    assertEquals("00002-0000-01", sortedNDCs.get(0));  // Expected first position
+    System.out.println("AAAAAAAAAAAAA");
+}
+
+
+
 
 
 

@@ -356,17 +356,18 @@ public class Code {
   // to string
   @Override
   public String toString() {
-    return "Code{" +
-        "value='" + value + '\'' +
-        // ", label='" + label + '\'' +
-        // ", description='" + description + '\'' +
-        // ", codeStatus=" + codeStatus +
-        // ", reference=" + reference +
-        // ", useDate=" + useDate +
-        // ", useAge=" + useAge +
-        // ", conceptType='" + conceptType + '\'' +
-        // ", testAge='" + testAge + '\'' +
-        '}';
+    return "{"+value+"}";
+    // return "Code{" +
+    //     "value='" + value + '\'' +
+    //     ", label='" + label + '\'' +
+    //     ", description='" + description + '\'' +
+    //     ", codeStatus=" + codeStatus +
+    //     ", reference=" + reference +
+    //     ", useDate=" + useDate +
+    //     ", useAge=" + useAge +
+    //     ", conceptType='" + conceptType + '\'' +
+    //     ", testAge='" + testAge + '\'' +
+    //     '}';
   }
 
 }

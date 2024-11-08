@@ -7,20 +7,36 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.apache.commons.lang3.StringUtils;
-import org.mitre.synthea.codebase.generated.*;
-import org.mitre.synthea.codebase.reference.*;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.mitre.synthea.codebase.generated.Code;
+import org.mitre.synthea.codebase.generated.Codebase;
+import org.mitre.synthea.codebase.generated.Codeset;
+import org.mitre.synthea.codebase.generated.LinkTo;
+import org.mitre.synthea.codebase.generated.Reference;
+import org.mitre.synthea.codebase.generated.UseDate;
+import org.mitre.synthea.codebase.mapping.Combo;
+import org.mitre.synthea.codebase.mapping.Mapping;
+import org.mitre.synthea.codebase.mapping.NDC;
+import org.mitre.synthea.codebase.reference.CodeStatusValue;
+import org.mitre.synthea.codebase.reference.CodesetType;
+import org.mitre.synthea.codebase.reference.Ops;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CodeMap {
 
-    public Map<CodesetType, Map<String, Code>> getCodeBaseMap() {
+  
+  
+  public Map<CodesetType, Map<String, Code>> getCodeBaseMap() {
       return codeBaseMap; // Retourne la carte des codes
   }
+
+  private List<NDC> ndcList;
 
   private static final Logger logger = LoggerFactory.getLogger(CodeMap.class);
 
@@ -143,6 +159,77 @@ public class CodeMap {
 
       return relatedValues; // Returns the list of related values
   }
+
+
+
+  // 
+
+
+    public List<String> getMostFrequentNDCsByCVXList(List<Code> cvxCodes) {
+      Map<String, Integer> ndcFrequency = new HashMap<>();
+
+      for (Code cvxCode : cvxCodes) {
+          List<String> relatedNDCs = getRelatedValues(cvxCode, CodesetType.VACCINATION_NDC_CODE_UNIT_OF_USE);
+
+          // Compter chaque NDC dans le Map de fréquence
+          for (String ndc : relatedNDCs) {
+              ndcFrequency.put(ndc, ndcFrequency.getOrDefault(ndc, 0) + 1);
+          }
+      }
+
+      // Filtrer les NDC présents dans toutes les listes si nécessaire
+      int totalCvxCount = cvxCodes.size();
+      List<String> ndcInAllLists = ndcFrequency.entrySet().stream()
+          .filter(entry -> entry.getValue() == totalCvxCount)
+          .map(Map.Entry::getKey)
+          .collect(Collectors.toList());
+
+      // Sinon, trier les NDC par fréquence décroissante
+      List<String> sortedNDCs = ndcFrequency.entrySet().stream()
+          .sorted((a, b) -> Integer.compare(b.getValue(), a.getValue()))
+          .map(Map.Entry::getKey)
+          .collect(Collectors.toList());
+
+      return ndcInAllLists.isEmpty() ? sortedNDCs : ndcInAllLists;
+  }
+
+  //  Combo
+
+    /**
+     * This method uses the Mapping class to create vaccine combos
+     * from a list of CVX codes.
+     *
+     * @param cvxCodes List of CVX codes.
+     * @return List of combos generated from the provided CVX codes.
+     */
+    public List<Combo> getCombosByCVXList(List<Code> cvxCodes) {
+        // Instantiate the Mapping class with the current CodeMap instance
+        Mapping mapping = new Mapping(this);
+        
+        // Step 1: Create NDCs from the provided CVX codes
+        List<NDC> ndcList = mapping.createNDCsFromCVX(cvxCodes);
+        
+        // Debugging output to verify NDC creation
+        System.out.println("NDC List Created:");
+        for (NDC ndc : ndcList) {
+            System.out.println(ndc);
+        }
+        System.out.println("End of NDC List\n");
+
+        // Step 2: Generate combos from the list of NDCs
+        List<Combo> comboList = mapping.createCombosFromNDCs(ndcList, cvxCodes);
+        
+        // Step 3: Debugging output to verify Combo creation
+        System.out.println("Generated Combos:");
+        for (Combo combo : comboList) {
+            System.out.println(combo);
+        }
+        System.out.println("End of Combos\n");
+
+        // Step 4: Return the list of generated combos
+        return comboList;
+    }
+
 
 
 
