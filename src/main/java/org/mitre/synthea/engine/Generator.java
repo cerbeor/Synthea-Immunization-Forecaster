@@ -82,7 +82,7 @@ public class Generator {
   private Exporter.ExporterRuntimeOptions exporterRuntimeOptions;
   public static EntityManager entityManager;
   public final int threadPoolSize;
-  public AtomicInteger  antivaxCount = new AtomicInteger(0);
+  public AtomicInteger antivaxCount = new AtomicInteger(0);
 
   /**
    * Used only for testing and debugging. Populate this field to keep track of all patients
@@ -383,11 +383,11 @@ public class Generator {
       for (int i = 0; i < this.options.population; i++) {
         final int index = i;
         final long seed = this.populationRandom.randLong();
-        threadPool.submit(() -> generatePerson(index, seed, options.antivaxPercentage));
+        threadPool.submit(() -> generatePerson(index, seed));
       }
     } else {
       // we have a single fixed seed to generate, don't bother with threadpool
-      generatePerson(0, this.options.singlePersonSeed, options.antivaxPercentage);
+      generatePerson(0, this.options.singlePersonSeed);
     }
 
     try {
@@ -443,7 +443,7 @@ public class Generator {
   public Person generatePerson(int index) {
     // System.currentTimeMillis is not unique enough
     long personSeed = UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE;
-    return generatePerson(index, personSeed, 0);
+    return generatePerson(index, personSeed);
   }
 
   /**
@@ -459,7 +459,7 @@ public class Generator {
    *          Seed for the random person
    * @return generated Person
    */
-  public Person generatePerson(int index, long personSeed, double antivaxPercentage) {
+  public Person generatePerson(int index, long personSeed) {
 
     Person person = new Person(personSeed);
     boolean wasExported = true;
@@ -482,7 +482,7 @@ public class Generator {
 
       do {
         tryNumber++;
-        person = createPerson(personSeed, demoAttributes, antivaxPercentage);
+        person = createPerson(personSeed, demoAttributes);
         long finishTime = person.lastUpdated + timestep;
 
         boolean isAlive = person.alive(finishTime);
@@ -657,7 +657,7 @@ public class Generator {
    * @param demoAttributes Demographic attributes for the new person, {@link #randomDemographics}
    * @return the new person
    */
-  public Person createPerson(long personSeed, Map<String, Object> demoAttributes, double antivaxPercentage) {
+  public Person createPerson(long personSeed, Map<String, Object> demoAttributes) {
 
     // Initialize person.
     Person person = new Person(personSeed);
@@ -668,7 +668,7 @@ public class Generator {
     location.setSocialDeterminants(person);
 
     // Randomly assign antivax based on the antivaxPercentage
-    if (person.randInt(100) < antivaxPercentage) {
+    if (person.randInt(100) < this.options.antivaxPercentage) {
       person.attributes.put(Person.ANTIVAX, true);
       antivaxCount.incrementAndGet();
     } else {

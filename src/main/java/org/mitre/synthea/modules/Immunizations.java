@@ -83,7 +83,7 @@ public class Immunizations {
           boolean getImmunization = true;
 
           // If antivax person
-          if ((boolean) person.attributes.get(Person.ANTIVAX)){
+          if ((boolean) person.attributes.getOrDefault(Person.ANTIVAX, false)){
             getImmunization = false;
           } else {
             if (Objects.equals(immunizationKey, "88")) { // for influenza
