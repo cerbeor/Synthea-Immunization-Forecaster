@@ -6,10 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.TimeZone;
+import java.util.*;
 
 import org.mitre.synthea.engine.Generator;
 import org.mitre.synthea.engine.Module;
@@ -42,6 +39,8 @@ public class App {
     System.out.println("         [-f fixedRecordPath]");
     System.out.println("         [-k keepMatchingPatientsPath]");
     System.out.println("         [-antivaxPercentage antivaxPercentage]");
+    System.out.println("         [-antivaxLastNames firstLetter] - Antivax status for individuals based on first letter of last name (letters separated by \",\")");
+    System.out.println("         [-antivaxZipCodePrefixes zipPrefixes] - Antivax status for individuals in zip code prefix range (zip code prefixes separated by \",\")");
     System.out.println("         [--config*=value]");
     System.out.println("          * any setting from src/main/resources/synthea.properties");
     System.out.println("Examples:");
@@ -54,6 +53,8 @@ public class App {
     System.out.println("run_synthea -g M -a 60-65");
     System.out.println("run_synthea -p 10 --exporter.fhir.export=true");
     System.out.println("run_synthea --exporter.baseDirectory=\"./output_tx/\" Texas");
+    System.out.println("run_synthea -antivaxPercentage 90");
+    System.out.println("run_synthea -p 50 -antivaxLastNames A:20-B:50-C:30 -antivaxZipCodePrefixes 010:80-023:90");
   }
 
   /**
@@ -241,6 +242,22 @@ public class App {
               throw new IllegalArgumentException("Antivax percentage must be between 0 and 100.");
             }
             System.out.println("Antivax percentage: " + options.antivaxPercentage);
+          } else if (currArg.equals("-antivaxLastNames")) {
+            String value = argsQ.poll();
+            if (value == null) {
+              System.err.println("Error: No value provided for -antivaxFirstLetter.");
+            } else {
+              parseAntivaxMap(value.toLowerCase(), options.antivaxFirstLetters);
+              System.out.println("Antivax first letters and percentages: " + options.antivaxFirstLetters);
+            }
+          } else if (currArg.equals("-antivaxZipCodePrefixes")) {
+            String value = argsQ.poll();
+            if (value == null) {
+              System.err.println("Error: No value provided for -antivaxZipCodePrefixes.");
+            } else {
+              parseAntivaxMap(value, options.antivaxZipCodePrefixes);
+              System.out.println("Antivax zip code prefixes and percentages: " + options.antivaxZipCodePrefixes);
+            }
           } else if (currArg.startsWith("--")) {
             String configSetting;
             String value;
@@ -315,6 +332,27 @@ public class App {
               "set configuration option physiology.generators.enabled=false to use"
       );
       throw new IllegalArgumentException(errString);
+    }
+  }
+
+  private static void parseAntivaxMap(String input, Map<String, Double> map) {
+    for (String pair : input.split("-")) {
+      String[] keyValue = pair.split(":");
+      if (keyValue.length == 2) {
+        String key = keyValue[0].trim();
+        try {
+          double percentage = Double.parseDouble(keyValue[1].trim());
+          if (percentage >= 0 && percentage <= 100) {
+            map.put(key, percentage);
+          } else {
+            System.err.println("Percentage for " + key + " is out of range (0-100)");
+          }
+        } catch (NumberFormatException e) {
+          System.err.println("Invalid percentage for " + key + ": " + keyValue[1]);
+        }
+      } else {
+        System.err.println("Invalid key-value pair: " + pair);
+      }
     }
   }
 }

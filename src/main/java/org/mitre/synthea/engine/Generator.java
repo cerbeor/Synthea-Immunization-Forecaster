@@ -145,6 +145,10 @@ public class Generator {
     public Path keepPatientsModulePath;
     /** Number of individuals to assign as antivax (default 0), for immunization module */
     public double antivaxPercentage = 0;
+    /** Map storing the percentage for each person with last name's first letter to be antivax */
+    public Map<String, Double> antivaxFirstLetters = new HashMap<>();
+    /** Map storing the percentage for each person in zip code prefixes to be antivax */
+    public Map<String, Double> antivaxZipCodePrefixes = new HashMap<>();
   }
 
   /**
@@ -660,6 +664,7 @@ public class Generator {
   public Person createPerson(long personSeed, Map<String, Object> demoAttributes) {
 
     // Initialize person.
+    boolean isAntivax = false;
     Person person = new Person(personSeed);
     person.populationSeed = this.options.seed;
     person.attributes.putAll(demoAttributes);
@@ -667,15 +672,56 @@ public class Generator {
     person.lastUpdated = (long) demoAttributes.get(Person.BIRTHDATE);
     location.setSocialDeterminants(person);
 
-    // Randomly assign antivax based on the antivaxPercentage
-    if (person.randInt(100) < this.options.antivaxPercentage) {
-      person.attributes.put(Person.ANTIVAX, true);
-      antivaxCount.incrementAndGet();
-    } else {
+    LifecycleModule.birth(person, person.lastUpdated);
+
+
+    if (options.antivaxFirstLetters != null){
+      // Check if last name matches any of the specified letters with percentages
+      String lastName = (String) person.attributes.get(Person.LAST_NAME);
+      if (lastName != null && options.antivaxFirstLetters.containsKey(lastName.substring(0, 1).toLowerCase())) {
+        // If true, person have a certain percentage of chance to be antivax
+        double percentage = options.antivaxFirstLetters.get(lastName.substring(0, 1).toLowerCase());
+        if (person.randInt(100) < percentage) {
+          person.attributes.put(Person.ANTIVAX, true);
+          isAntivax = true;
+          antivaxCount.incrementAndGet();
+        }
+      }
+    }
+
+    if (options.antivaxZipCodePrefixes != null){
+      // Check if zip code matches any of the specified prefixes with percentages
+      String zipCode = (String) person.attributes.get(Person.ZIP);
+      if (!isAntivax && zipCode != null) {
+        for (String prefix : options.antivaxZipCodePrefixes.keySet()) {
+          if (zipCode.startsWith(prefix)) {
+            // If true, person have a certain percentage of chance to be antivax
+            double percentage = options.antivaxZipCodePrefixes.get(prefix);
+            if (person.randInt(100) < percentage) {
+              person.attributes.put(Person.ANTIVAX, true);
+              isAntivax = true;
+              antivaxCount.incrementAndGet();
+              break;
+            }
+          }
+        }
+      }
+    }
+
+    if (options.antivaxZipCodePrefixes != null && options.antivaxFirstLetters != null){
+      // Randomly assign antivax based on the antivaxPercentage if options.antivaxFirstLetters and options.antivaxZipCodePrefixes are null
+      if (person.randInt(100) < this.options.antivaxPercentage) {
+        person.attributes.put(Person.ANTIVAX, true);
+        isAntivax = true;
+        antivaxCount.incrementAndGet();
+      }
+    }
+
+
+    if(!isAntivax){
       person.attributes.put(Person.ANTIVAX, false);
     }
 
-    LifecycleModule.birth(person, person.lastUpdated);
 
     person.currentModules = Module.getModules(modulePredicate);
 
@@ -792,10 +838,10 @@ public class Generator {
     // this is synchronized to ensure all lines for a single person are always printed
     // consecutively
     String deceased = isAlive ? "" : "DECEASED";
-    System.out.format("%d -- %s (%d y/o %s) %s, %s %s (%d)\n", index + 1,
+    System.out.format("%d -- %s (%d y/o %s) %s, %s, %s %s (%d)\n", index + 1,
         person.attributes.get(Person.NAME), person.ageInYears(time),
         person.attributes.get(Person.GENDER),
-        person.attributes.get(Person.CITY), person.attributes.get(Person.STATE),
+        person.attributes.get(Person.CITY), person.attributes.get(Person.STATE), person.attributes.get(Person.ZIP),
         deceased,
         person.getCount());
 
