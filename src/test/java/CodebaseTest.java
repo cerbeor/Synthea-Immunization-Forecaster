@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.mitre.synthea.codebase.*;
 import org.mitre.synthea.codebase.generated.*;
+import org.mitre.synthea.codebase.mapping.Combo;
 import org.mitre.synthea.codebase.reference.*;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -120,11 +121,33 @@ public void testGetCombosByCVXList() {
 
     // Example validation of results - adjust based on test data
     assertEquals("00002-0000-01", sortedNDCs.get(0));  // Expected first position
-    System.out.println("AAAAAAAAAAAAA");
 }
 
+/*  Case 1 - Find two Combo objects with the CVX codes 004, 005, and 006
+ * 
+ */
+@Test
+public void testGetCombosByCVXListCase1() {
 
+    // Call the method with the list of CVX codes
+    List<Combo> comboList = codeMap.getCombosByCVXList(Arrays.asList(cvxCodeObj4, cvxCodeObj5, cvxCodeObj6));
 
+    Combo combo1 = comboList.get(0);
+    Combo combo2 = comboList.get(1);
+
+    assertEquals(1, combo1.getNdcList().size());
+    assertEquals(2, combo2.getNdcList().size());
+
+    assertEquals("00003-0000-03", combo1.getNdcList().get(0).getNdcCode());
+    // Test score combo 1
+    assertEquals(100.00, combo1.getScore(), 0.00);
+
+    // Combo 2
+    assertEquals("00003-0000-02", combo2.getNdcList().get(0).getNdcCode());
+    assertEquals("00003-0000-01", combo2.getNdcList().get(1).getNdcCode());
+    // Test score combo 2
+    assertEquals(50.00, combo2.getScore(), 0.00);
+}
 
 
 

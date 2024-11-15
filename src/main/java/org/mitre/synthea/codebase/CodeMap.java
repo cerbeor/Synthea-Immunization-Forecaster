@@ -13,18 +13,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.mitre.synthea.codebase.generated.Code;
-import org.mitre.synthea.codebase.generated.Codebase;
-import org.mitre.synthea.codebase.generated.Codeset;
-import org.mitre.synthea.codebase.generated.LinkTo;
-import org.mitre.synthea.codebase.generated.Reference;
-import org.mitre.synthea.codebase.generated.UseDate;
-import org.mitre.synthea.codebase.mapping.Combo;
-import org.mitre.synthea.codebase.mapping.Mapping;
-import org.mitre.synthea.codebase.mapping.NDC;
-import org.mitre.synthea.codebase.reference.CodeStatusValue;
-import org.mitre.synthea.codebase.reference.CodesetType;
-import org.mitre.synthea.codebase.reference.Ops;
+import org.mitre.synthea.codebase.generated.*;
+import org.mitre.synthea.codebase.mapping.*;
+import org.mitre.synthea.codebase.reference.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -171,20 +162,20 @@ public class CodeMap {
       for (Code cvxCode : cvxCodes) {
           List<String> relatedNDCs = getRelatedValues(cvxCode, CodesetType.VACCINATION_NDC_CODE_UNIT_OF_USE);
 
-          // Compter chaque NDC dans le Map de fréquence
+          // Count each NDC in the Frequency Map
           for (String ndc : relatedNDCs) {
               ndcFrequency.put(ndc, ndcFrequency.getOrDefault(ndc, 0) + 1);
           }
       }
 
-      // Filtrer les NDC présents dans toutes les listes si nécessaire
+      // Filter NDCs present in all lists
       int totalCvxCount = cvxCodes.size();
       List<String> ndcInAllLists = ndcFrequency.entrySet().stream()
           .filter(entry -> entry.getValue() == totalCvxCount)
           .map(Map.Entry::getKey)
           .collect(Collectors.toList());
 
-      // Sinon, trier les NDC par fréquence décroissante
+      // Otherwise, sort the NDCs by decreasing frequency
       List<String> sortedNDCs = ndcFrequency.entrySet().stream()
           .sorted((a, b) -> Integer.compare(b.getValue(), a.getValue()))
           .map(Map.Entry::getKey)
@@ -234,6 +225,17 @@ public class CodeMap {
 
 
 // 
+
+
+// Stock simulation part
+
+
+
+
+
+
+
+//
 
 
 
