@@ -682,25 +682,21 @@ public class Generator {
         // If true, person have a certain percentage of chance to be antivax
         double percentage = options.antivaxFirstLetters.get(lastName.substring(0, 1).toLowerCase());
         if (person.randInt(100) < percentage) {
-          person.attributes.put(Person.ANTIVAX, true);
           isAntivax = true;
-          antivaxCount.incrementAndGet();
         }
       }
     }
 
-    if (options.antivaxZipCodePrefixes != null){
+    if (!isAntivax && options.antivaxZipCodePrefixes != null){
       // Check if zip code matches any of the specified prefixes with percentages
       String zipCode = (String) person.attributes.get(Person.ZIP);
-      if (!isAntivax && zipCode != null) {
+      if (zipCode != null) {
         for (String prefix : options.antivaxZipCodePrefixes.keySet()) {
           if (zipCode.startsWith(prefix)) {
             // If true, person have a certain percentage of chance to be antivax
             double percentage = options.antivaxZipCodePrefixes.get(prefix);
             if (person.randInt(100) < percentage) {
-              person.attributes.put(Person.ANTIVAX, true);
               isAntivax = true;
-              antivaxCount.incrementAndGet();
               break;
             }
           }
@@ -708,18 +704,19 @@ public class Generator {
       }
     }
 
-    if (options.antivaxZipCodePrefixes != null && options.antivaxFirstLetters != null){
+    if (options.antivaxZipCodePrefixes == null && options.antivaxFirstLetters == null){
       // Randomly assign antivax based on the antivaxPercentage if options.antivaxFirstLetters and options.antivaxZipCodePrefixes are null
       if (person.randInt(100) < this.options.antivaxPercentage) {
-        person.attributes.put(Person.ANTIVAX, true);
         isAntivax = true;
-        antivaxCount.incrementAndGet();
       }
     }
 
 
     if(!isAntivax){
       person.attributes.put(Person.ANTIVAX, false);
+    } else {
+      person.attributes.put(Person.ANTIVAX, true);
+      antivaxCount.incrementAndGet();
     }
 
 
@@ -838,8 +835,9 @@ public class Generator {
     // this is synchronized to ensure all lines for a single person are always printed
     // consecutively
     String deceased = isAlive ? "" : "DECEASED";
-    System.out.format("%d -- %s (%d y/o %s) %s, %s, %s %s (%d)\n", index + 1,
-        person.attributes.get(Person.NAME), person.ageInYears(time),
+    System.out.format("%d -- %s (%s) (%d y/o %s) %s, %s, %s %s (%d)\n", index + 1,
+        person.attributes.get(Person.NAME), person.attributes.get(Person.MAIDEN_NAME),
+        person.ageInYears(time),
         person.attributes.get(Person.GENDER),
         person.attributes.get(Person.CITY), person.attributes.get(Person.STATE), person.attributes.get(Person.ZIP),
         deceased,
