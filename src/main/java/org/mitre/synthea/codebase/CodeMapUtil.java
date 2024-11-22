@@ -56,4 +56,45 @@ public class CodeMapUtil {
         // Convertir le Set en List avant de le retourner
         return new ArrayList<>(ndcSet);
     }
+
+
+
+    /**
+     * Extracts all Vaccine Group labels from the given CodeMap instance.
+     * 
+     * This method focuses on the VACCINE_GROUP CodesetType.
+     * 
+     * @param codeMap The CodeMap instance containing various codesets.
+     * @return A list of Vaccine Group labels (strings) extracted from the VACCINE_GROUP codeset.
+     */
+    public static List<String> extractVaccineGroupsFromCodebase(CodeMap codeMap) {
+        // Use a Set to avoid duplicates
+        Set<String> vaccineGroupSet = new HashSet<>();
+        
+        // Retrieve the entire CodeBase map from the CodeMap instance
+        Map<CodesetType, Map<String, Code>> codeBaseMap = codeMap.getCodeBaseMap();
+        
+        if (codeBaseMap == null || codeBaseMap.isEmpty()) {
+            return new ArrayList<>(); // Return an empty list if no codes are found
+        }
+        
+        // Focus only on the VACCINE_GROUP CodesetType
+        CodesetType vaccineGroupType = CodesetType.VACCINE_GROUP;
+        
+        // Retrieve the Vaccine Group codeset from the CodeBase map
+        Map<String, Code> vaccineGroupCodeset = codeBaseMap.get(vaccineGroupType);
+        
+        if (vaccineGroupCodeset != null) {
+            // Extract all Vaccine Group labels from the current codeset
+            for (Map.Entry<String, Code> entry : vaccineGroupCodeset.entrySet()) {
+                Code vaccineGroupCode = entry.getValue();
+                if (vaccineGroupCode != null && vaccineGroupCode.getLabel() != null) {
+                    vaccineGroupSet.add(vaccineGroupCode.getLabel()); // Add the label to the Set
+                }
+            }
+        }
+        
+        // Convert the Set to a List before returning
+        return new ArrayList<>(vaccineGroupSet);
+    }
 }

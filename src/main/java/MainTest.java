@@ -9,7 +9,7 @@ import org.mitre.synthea.codebase.mapping.*;
 public class MainTest {
     
     public static void main(String[] args) {
-        CodeMap codeMap = CodeMapBuilder.INSTANCE.getDefaultCodeMap("./src/test/resources/CompiledTest.xml");
+        CodeMap codeMap = CodeMapBuilder.INSTANCE.getDefaultCodeMap("./src/test/resources/compiledTest/CompiledTestCombo.xml");
 
 
         // String ndcCode = "00001-0000-01";  // Example of an existing NDC
@@ -30,8 +30,7 @@ public class MainTest {
         // System.out.println("Taille liste 2 - "+comboList.get(1).getNdcList().size());
 
 
-        CodeMapUtil codeMapUtil = new CodeMapUtil();
-        List<String> ndcList = codeMapUtil.extractNDCsFromCodebase(codeMap);
+        List<String> ndcList = CodeMapUtil.extractNDCsFromCodebase(codeMap);
 
         // show us NDC list
         System.out.println(ndcList);

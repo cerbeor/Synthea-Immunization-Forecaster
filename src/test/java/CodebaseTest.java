@@ -34,7 +34,7 @@ public class CodebaseTest {
 
     @BeforeClass
     public static void setUp() {
-        codeMap = CodeMapBuilder.INSTANCE.getDefaultCodeMap("./src/test/resources/CompiledTest.xml");
+        codeMap = CodeMapBuilder.INSTANCE.getDefaultCodeMap("./src/test/resources/CompiledTest/CompiledTestCombo.xml");
         // Retrieve Code objects for each CVX
         cvxCodeObj1 = codeMap.getCodeForCodeset(CodesetType.VACCINATION_CVX_CODE, "001");
         cvxCodeObj2 = codeMap.getCodeForCodeset(CodesetType.VACCINATION_CVX_CODE, "002");
