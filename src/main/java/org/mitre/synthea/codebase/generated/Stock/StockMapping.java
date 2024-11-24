@@ -11,13 +11,14 @@ public class StockMapping {
 
  private CodeMap codeMap;
  private HashMap<String, Boolean> mapStockVaccineGroup;
+ int LOADING = 0;
 
  public StockMapping(CodeMap codeMap){
     this.codeMap = codeMap;
  }
 
 
- public List<Combo> generateNdcCombinations(int n) {
+ public List<Combo> generateNdcCombinations(int n, int m) {
     // Step 1: Initialize vaccine group and NDC lists
     List<String> vaccineGroupList = CodeMapUtil.extractVaccineGroupsFromCodebase(codeMap);
     List<String> ndcList = CodeMapUtil.extractNDCsFromCodebase(codeMap);
@@ -41,7 +42,7 @@ public class StockMapping {
 
     // Step 2: Generate all possible combinations of NDCs
     List<NDC> ndcObjects = ndcList.stream().map(NDC::new).collect(Collectors.toList());
-    generateCombinations(new ArrayList<>(), ndcObjects, vaccineGroupList, n, combinations, ndcToVaccineGroups);
+    generateCombinations(new ArrayList<>(), ndcObjects, vaccineGroupList, n, m, combinations, ndcToVaccineGroups);
 
     // Sort combinations by effectiveness (e.g., fewer NDCs, higher score)
     combinations.sort(Comparator.comparingDouble(Combo::getScore).reversed());
@@ -62,8 +63,13 @@ public class StockMapping {
 
 // Recursive method to generate combinations
 private void generateCombinations(List<NDC> currentCombo, List<NDC> remainingNdcList,
-                                  List<String> targetGroups, int n, List<Combo> resultCombos,
+                                  List<String> targetGroups, int n, int m, List<Combo> resultCombos,
                                   Map<String, List<String>> ndcToVaccineGroups) {
+    // Stop early if the desired number of combinations has been reached
+    if (m != -1 && resultCombos.size() >= m) {
+        return;
+    }
+
     // Check if the current combination covers the required groups at least 'n' times
     Map<String, Integer> groupCoverage = new HashMap<>();
     for (String group : targetGroups) {
@@ -87,6 +93,10 @@ private void generateCombinations(List<NDC> currentCombo, List<NDC> remainingNdc
         Combo completeCombo = new Combo(new ArrayList<>(currentCombo), false, completionPercentage);
         completeCombo.setAllVaccineGroupsFound(true); // Mark vaccine groups as fully covered
         resultCombos.add(completeCombo);
+        // Stop early if the limit has been reached
+        if (m != -1 && resultCombos.size() >= m) {
+            return;
+        }
         return; // No need to explore further in this branch
     }
 
@@ -106,10 +116,11 @@ private void generateCombinations(List<NDC> currentCombo, List<NDC> remainingNdc
         NDC selectedNdc = remainingNdcList.get(i);
         currentCombo.add(selectedNdc); // Add this NDC to the current combination
         List<NDC> newRemainingList = remainingNdcList.subList(i + 1, remainingNdcList.size());
-        generateCombinations(currentCombo, newRemainingList, targetGroups, n, resultCombos, ndcToVaccineGroups);
+        generateCombinations(currentCombo, newRemainingList, targetGroups, n, m, resultCombos, ndcToVaccineGroups);
         currentCombo.remove(currentCombo.size() - 1); // Remove this NDC to explore other combinations
     }
 }
+
 
 // Initialize the mapStockVaccineGroup based on a random or fixed selection of a combo
 public void initializeStockVaccineGroup(List<Combo> combos, boolean random) {

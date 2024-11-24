@@ -79,5 +79,17 @@ public class Combo {
         this.allVaccineGroupsFound = allVaccineGroupsFound;
     }
 
+
+
+    public double getVaccineGroupCompletionPercentage() {
+        return vaccineGroupCompletionPercentage;
+    }
+
+
+
+    public void setVaccineGroupCompletionPercentage(double vaccineGroupCompletionPercentage) {
+        this.vaccineGroupCompletionPercentage = vaccineGroupCompletionPercentage;
+    }
+
     
 }
