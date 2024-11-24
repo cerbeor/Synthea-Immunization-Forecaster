@@ -10,6 +10,7 @@ import org.mitre.synthea.codebase.mapping.*;
 public class StockMapping {
 
  private CodeMap codeMap;
+ private HashMap<String, Boolean> mapStockVaccineGroup;
 
  public StockMapping(CodeMap codeMap){
     this.codeMap = codeMap;
@@ -110,7 +111,47 @@ private void generateCombinations(List<NDC> currentCombo, List<NDC> remainingNdc
     }
 }
 
+// Initialize the mapStockVaccineGroup based on a random or fixed selection of a combo
+public void initializeStockVaccineGroup(List<Combo> combos, boolean random) {
+    // Initialize mapStockVaccineGroup as empty, with all NDCs set to false by default
+    mapStockVaccineGroup = new HashMap<>();
 
+    // Step 1: Select the combo based on the 'random' flag
+    Combo selectedCombo;
+    if (random) {
+        Random rand = new Random();
+        // Randomly select a Combo from the list of combos
+        selectedCombo = combos.get(rand.nextInt(combos.size()));
+    } else {
+        // Select the first combo in the list if random is false
+        selectedCombo = combos.get(0);
+    }
+
+    // Step 2: Get the NDCs from the selected combo
+    List<NDC> selectedNdcList = selectedCombo.getNdcList();
+
+    // Step 3: Mark the NDCs from the selected combo as true in the mapStockVaccineGroup
+    for (NDC ndc : selectedNdcList) {
+        mapStockVaccineGroup.put(ndc.getNdcCode(), true);  // Set selected NDC to true
+    }
+
+    // Step 4: Set all other NDCs in the mapStockVaccineGroup to false (default)
+    for (String ndcCode : CodeMapUtil.extractNDCsFromCodebase(codeMap)) {
+        if (!mapStockVaccineGroup.containsKey(ndcCode)) {
+            mapStockVaccineGroup.put(ndcCode, false);  // Set non-selected NDCs to false
+        }
+    }
+}
+
+
+public HashMap<String, Boolean> getMapStockVaccineGroup() {
+    return mapStockVaccineGroup;
+}
+
+
+public void setMapStockVaccineGroup(HashMap<String, Boolean> mapStockVaccineGroup) {
+    this.mapStockVaccineGroup = mapStockVaccineGroup;
+}
 
 
     
