@@ -10,6 +10,8 @@ public class Combo {
     private boolean allCvxFound; // Indicates if all CVX codes were matched
     private double completionPercentage; // Percentage of CVX codes covered if incomplete
 
+    private boolean allVaccineGroupsFound; // Indicates if all vaccine groups were matched
+
     public Combo(List<NDC> ndcList, boolean allCvxFound, double completionPercentage) {
         this.ndcList = new ArrayList<>(ndcList);
         this.allCvxFound = allCvxFound;
@@ -48,7 +50,21 @@ public class Combo {
 
     @Override
     public String toString() {
-        return String.format("\n Combo :\n[NDCs: %s, Score: %.2f\n, All CVX Found: %b\n, Completion: %.2f%%\n]", 
-                             ndcList, score, allCvxFound, completionPercentage);
+        return String.format("\n Combo :\n[NDCs: %s, Score: %.2f\n, All CVX Found: %b\n, Completion: %.2f%%\n, All Vaccine Groups Found: %b]",
+                             ndcList, score, allCvxFound, completionPercentage, allVaccineGroupsFound);
     }
+
+
+
+    public boolean isAllVaccineGroupsFound() {
+        return allVaccineGroupsFound;
+    }
+
+
+
+    public void setAllVaccineGroupsFound(boolean allVaccineGroupsFound) {
+        this.allVaccineGroupsFound = allVaccineGroupsFound;
+    }
+
+    
 }

@@ -9,6 +9,7 @@ public class Stock {
 
     private HashMap<String, Boolean> mapStock; // Private due to encapsulation principles
 
+
     // Function that creates the stock map from the list of existing NDCs
     // by randomly assigning true or false
     public void initializeMapStock(List<String> ndcList) {

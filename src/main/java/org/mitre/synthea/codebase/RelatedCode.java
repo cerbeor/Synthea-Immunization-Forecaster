@@ -80,4 +80,35 @@ public class RelatedCode {
   }
 
 
+  //
+
+    /**
+   * Retrieves a list of CVX codes associated with a given NDC.
+   *
+   * @param ndc The NDC code as a string.
+   * @return A list of CVX codes (strings) related to the provided NDC.
+   */
+  public List<String> getCvxCodesFromNdc(String ndc) {
+    List<String> cvxCodes = new ArrayList<>();
+    // Retrieve the NDC code from the map
+    Code ndcCode = this.map.getCodeForCodeset(CodesetType.VACCINATION_NDC_CODE, ndc);
+
+    if (ndcCode != null) {
+        // Retrieve related CVX codes for the NDC
+        List<Code> relatedCvxCodes = this.map.getRelatedCodesForCodeIn(CodesetType.VACCINATION_NDC_CODE, ndc, CodesetType.VACCINATION_CVX_CODE);
+
+        if (relatedCvxCodes != null) {
+            for (Code cvxCode : relatedCvxCodes) {
+                if (cvxCode != null) {
+                    // Add the CVX code value to the list
+                    cvxCodes.add(cvxCode.getValue());
+                }
+            }
+        }
+    }
+    return cvxCodes;
+  }
+
+
+
 }
