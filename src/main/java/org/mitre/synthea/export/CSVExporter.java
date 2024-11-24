@@ -299,7 +299,7 @@ public class CSVExporter {
     patients.write("Id,BIRTHDATE,DEATHDATE,SSN,DRIVERS,PASSPORT,"
         + "PREFIX,FIRST,LAST,SUFFIX,MAIDEN,MARITAL,RACE,ETHNICITY,GENDER,BIRTHPLACE,"
         + "ADDRESS,CITY,STATE,COUNTY,FIPS,ZIP,LAT,LON,"
-        + "HEALTHCARE_EXPENSES,HEALTHCARE_COVERAGE,INCOME");
+        + "HEALTHCARE_EXPENSES,HEALTHCARE_COVERAGE,INCOME,ANTIVAX_STATUS");
     patients.write(NEWLINE);
     allergies.write("START,STOP,PATIENT,ENCOUNTER,CODE,SYSTEM,DESCRIPTION,TYPE,CATEGORY,"
         + "REACTION1,DESCRIPTION1,SEVERITY1,REACTION2,DESCRIPTION2,SEVERITY2");
@@ -655,6 +655,9 @@ public class CSVExporter {
     // s.append(person.attributes.get("most-recent-qaly")).append(',');
     // DALYS
     // s.append(person.attributes.get("most-recent-daly"));
+    // Antivax Status
+    boolean isAntivax = (Boolean) person.attributes.getOrDefault(Person.ANTIVAX, false);
+    s.append(',').append(isAntivax);
 
     s.append(NEWLINE);
     write(s.toString(), patients);
