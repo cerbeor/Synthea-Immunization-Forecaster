@@ -704,7 +704,7 @@ public class Generator {
       }
     }
 
-    if (options.antivaxZipCodePrefixes == null && options.antivaxFirstLetters == null){
+    if (options.antivaxZipCodePrefixes.isEmpty() && options.antivaxFirstLetters.isEmpty()){
       // Randomly assign antivax based on the antivaxPercentage if options.antivaxFirstLetters and options.antivaxZipCodePrefixes are null
       if (person.randInt(100) < this.options.antivaxPercentage) {
         isAntivax = true;

@@ -78,6 +78,9 @@ Options: [-s seed]
          [-f fixedRecordPath]
          [-k keepMatchingPatientsPath]
          [--config*=value]
+         [-antivaxPercentage percentage]
+         [-antivaxLastNames firstLetter]
+         [-antivaxZipCodePrefixes zipPrefixes]
           * any setting from src/main/resources/synthea.properties
 
 Examples:
@@ -90,6 +93,9 @@ run_synthea -s 21 -p 100 Utah "Salt Lake City"
 run_synthea -g M -a 60-65
 run_synthea -p 10 --exporter.fhir.export=true
 run_synthea --exporter.baseDirectory="./output_tx/" Texas
+run_synthea -antivaxPercentage 90
+run_synthea -p 50 -antivaxZipCodePrefixes 010:80-023:90 --> people from zip codes starting with 010 will have 80% chance of being antivax, people from zip codes starting with 023 will have 90% chance of being antivax
+run_synthea -p 50 -antivaxLastNames A:20-B:50-C:30 --> people with last names (maiden names) starting with A will have 20% chance of being antivax, people with last names starting with B will have 50% chance of being antivax, people with last names starting with C will have 30% chance of being antivax
 ```
 
 Some settings can be changed in `./src/main/resources/synthea.properties`.

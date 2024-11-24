@@ -39,8 +39,8 @@ public class App {
     System.out.println("         [-f fixedRecordPath]");
     System.out.println("         [-k keepMatchingPatientsPath]");
     System.out.println("         [-antivaxPercentage antivaxPercentage]");
-    System.out.println("         [-antivaxLastNames firstLetter] - Antivax status for individuals based on first letter of last name (letters separated by \",\")");
-    System.out.println("         [-antivaxZipCodePrefixes zipPrefixes] - Antivax status for individuals in zip code prefix range (zip code prefixes separated by \",\")");
+    System.out.println("         [-antivaxLastNames firstLetter]");
+    System.out.println("         [-antivaxZipCodePrefixes zipPrefixes]");
     System.out.println("         [--config*=value]");
     System.out.println("          * any setting from src/main/resources/synthea.properties");
     System.out.println("Examples:");
