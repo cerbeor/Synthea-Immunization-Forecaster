@@ -10,7 +10,9 @@ public class Combo {
     private boolean allCvxFound; // Indicates if all CVX codes were matched
     private double completionPercentage; // Percentage of CVX codes covered if incomplete
 
+    private double scoreVaccineGroup; 
     private boolean allVaccineGroupsFound; // Indicates if all vaccine groups were matched
+    private double vaccineGroupCompletionPercentage;
 
     public Combo(List<NDC> ndcList, boolean allCvxFound, double completionPercentage) {
         this.ndcList = new ArrayList<>(ndcList);
@@ -46,6 +48,17 @@ public class Combo {
             baseScore *= completionPercentage;
         }
         return baseScore / ndcList.size();
+    }
+
+    // Calculate the score based on the number of Vaccines group and completion
+    public double calculateScoreVaccineGroup() {
+        // Higher score if fewer NDCs are used, and if all CVX codes are found
+        double baseScore = 100;
+        if (!allVaccineGroupsFound) {
+            baseScore *= vaccineGroupCompletionPercentage;
+        }
+        scoreVaccineGroup = baseScore / ndcList.size();
+        return scoreVaccineGroup;
     }
 
     @Override
