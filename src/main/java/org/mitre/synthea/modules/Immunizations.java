@@ -21,6 +21,7 @@ import org.immregistries.vfa.connect.model.*;
 import org.mitre.synthea.helpers.Attributes;
 import org.mitre.synthea.helpers.Attributes.Inventory;
 import org.mitre.synthea.helpers.Utilities;
+import org.mitre.synthea.world.agents.Clinician;
 import org.mitre.synthea.world.agents.Person;
 import org.mitre.synthea.world.concepts.HealthRecord;
 import org.mitre.synthea.world.concepts.HealthRecord.Code;
@@ -99,6 +100,15 @@ public class Immunizations {
               getImmunization = false;
             }
           }
+
+          // If antivax clinician
+          HealthRecord.Encounter currentEncounter = (HealthRecord.Encounter) person.attributes.get(Person.CURRENT_ENCOUNTER);
+          if ((boolean) currentEncounter.clinician.attributes.getOrDefault(Person.ANTIVAX, false)) {
+            getImmunization = false;
+//            System.out.println("Clinician "+ currentEncounter.clinician.attributes.get(Clinician.FIRST_NAME)+" is antivax. Vaccine not administered: " + immunizationKey);
+          } /*else {
+            System.out.println("---- Clinician "+ currentEncounter.clinician.attributes.get(Clinician.FIRST_NAME)+" is pro-vax. Vaccine administered: " + immunizationKey);
+          }*/
 
           if (getImmunization) {
             /**

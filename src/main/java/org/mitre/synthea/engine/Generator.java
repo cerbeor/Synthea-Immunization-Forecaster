@@ -143,12 +143,14 @@ public class Generator {
     public int daysToTravelForward = -1;
     /** Path to a module defining which patients should be kept and exported. */
     public Path keepPatientsModulePath;
-    /** Number of individuals to assign as antivax (default 0), for immunization module */
+    /** Percentage of individuals to assign as antivax (default 0), for immunization module */
     public double antivaxPercentage = 0;
     /** Map storing the percentage for each person with last name's first letter to be antivax */
     public Map<String, Double> antivaxFirstLetters = new HashMap<>();
     /** Map storing the percentage for each person in zip code prefixes to be antivax */
     public Map<String, Double> antivaxZipCodePrefixes = new HashMap<>();
+    /** Percentage of clinicians to assign as antivax (default 0), for immunization module */
+    public double cliniciansAntivaxPercentage = 0;
   }
 
   /**
@@ -273,6 +275,7 @@ public class Generator {
     }
 
     // initialize hospitals
+    Provider.setCliniciansAntivaxPercentage(options.cliniciansAntivaxPercentage);
     Provider.loadProviders(location, this.clinicianRandom);
     // Initialize Payers
     PayerManager.loadPayers(location);

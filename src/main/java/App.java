@@ -41,6 +41,7 @@ public class App {
     System.out.println("         [-antivaxPercentage antivaxPercentage]");
     System.out.println("         [-antivaxLastNames firstLetter]");
     System.out.println("         [-antivaxZipCodePrefixes zipPrefixes]");
+    System.out.println("         [-cliniciansAntivaxPercentage cliniciansAntivaxPercentage]");
     System.out.println("         [--config*=value]");
     System.out.println("          * any setting from src/main/resources/synthea.properties");
     System.out.println("Examples:");
@@ -55,6 +56,7 @@ public class App {
     System.out.println("run_synthea --exporter.baseDirectory=\"./output_tx/\" Texas");
     System.out.println("run_synthea -antivaxPercentage 90");
     System.out.println("run_synthea -p 50 -antivaxLastNames A:20-B:50-C:30 -antivaxZipCodePrefixes 010:80-023:90");
+    System.out.println("run_synthea -cliniciansAntivaxPercentage 100");
   }
 
   /**
@@ -258,6 +260,13 @@ public class App {
               parseAntivaxMap(value, options.antivaxZipCodePrefixes);
               System.out.println("Antivax zip code prefixes and percentages: " + options.antivaxZipCodePrefixes);
             }
+          } else if (currArg.equals("-cliniciansAntivaxPercentage")) {
+            String value = argsQ.poll();
+            options.cliniciansAntivaxPercentage = Double.parseDouble(value);
+            if (options.cliniciansAntivaxPercentage < 0 || options.cliniciansAntivaxPercentage > 100) {
+              throw new IllegalArgumentException("Clinicians antivax percentage must be between 0 and 100.");
+            }
+            System.out.println("Clinicians Antivax percentage: " + options.cliniciansAntivaxPercentage);
           } else if (currArg.startsWith("--")) {
             String configSetting;
             String value;

@@ -19,6 +19,7 @@ import org.hl7.fhir.r4.model.ResourceType;
 import org.mitre.synthea.helpers.Config;
 import org.mitre.synthea.helpers.RandomNumberGenerator;
 import org.mitre.synthea.world.agents.Clinician;
+import org.mitre.synthea.world.agents.Person;
 import org.mitre.synthea.world.agents.Provider;
 
 public abstract class FhirPractitionerExporterR4 {
@@ -61,6 +62,11 @@ public abstract class FhirPractitionerExporterR4 {
                   practitioner.addExtension()
                     .setUrl(PROC_EXTENSION_URI)
                     .setValue(new IntegerType(doc.getProcedureCount()));
+                }
+                // Add antivax_status as a direct property
+                if (doc.attributes.containsKey(Person.ANTIVAX)) {
+                  boolean antivaxStatus = (boolean) doc.attributes.get(Person.ANTIVAX);
+                  practitioner.addExtension("antivax_status", new org.hl7.fhir.r4.model.BooleanType(antivaxStatus));
                 }
               }
             }

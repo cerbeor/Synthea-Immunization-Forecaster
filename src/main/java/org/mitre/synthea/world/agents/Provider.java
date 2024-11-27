@@ -39,6 +39,10 @@ import org.mitre.synthea.world.geography.quadtree.QuadTreeElement;
 
 public class Provider implements QuadTreeElement, Serializable {
 
+  public static void setCliniciansAntivaxPercentage(double cliniciansAntivaxPercentage) {
+    Provider.cliniciansAntivaxPercentage = cliniciansAntivaxPercentage;
+  }
+
   public enum ProviderType {
     DIALYSIS, HOME_HEALTH, HOSPICE, HOSPITAL, LONG_TERM,
     NURSING, PRIMARY, REHAB, URGENT, VETERAN, PHARMACY, IHS;
@@ -103,6 +107,7 @@ public class Provider implements QuadTreeElement, Serializable {
   public Map<String, ArrayList<Clinician>> clinicianMap;
   // row: year, column: type, value: count
   private transient Table<Integer, String, AtomicInteger> utilization;
+  private static double cliniciansAntivaxPercentage = 0;
 
   /**
    * Java Serialization support for the utilization field.
@@ -590,6 +595,15 @@ public class Provider implements QuadTreeElement, Serializable {
       String ssn = "999-" + ((doc.randInt(99 - 10 + 1) + 10)) + "-"
           + ((doc.randInt(9999 - 1000 + 1) + 1000));
       clinician.attributes.put(Person.IDENTIFIER_SSN, ssn);
+
+      // Clinicians have a percentage of chance of being antivax
+//      System.out.println("Clinician antivax percentage: " + cliniciansAntivaxPercentage);
+      if (random.rand() < cliniciansAntivaxPercentage/100) {
+        clinician.attributes.put(Person.ANTIVAX, true);
+      } else {
+        clinician.attributes.put(Person.ANTIVAX, false);
+      }
+
     } catch (Throwable e) {
       e.printStackTrace();
       throw e;
