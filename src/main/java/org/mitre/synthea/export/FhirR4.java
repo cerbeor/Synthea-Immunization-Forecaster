@@ -170,6 +170,8 @@ public class FhirR4 {
   private static final String LOINC_URI = "http://loinc.org";
   private static final String RXNORM_URI = "http://www.nlm.nih.gov/research/umls/rxnorm";
   private static final String CVX_URI = "http://hl7.org/fhir/sid/cvx";
+  // Add NDC URI
+  private static final String NDC_URI = "http://hl7.org/fhir/sid/ndc";
   private static final String DISCHARGE_URI = "http://www.nubc.org/patient-discharge";
   private static final String SHR_EXT = "http://standardhealthrecord.org/fhir/StructureDefinition/";
   private static final String SYNTHEA_EXT = "http://synthetichealth.github.io/synthea/";
@@ -2263,6 +2265,9 @@ public class FhirR4 {
     immResource.setStatus(ImmunizationStatus.COMPLETED);
     immResource.setOccurrence(convertFhirDateTime(immunization.start, true));
     immResource.setVaccineCode(mapCodeToCodeableConcept(immunization.codes.get(0), CVX_URI));
+    // TODO Add NDC code to the immunization resources
+    //immResource.setVaccineCode(mapCodeToCodeableConcept(immunization.codes.get(0), NDC_URI));
+    
     immResource.setPrimarySource(true);
     immResource.setPatient(new Reference(personEntry.getFullUrl()));
     immResource.setEncounter(new Reference(encounterEntry.getFullUrl()));

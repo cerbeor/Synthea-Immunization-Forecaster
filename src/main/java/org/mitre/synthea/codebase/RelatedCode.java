@@ -44,39 +44,71 @@ public class RelatedCode {
     return cvxValue;
   }
 
+    public List<String> getNdcFromMultipleCvx(List<String> cvxCodes) {
+      List<String> ndcs = new ArrayList<>();
+      for (String cvx : cvxCodes) {
+          // Retrieve the CVX code
+          Code cvxCode = this.map.getCodeForCodeset(CodesetType.VACCINATION_CVX_CODE, cvx);
+          // If the CVX code exists, get the associated NDC codes
+          if (cvxCode != null) {
+              // Use a method to retrieve the associated NDC codes
+              // Ensure that you have a method that fetches the linked codes (e.g., NDC for CVX)
+              String ndcValue = this.map.getRelatedValue(cvxCode, CodesetType.VACCINATION_NDC_CODE);
+              if (ndcValue != null && !ndcs.contains(ndcValue)) {
+                  ndcs.add(ndcValue);
+              }
+          }
+      }
+      return ndcs;
+  }
+
+  // New method to retrieve multiple NDCs from a single CVX
+  public List<String> getNdcCodesFromCvx(String cvx) {
+      List<String> ndcCodes = new ArrayList<>();
+      // Retrieve related NDC codes for the given CVX
+      List<Code> relatedNdcCodes = this.map.getRelatedCodesForCodeIn(CodesetType.VACCINATION_CVX_CODE, cvx, CodesetType.VACCINATION_NDC_CODE);
+      
+      if (relatedNdcCodes != null) {
+          for (Code ndcCode : relatedNdcCodes) {
+              if (ndcCode != null) {
+                  // Add the value of the NDC code to the list
+                  ndcCodes.add(ndcCode.getValue());
+              }
+          }
+      }
+      return ndcCodes;
+  }
 
 
-  public List<String> getNdcFromMultipleCvx(List<String> cvxCodes) {
-    List<String> ndcs = new ArrayList<>();
-    for (String cvx : cvxCodes) {
-        // Obtenez le code CVX
-        Code cvxCode = this.map.getCodeForCodeset(CodesetType.VACCINATION_CVX_CODE, cvx);
-        // Si le code CVX existe, obtenez les NDC associés
-        if (cvxCode != null) {
-            // Ici, vous devrez utiliser une méthode qui récupère les NDC associés
-            // Vous devrez avoir une méthode qui renvoie les codes liés (par exemple, NDC pour le CVX)
-            String ndcValue = this.map.getRelatedValue(cvxCode, CodesetType.VACCINATION_NDC_CODE);
-            if (ndcValue != null && !ndcs.contains(ndcValue)) {
-                ndcs.add(ndcValue);
+  //
+
+    /**
+   * Retrieves a list of CVX codes associated with a given NDC.
+   *
+   * @param ndc The NDC code as a string.
+   * @return A list of CVX codes (strings) related to the provided NDC.
+   */
+  public List<String> getCvxCodesFromNdc(String ndc) {
+    List<String> cvxCodes = new ArrayList<>();
+    // Retrieve the NDC code from the map
+    Code ndcCode = this.map.getCodeForCodeset(CodesetType.VACCINATION_NDC_CODE, ndc);
+
+    if (ndcCode != null) {
+        // Retrieve related CVX codes for the NDC
+        List<Code> relatedCvxCodes = this.map.getRelatedCodesForCodeIn(CodesetType.VACCINATION_NDC_CODE, ndc, CodesetType.VACCINATION_CVX_CODE);
+
+        if (relatedCvxCodes != null) {
+            for (Code cvxCode : relatedCvxCodes) {
+                if (cvxCode != null) {
+                    // Add the CVX code value to the list
+                    cvxCodes.add(cvxCode.getValue());
+                }
             }
         }
     }
-    return ndcs;
-}
-
-  // Nouvelle méthode pour récupérer plusieurs NDC à partir d'un CVX
-  public List<String> getNdcCodesFromCvx(String cvx) {
-    List<String> ndcCodes = new ArrayList<>();
-    List<Code> relatedNdcCodes = this.map.getRelatedCodesForCodeIn(CodesetType.VACCINATION_CVX_CODE, cvx, CodesetType.VACCINATION_NDC_CODE);
-    
-    if (relatedNdcCodes != null) {
-      for (Code ndcCode : relatedNdcCodes) {
-        if (ndcCode != null) {
-          ndcCodes.add(ndcCode.getValue());
-        }
-      }
-    }
-    return ndcCodes;
+    return cvxCodes;
   }
+
+
 
 }

@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<codebase>
+
+    <codeset>
+        <label>Vaccine Group</label>
+        <type>VACCINE_GROUP</type>
+
+        <code>
+            <value>VaccineGroup1</value>
+            <label>Label VaccineGroup1</label>
+            <description></description>
+            <code-status>
+                <status>Valid</status>
+            </code-status>
+            <reference>
+                <link-to codeset="VACCINATION_CVX_CODE">001</link-to>
+                <link-to codeset="VACCINATION_CVX_CODE">002</link-to>
+                <link-to codeset="VACCINATION_CVX_CODE">003</link-to>
+            </reference>
+        </code>
+
+        <code>
+            <value>VaccineGroup2</value>
+            <label>Label VaccineGroup2</label>
+            <description></description>
+            <code-status>
+                <status>Valid</status>
+            </code-status>
+            <reference>
+                <link-to codeset="VACCINATION_CVX_CODE">004</link-to>
+                <link-to codeset="VACCINATION_CVX_CODE">005</link-to>
+                <link-to codeset="VACCINATION_CVX_CODE">006</link-to>
+            </reference>
+        </code>
+
+        <code>
+            <value>VaccineGroup3</value>
+            <label>Label VaccineGroup3</label>
+            <description></description>
+            <code-status>
+                <status>Valid</status>
+            </code-status>
+            <reference>
+                <link-to codeset="VACCINATION_CVX_CODE">007</link-to>
+                <link-to codeset="VACCINATION_CVX_CODE">008</link-to>
+                <link-to codeset="VACCINATION_CVX_CODE">009</link-to>
+            </reference>
+        </code>
+
+        <code>
+            <value>VaccineGroup4</value>
+            <label>Label VaccineGroup4</label>
+            <description></description>
+            <code-status>
+                <status>Valid</status>
+            </code-status>
+            <reference>
+                <link-to codeset="VACCINATION_CVX_CODE">010</link-to>
+                <link-to codeset="VACCINATION_CVX_CODE">011</link-to>
+                <link-to codeset="VACCINATION_CVX_CODE">012</link-to>
+            </reference>
+        </code>
+    </codeset>
+
+
+    <codeset>
+        <label>Vaccination CVX Codes</label>
+        <type>VACCINATION_CVX_CODE</type>
+        <!-- CVX code 001 linked to multiple NDCs -->
+
+        <code>
+            <value>001</value>
+            <label>Example Vaccine 1</label>
+            <description>Description for Vaccine 1</description>
+            <code-status>
+                <status>Valid</status>
+            </code-status>
+            <reference>
+                <link-to codeset="VACCINE_GROUP">VaccineGroup1</link-to>
+                <link-to codeset="VACCINATION_NDC_CODE_UNIT_OF_USE">00001-0000-01</link-to>
+            </reference>
+        </code>
+
+                
+        <code>
+            <value>002</value>
+            <label>Example Vaccine 2</label>
+            <description>Description for Vaccine 2</description>
+            <code-status>
+                <status>Valid</status>
+            </code-status>
+            <reference>
+                <link-to codeset="VACCINE_GROUP">VaccineGroup1</link-to>
+
+            </reference>
+        </code>
+                
+        <code>
+            <value>003</value>
+            <label>Example Vaccine 3</label>
+            <description>Description for Vaccine 3</description>
+            <code-status>
+                <status>Valid</status>
+            </code-status>
+            <reference>
+                <link-to codeset="VACCINE_GROUP">VaccineGroup1</link-to>
+                <link-to codeset="VACCINATION_NDC_CODE_UNIT_OF_USE">00003-0000-01</link-to>
+            </reference>
+        </code>
+                
+        <code>
+            <value>004</value>
+            <label>Example Vaccine 4</label>
+            <description>Description for Vaccine 4</description>
+            <code-status>
+                <status>Valid</status>
+            </code-status>
+            <reference>
+                <link-to codeset="VACCINE_GROUP">VaccineGroup2</link-to>
+                <link-to codeset="VACCINATION_NDC_CODE_UNIT_OF_USE">00001-0000-01</link-to>
+            </reference>
+        </code>
+                
+        <code>
+            <value>005</value>
+            <label>Example Vaccine 5</label>
+            <description>Description for Vaccine 5</description>
+            <code-status>
+                <status>Valid</status>
+            </code-status>
+            <reference>
+                <link-to codeset="VACCINE_GROUP">VaccineGroup2</link-to>
+            </reference>
+        </code>
+                
+        <code>
+            <value>006</value>
+            <label>Example Vaccine 6</label>
+            <description>Description for Vaccine 6</description>
+            <code-status>
+                <status>Valid</status>
+            </code-status>
+            <reference>
+                <link-to codeset="VACCINE_GROUP">VaccineGroup2</link-to>
+                <link-to codeset="VACCINATION_NDC_CODE_UNIT_OF_USE">00002-0000-01</link-to>
+            </reference>
+        </code>
+                
+        <code>
+            <value>007</value>
+            <label>Example Vaccine 7</label>
+            <description>Description for Vaccine 7</description>
+            <code-status>
+                <status>Valid</status>
+            </code-status>
+            <reference>
+                <link-to codeset="VACCINE_GROUP">VaccineGroup3</link-to>
+                <link-to codeset="VACCINATION_NDC_CODE_UNIT_OF_USE">00002-0000-01</link-to>
+            </reference>
+        </code>
+                
+        <code>
+            <value>008</value>
+            <label>Example Vaccine 8</label>
+            <description>Description for Vaccine 8</description>
+            <code-status>
+                <status>Valid</status>
+            </code-status>
+            <reference>
+                <link-to codeset="VACCINE_GROUP">VaccineGroup3</link-to>
+                <link-to codeset="VACCINATION_NDC_CODE_UNIT_OF_USE">00003-0000-01</link-to>
+            </reference>
+        </code>
+                
+        <code>
+            <value>009</value>
+            <label>Example Vaccine 9</label>
+            <description>Description for Vaccine 9</description>
+            <code-status>
+                <status>Valid</status>
+            </code-status>
+            <reference>
+                <link-to codeset="VACCINE_GROUP">VaccineGroup3</link-to>
+            </reference>
+        </code>
+                
+        <code>
+            <value>010</value>
+            <label>Example Vaccine 10</label>
+            <description>Description for Vaccine 10</description>
+            <code-status>
+                <status>Valid</status>
+            </code-status>
+            <reference>
+                <link-to codeset="VACCINE_GROUP">VaccineGroup4</link-to>
+                <link-to codeset="VACCINATION_NDC_CODE_UNIT_OF_USE">00004-0000-01</link-to>
+            </reference>
+        </code>
+                
+        <code>
+            <value>011</value>
+            <label>Example Vaccine 11</label>
+            <description>Description for Vaccine 11</description>
+            <code-status>
+                <status>Valid</status>
+            </code-status>
+            <reference>
+                <link-to codeset="VACCINE_GROUP">VaccineGroup4</link-to>
+            </reference>
+        </code>
+                
+        <code>
+            <value>012</value>
+            <label>Example Vaccine 12</label>
+            <description>Description for Vaccine 12</description>
+            <code-status>
+                <status>Valid</status>
+            </code-status>
+            <reference>
+                <link-to codeset="VACCINE_GROUP">VaccineGroup4</link-to>
+            </reference>
+        </code>
+
+
+
+    </codeset>
+
+    <codeset>
+        <label>Vaccination NDC for Unit-of-Use</label>
+        <type>VACCINATION_NDC_CODE_UNIT_OF_USE</type>
+
+        <code>
+            <value>00001-0000-01</value>
+            <label>NDC Label 1</label>
+            <description>Description for NDC 1</description>
+            <code-status>
+                <status>Valid</status>
+            </code-status>
+            <reference>
+                <link-to codeset="VACCINATION_CVX_CODE">001</link-to>
+                <link-to codeset="VACCINATION_CVX_CODE">004</link-to>
+            </reference>
+            <use-date>
+                <not-before>20230101</not-before>
+            </use-date>
+        </code>
+
+        <code>
+            <value>00002-0000-01</value>
+            <label>NDC Label 2</label>
+            <description>Description for NDC 1</description>
+            <code-status>
+                <status>Valid</status>
+            </code-status>
+            <reference>
+                <link-to codeset="VACCINATION_CVX_CODE">006</link-to>
+                <link-to codeset="VACCINATION_CVX_CODE">007</link-to>
+            </reference>
+            <use-date>
+                <not-before>20230101</not-before>
+            </use-date>
+        </code>
+
+        <code>
+            <value>00003-0000-01</value>
+            <label>NDC Label 3</label>
+            <description>Description for NDC 1</description>
+            <code-status>
+                <status>Valid</status>
+            </code-status>
+            <reference>
+                <link-to codeset="VACCINATION_CVX_CODE">003</link-to>
+                <link-to codeset="VACCINATION_CVX_CODE">008</link-to>
+            </reference>
+            <use-date>
+                <not-before>20230101</not-before>
+            </use-date>
+        </code>
+
+        <code>
+            <value>00004-0000-01</value>
+            <label>NDC Label 4</label>
+            <description>Description for NDC 1</description>
+            <code-status>
+                <status>Valid</status>
+            </code-status>
+            <reference>
+                <link-to codeset="VACCINATION_CVX_CODE">010</link-to>
+            </reference>
+            <use-date>
+                <not-before>20230101</not-before>
+            </use-date>
+        </code>
+    </codeset>
+</codebase>
+
+
+<!-- Others -->
+
+<!-- Vaccine Type  -->
+<!-- Patient Sex -->
+<!-- Forecast Immunization Schedule -->
+<!-- Observation Identifier -->
+<!-- OBSERVATION_IDENTIFIER -->
+<!-- Patient Protection -->
+<!-- CDC PHIN VADS -->
+<!-- Vaccination VIS Doc Type -->
+<!-- VACCINATION_VIS_DOC_TYPE VOIR -->
+<!-- Contraindication or Precaution -->
+<!-- Telecommunication Equipment -->
+<!-- Financial Status Code -->
+<!-- Body Site -->
+<!-- Vaccination Confidentiality -->
+<!-- Vaccination Reaction -->
+<!-- Body Route -->
+
+
+<!-- Person Name Type -->
+<!-- Id Assigning Authority -->
+<!-- Evidence of Immunity -->
+<!-- Vaccination Funding Source -->
+<!-- Physician Number -->
+
+<!-- Vaccination Manufacturer Code -->
+<!-- Vaccination Order Control Code -->
+<!-- Vaccination Action Code -->
+<!-- Patient Ethnicity -->
+<!-- Vaccination Trade Name -->
+<!-- Person Language -->
+<!-- Vaccination Special Indications -->
+<!-- Patient Id -->
+<!-- Id Type Code -->
+<!-- Acknowledgement Type -->
+<!-- ACKNOWLEDGEMENT_TYPE -->
+<!-- Vaccination Lot Number Pattern -->
+<!-- HL7 Value Type -->
+<!-- Facility Type -->
+
+
+<!-- Vaccination Information Source -->
+<!-- Patient Class -->
+<!-- Forecast Reason -->
+<!-- Person Relationship -->
+<!-- Vaccine Product -->
+<!-- Message Profile Id -->
+<!-- Vaccination Validity -->
+<!-- Potential Issue -->
+<!-- Address Type -->
+<!-- Telecommunication Use -->
+<!-- Administration Unit -->
+<!-- Injection Guidance Site -->   
+<!-- Birth Order -->
+<!-- Vaccination VIS Vaccines -->
+<!-- Injection Guidance -->
+<!-- HL7 Coding System -->
+<!-- Vaccination Completion -->
+
+<!-- Registry Status -->
+<!-- Patient Race -->
+
