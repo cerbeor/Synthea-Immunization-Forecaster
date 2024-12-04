@@ -5,6 +5,8 @@ import java.util.stream.Collectors;
 
 import org.mitre.synthea.codebase.*;
 import org.mitre.synthea.codebase.mapping.*;
+import org.mitre.synthea.codebase.reference.CodesetType;
+import org.mitre.synthea.codebase.generated.*;;
 
 
 public class StockMapping {
@@ -16,6 +18,94 @@ public class StockMapping {
  public StockMapping(CodeMap codeMap){
     this.codeMap = codeMap;
  }
+
+// New version
+
+/**
+ * Maps CVX codes to their associated Vaccine Groups and NDCs.
+ *
+ * This method fetches all CVX codes from the CodeMap, determines the Vaccine Groups
+ * related to each CVX, and links the CVX codes to NDCs via the CodeMap relationships.
+ *
+ * @return A map where the key is the vaccine group (String) and the value is a list of associated NDC objects.
+ */
+public Map<String, List<NDC>> mapCvxToVaccineGroupsAndNDCs() {
+    // Map that will contain each VaccineGroup as a key and a list of associated NDCs as the value
+    Map<String, List<NDC>> vaccineGroupMap = new HashMap<>();
+
+    // 1. Retrieve all CVX codes
+    List<String> cvxCodes = CodeMapUtil.extractCvxFromCodebase(codeMap); // Get all CVX codes from the database
+    System.out.println("Total CVX Codes: " + cvxCodes.size());
+
+    // 2. Loop through each CVX code
+    for (String cvx : cvxCodes) {
+        // Retrieve the CVX Code object
+        Code cvxCodeObj = codeMap.getCodeForCodeset(CodesetType.VACCINATION_CVX_CODE, cvx);
+        
+        if (cvxCodeObj != null) {
+            // Step 2.1: Retrieve the list of NDCs associated with this CVX
+            List<String> relatedNDCs = codeMap.getRelatedValues(cvxCodeObj, CodesetType.VACCINATION_NDC_CODE_UNIT_OF_USE);
+            System.out.println("CVX " + cvx + " has " + relatedNDCs.size() + " related NDCs.");
+
+            // Step 2.2: Retrieve the vaccine group(s) associated with this CVX
+            List<String> vaccineGroups = getVaccineGroupLabelsFromCvx(cvx); // Method to get the vaccine groups for a CVX
+            System.out.println("CVX " + cvx + " is associated with " + vaccineGroups.size() + " vaccine groups.");
+
+            // For each vaccine group associated with this CVX
+            for (String vaccineGroup : vaccineGroups) {
+                // Get or create the list of NDCs for this VaccineGroup
+                List<NDC> ndcList = vaccineGroupMap.computeIfAbsent(vaccineGroup, k -> new ArrayList<>());
+
+                // Add the NDCs associated with this VaccineGroup
+                for (String ndcCode : relatedNDCs) {
+                    // Create a new NDC object or retrieve an existing one
+                    NDC ndc = new NDC(ndcCode);
+
+                    // Add the CVX Code to this NDC
+                    ndc.getCvxCodes().add(cvxCodeObj);
+
+                    // Add this NDC to the list for this vaccine group
+                    ndcList.add(ndc);
+                }
+            }
+        }
+    }
+
+    // Return the final map
+    return vaccineGroupMap;
+}
+
+/**
+ * Method to retrieve the vaccine groups associated with a given CVX code.
+ *
+ * @param cvx The CVX code for which to retrieve associated vaccine groups.
+ * @return A list of vaccine group names associated with the CVX code.
+ */
+public List<String> getVaccineGroupLabelsFromCvx(String cvx) {
+    List<String> grouplabels = new ArrayList<>();
+    
+    // Create an instance of RelatedCode to retrieve groups associated with the CVX
+    RelatedCode relatedCode = new RelatedCode(codeMap);
+    
+    // Retrieve the vaccine group codes associated with this CVX
+    List<String> cvxVaccineGroups = relatedCode.getVaccineGroupLabelsFromCvx(cvx);
+    
+    // Check if any groups were found
+    if (cvxVaccineGroups != null) {
+        // Add each vaccine group to the list
+        grouplabels.addAll(cvxVaccineGroups);
+    }
+    
+    // Return the list of vaccine group labels associated with the CVX
+    return grouplabels;
+}
+
+
+
+
+
+
+ // old version
 
 
  public List<Combo> generateNdcCombinations(int n, int m) {
@@ -165,5 +255,5 @@ public void setMapStockVaccineGroup(HashMap<String, Boolean> mapStockVaccineGrou
 }
 
 
-    
+
 }
