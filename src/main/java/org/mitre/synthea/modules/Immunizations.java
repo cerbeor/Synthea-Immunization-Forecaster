@@ -21,6 +21,7 @@ import org.immregistries.vfa.connect.model.*;
 import org.mitre.synthea.helpers.Attributes;
 import org.mitre.synthea.helpers.Attributes.Inventory;
 import org.mitre.synthea.helpers.Utilities;
+import org.mitre.synthea.world.agents.Clinician;
 import org.mitre.synthea.world.agents.Person;
 import org.mitre.synthea.world.concepts.HealthRecord;
 import org.mitre.synthea.world.concepts.HealthRecord.Code;
@@ -100,6 +101,15 @@ public class Immunizations {
             }
           }
 
+          // If antivax clinician
+          HealthRecord.Encounter currentEncounter = (HealthRecord.Encounter) person.attributes.get(Person.CURRENT_ENCOUNTER);
+          if ((boolean) currentEncounter.clinician.attributes.getOrDefault(Person.ANTIVAX, false)) {
+            getImmunization = false;
+//            System.out.println("Clinician "+ currentEncounter.clinician.attributes.get(Clinician.FIRST_NAME)+" is antivax. Vaccine not administered: " + immunizationKey);
+          } /*else {
+            System.out.println("---- Clinician "+ currentEncounter.clinician.attributes.get(Clinician.FIRST_NAME)+" is pro-vax. Vaccine administered: " + immunizationKey);
+          }*/
+
           if (getImmunization) {
             /**
              * getting specific history on cvx, name
@@ -163,25 +173,25 @@ public class Immunizations {
 //      log = log.strip();
 //      System.out.println(log);
 //      System.out.println("log length = " + (log.split("\n").length - 1));
-        /**
-         * Filtering the result of the forecaster (some vaccines are duplicated)
-         */
-        List<Integer> vaccineGroupIdList = new ArrayList<>();
-        List<String> vaccineCvxList = new ArrayList<>();
-        Iterator<ForecastActual> iterator = forecastActuals.iterator();
-        while (iterator.hasNext()) {
-            ForecastActual forecastActual = iterator.next();
-            if (vaccineGroupIdList.contains(forecastActual.getVaccineGroup().getVaccineGroupId()) 
-            || vaccineCvxList.contains(forecastActual.getVaccineGroup().getVaccineCvx())
-            || forecastActual.getVaccineGroup().getLabel().equals("DTaP, Tdap or Td")) {
-                iterator.remove();
-            } else {
-                vaccineGroupIdList.add(forecastActual.getVaccineGroup().getVaccineGroupId());
-                vaccineCvxList.add(forecastActual.getVaccineGroup().getVaccineCvx());
-              }
-        };
-        vaccineGroupIdList = null;
-        vaccineCvxList = null;
+      /**
+       * Filtering the result of the forecaster (some vaccines are duplicated)
+       */
+      List<Integer> vaccineGroupIdList = new ArrayList<>();
+      List<String> vaccineCvxList = new ArrayList<>();
+      Iterator<ForecastActual> iterator = forecastActuals.iterator();
+      while (iterator.hasNext()) {
+        ForecastActual forecastActual = iterator.next();
+        if (vaccineGroupIdList.contains(forecastActual.getVaccineGroup().getVaccineGroupId())
+                || vaccineCvxList.contains(forecastActual.getVaccineGroup().getVaccineCvx())
+                || forecastActual.getVaccineGroup().getLabel().equals("DTaP, Tdap or Td")) {
+          iterator.remove();
+        } else {
+          vaccineGroupIdList.add(forecastActual.getVaccineGroup().getVaccineGroupId());
+          vaccineCvxList.add(forecastActual.getVaccineGroup().getVaccineCvx());
+        }
+      };
+      vaccineGroupIdList = null;
+      vaccineCvxList = null;
 
       forecastActuals = checkForCombinationDepreciated(forecastActuals);
 
@@ -271,48 +281,48 @@ public class Immunizations {
 
     List<String> immunizationList = new ArrayList<>();
     for (ForecastActual forecastActual : forecastActualList) {
-        immunizationList.add(forecastActual.getVaccineGroup().getVaccineCvx());
+      immunizationList.add(forecastActual.getVaccineGroup().getVaccineCvx());
     }
 
     List<Integer> index = new ArrayList<>();
     for (List<String> combinationVaccine : listOfCombinations) {
       index.clear();
-        for (String cvxCode : combinationVaccine.subList(2, combinationVaccine.size())) {
-            if (immunizationList.contains(cvxCode)) {
-                for (String immunization : immunizationList) {
-                    if (immunization.equals(cvxCode)) {
-                        index.add(immunizationList.indexOf(immunization));
-                        break;
-                    }
-                }
-            } 
-            else { break;}
+      for (String cvxCode : combinationVaccine.subList(2, combinationVaccine.size())) {
+        if (immunizationList.contains(cvxCode)) {
+          for (String immunization : immunizationList) {
+            if (immunization.equals(cvxCode)) {
+              index.add(immunizationList.indexOf(immunization));
+              break;
+            }
+          }
+        }
+        else { break;}
+      }
+
+      index.sort((a, b) -> Integer.compare(b, a));
+
+      if (index.size() == combinationVaccine.size() - 2) {
+        if (!immunizationList.contains(combinationVaccine.get(0))) {
+          ForecastActual newVaccine = new ForecastActual();
+          newVaccine.setAdminStatus("N");
+          newVaccine.setVaccineGroup(new VaccineGroup(Integer.parseInt(combinationVaccine.get(0)),combinationVaccine.get(1), combinationVaccine.get(0)));
+          forecastActualList.add(newVaccine);
         }
 
-        index.sort((a, b) -> Integer.compare(b, a));
-
-        if (index.size() == combinationVaccine.size() - 2) {
-            if (!immunizationList.contains(combinationVaccine.get(0))) {
-                ForecastActual newVaccine = new ForecastActual();
-                newVaccine.setAdminStatus("N");
-                newVaccine.setVaccineGroup(new VaccineGroup(Integer.parseInt(combinationVaccine.get(0)),combinationVaccine.get(1), combinationVaccine.get(0)));
-                forecastActualList.add(newVaccine);
-            }
-
-            Iterator<Integer> iterator = index.iterator();
-            while (iterator.hasNext()) {
-                int ind = iterator.next();
-                immunizationList.remove(ind);
-                forecastActualList.remove(ind);
-                iterator.remove(); 
-            }
+        Iterator<Integer> iterator = index.iterator();
+        while (iterator.hasNext()) {
+          int ind = iterator.next();
+          immunizationList.remove(ind);
+          forecastActualList.remove(ind);
+          iterator.remove();
         }
+      }
     }
     for (ForecastActual forecastActual : forecastActualList) {
       System.out.println(forecastActual.getVaccineGroup().getLabel() + " cvx code "+ forecastActual.getVaccineGroup().getVaccineCvx() +  " Adminlabel " + forecastActual.getAdmin().getLabel() + " | " + forecastActual.getAdminStatus());
     }
     return forecastActualList;
-}
+  }
 
   public static ImmunizationRecommendation queryForecaster(Person person, long time, Map<String, List<Long>> immunizationsGiven) throws Exception {
     // This fonction is going to ask the new CDS the Immunization Recommendation of the patient
@@ -394,7 +404,7 @@ public class Immunizations {
     // Return the ImmunizationRecommendation resource
     return immunizationRecommendation;
   }
-  
+
 
   @SuppressWarnings("rawtypes")
   private static Map loadImmunizationSchedule() {
@@ -509,20 +519,20 @@ public class Immunizations {
   }
 
 
-    /**
-     * Return whether or not the specified immunization is due.
-     *
-     * @param immunization The immunization to give
-     * @param person The person to receive the immunization
-     * @param time The time the immunization would be given
-     * @param immunizationsGiven The history of immunizations
-     * @return -1 if the immunization should not be given, otherwise a positive integer,
-     *     where the value is the series. For example, 1 if this is the first time the
-     *     vaccine was administered; 2 if this is the second time, et cetera.
-     */
+  /**
+   * Return whether or not the specified immunization is due.
+   *
+   * @param immunization The immunization to give
+   * @param person The person to receive the immunization
+   * @param time The time the immunization would be given
+   * @param immunizationsGiven The history of immunizations
+   * @return -1 if the immunization should not be given, otherwise a positive integer,
+   *     where the value is the series. For example, 1 if this is the first time the
+   *     vaccine was administered; 2 if this is the second time, et cetera.
+   */
   @SuppressWarnings({ "rawtypes", "unchecked" })
   public static int immunizationDue(String immunization, Person person, long time,
-      Map<String, List<Long>> immunizationsGiven) {
+                                    Map<String, List<Long>> immunizationsGiven) {
     int ageInMonths = person.ageInMonths(time);
 
     List<Long> history = null;
@@ -595,14 +605,14 @@ public class Immunizations {
   @SuppressWarnings("rawtypes")
   public static Collection<Code> getAllCodes() {
     List<Map> rawCodes = (List<Map>) immunizationSchedule.values()
-        .stream().map(m -> (Map)m.get("code")).collect(Collectors.toList());
+            .stream().map(m -> (Map)m.get("code")).collect(Collectors.toList());
 
     List<Code> convertedCodes = new ArrayList<Code>(rawCodes.size());
 
     for (Map m : rawCodes) {
       Code immCode = new Code(m.get("system").toString(),
-                              m.get("code").toString(),
-                              m.get("display").toString());
+              m.get("code").toString(),
+              m.get("display").toString());
 
       convertedCodes.add(immCode);
     }

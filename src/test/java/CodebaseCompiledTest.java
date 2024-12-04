@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.mitre.synthea.codebase.CodeMap;
 import org.mitre.synthea.codebase.CodeMapBuilder;
+import org.mitre.synthea.codebase.RelatedCode;
 import org.mitre.synthea.codebase.reference.*;
 import org.mitre.synthea.codebase.generated.*;
 
@@ -87,4 +88,16 @@ public class CodebaseCompiledTest {
         assertEquals("00005-0100-01", relatedNDCs.get(0));
     }
 
+
+    // Test vaccine group
+
+    @Test
+    public void testGetVaccineGroupLabelsFromCvx() {
+        String cvxCode = "162";  // Example of a valid CVX
+        RelatedCode relatedCode = new RelatedCode(codeMap);
+        relatedCode.getVaccineGroupLabelsFromCvx(cvxCode);
+        List<String> vaccineGroupLabels = relatedCode.getVaccineGroupLabelsFromCvx(cvxCode);
+        assertEquals(1, vaccineGroupLabels.size());
+        assertEquals("meningococcal B, recombinant", vaccineGroupLabels.get(0));
+    }
 }
