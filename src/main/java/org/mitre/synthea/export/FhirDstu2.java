@@ -99,6 +99,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.hl7.fhir.r4.model.BooleanType;
+import org.hl7.fhir.r4.model.Extension;
 import org.mitre.synthea.engine.Components;
 import org.mitre.synthea.engine.Components.Attachment;
 import org.mitre.synthea.helpers.Config;
@@ -359,6 +361,17 @@ public class FhirDstu2 {
 
     patientResource.addUndeclaredExtension(raceExtension);
     patientResource.addUndeclaredExtension(ethnicityExtension);
+
+    // Add patient antivax extension
+    if (person.attributes.containsKey(Person.ANTIVAX)) {
+      Boolean isAntivax = (Boolean) person.attributes.get(Person.ANTIVAX);
+
+      ExtensionDt antivaxExtension = new ExtensionDt();
+      antivaxExtension.setUrl("http://synthetichealth.github.io/synthea/antivax");
+      antivaxExtension.setValue(new BooleanDt(isAntivax));
+
+      patientResource.addUndeclaredExtension(antivaxExtension);
+    }
 
     String firstLanguage = (String) person.attributes.get(Person.FIRST_LANGUAGE);
     Map languageMap = (Map) languageLookup.get(firstLanguage);
