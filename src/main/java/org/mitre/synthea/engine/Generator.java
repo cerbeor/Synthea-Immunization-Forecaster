@@ -10,12 +10,14 @@ import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -27,6 +29,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.io.IOCase;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.mitre.synthea.editors.GrowthDataErrorsEditor;
+import org.mitre.synthea.engine.Generator.GeneratorOptions;
 import org.mitre.synthea.export.CDWExporter;
 import org.mitre.synthea.export.Exporter;
 import org.mitre.synthea.helpers.Config;
@@ -78,11 +81,29 @@ public class Generator {
   private Module keepPatientsModule;
   private Long maxAttemptsToKeepPatient;
   public TransitionMetrics metrics;
-  public static String DEFAULT_STATE = "Massachusetts";
   private Exporter.ExporterRuntimeOptions exporterRuntimeOptions;
   public static EntityManager entityManager;
   public final int threadPoolSize;
   public AtomicInteger antivaxCount = new AtomicInteger(0);
+
+  // List of US states without abbreviations
+  private static final List<String> US_STATES = Arrays.asList(
+    "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", 
+    "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", 
+    "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", 
+    "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", 
+    "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", 
+    "New Hampshire", "New Jersey", "New Mexico", "New York", 
+    "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", 
+    "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", 
+    "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", 
+    "West Virginia", "Wisconsin", "Wyoming"
+  );
+
+  private static String getRandomState() {
+    Random random = new Random();
+    return US_STATES.get(random.nextInt(US_STATES.size()));
+  } 
 
   /**
    * Used only for testing and debugging. Populate this field to keep track of all patients
@@ -226,7 +247,7 @@ public class Generator {
 
   private void init() {
     if (options.state == null) {
-      options.state = DEFAULT_STATE;
+      options.state = getRandomState();
     }
     int stateIndex = Location.getIndex(options.state);
     if (Config.getAsBoolean("exporter.cdw.export")) {
