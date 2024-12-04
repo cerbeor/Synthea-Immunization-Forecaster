@@ -1,9 +1,41 @@
+import os
+import json
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 
-# Load your data
-df = pd.read_csv('output/csv/patients.csv')
+# Folder containing JSON files
+json_folder_path = 'output/fhir/'
+
+# Data storage
+data = []
+
+# Iterate over each file in the folder
+for file_name in os.listdir(json_folder_path):
+    if file_name.endswith('.json'):  # Check if the file is a JSON file
+        file_path = os.path.join(json_folder_path, file_name)
+        with open(file_path, 'r') as file:
+            json_data = json.load(file)
+            # Check for 'entry' and 'resourceType'
+            if 'entry' in json_data:
+                for entry in json_data['entry']:
+                    if entry.get('resource', {}).get('resourceType') == 'Patient':
+                        resource = entry['resource']
+                        # Extract ANTIVAX_STATUS and STATE
+                        antivax_status = None
+                        state = None
+                        for extension in resource.get('extension', []):
+                            if extension['url'] == "http://synthetichealth.github.io/synthea/antivax":
+                                antivax_status = extension.get('valueBoolean', None)
+                            if extension['url'] == "http://hl7.org/fhir/StructureDefinition/patient-birthPlace":
+                                state = extension.get('valueAddress', {}).get('state', None)
+                        if antivax_status is not None and state is not None:
+                            data.append({'STATE': state, 'ANTIVAX_STATUS': antivax_status})
+
+# Convert to DataFrame
+df = pd.DataFrame(data)
+
+print(df.head())
 
 # Define state name to abbreviation mapping 
 state_name_to_abbreviation = {
@@ -32,12 +64,11 @@ df = df.dropna(subset=['STATE'])  # Drop rows where state mapping fails
 
 # Calculate counts by state
 state_counts = (
-    df.groupby('STATE')
+    df.groupby('STATE', as_index=False)  # Group by STATE
     .agg(
-        total_people=('Id', 'size'),
-        antivax_count=('ANTIVAX_STATUS', 'sum')
+        total_people=('ANTIVAX_STATUS', 'size'),  # Count total entries per state
+        antivax_count=('ANTIVAX_STATUS', 'sum')  # Sum of true (antivax) entries
     )
-    .reset_index()
 )
 
 # Add antivax percentage column
