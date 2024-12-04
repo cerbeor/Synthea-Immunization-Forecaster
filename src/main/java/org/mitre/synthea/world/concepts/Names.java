@@ -120,6 +120,7 @@ public class Names {
     // Why? Because we do not know how using systems will index names. Say a user of an system
     // loaded with Synthea data wants to find all the people named John Smith. This will be easier
     // if John Smith always resolves to John52 Smith32 and not [John52 Smith32, John10 Smith22, ...]
-    return name + Integer.toString(Math.abs(name.hashCode() % 1000));
+//    return name + Integer.toString(Math.abs(name.hashCode() % 1000));
+    return name + "NIST";
   }
 }
