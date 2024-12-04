@@ -151,6 +151,10 @@ public class Generator {
     public Map<String, Double> antivaxZipCodePrefixes = new HashMap<>();
     /** Percentage of clinicians to assign as antivax (default 0), for immunization module */
     public double cliniciansAntivaxPercentage = 0;
+    /** Map storing the percentage for each clinician with last name's first letter to be antivax */
+    public Map<String, Double> cliniciansAntivaxFirstLetters = new HashMap<>();
+    /** Map storing the percentage for each clinician in zip code prefixes to be antivax */
+    public Map<String, Double> cliniciansAntivaxZipCodePrefixes = new HashMap<>();
   }
 
   /**
@@ -274,8 +278,10 @@ public class Generator {
       this.metrics = new TransitionMetrics();
     }
 
-    // initialize hospitals
+    // initialize hospitalsgit
     Provider.setCliniciansAntivaxPercentage(options.cliniciansAntivaxPercentage);
+    Provider.setCliniciansAntivaxFirstLetters(options.cliniciansAntivaxFirstLetters);
+    Provider.setCliniciansAntivaxZipCodePrefixes(options.cliniciansAntivaxZipCodePrefixes);
     Provider.loadProviders(location, this.clinicianRandom);
     // Initialize Payers
     PayerManager.loadPayers(location);

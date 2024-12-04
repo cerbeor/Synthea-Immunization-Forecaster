@@ -43,6 +43,14 @@ public class Provider implements QuadTreeElement, Serializable {
     Provider.cliniciansAntivaxPercentage = cliniciansAntivaxPercentage;
   }
 
+  public static void setCliniciansAntivaxFirstLetters(Map<String, Double> cliniciansAntivaxFirstLetters) {
+    Provider.cliniciansAntivaxFirstLetters = cliniciansAntivaxFirstLetters;
+  }
+
+  public static void setCliniciansAntivaxZipCodePrefixes(Map<String, Double> cliniciansAntivaxZipCodePrefixes) {
+    Provider.cliniciansAntivaxZipCodePrefixes = cliniciansAntivaxZipCodePrefixes;
+  }
+
   public enum ProviderType {
     DIALYSIS, HOME_HEALTH, HOSPICE, HOSPITAL, LONG_TERM,
     NURSING, PRIMARY, REHAB, URGENT, VETERAN, PHARMACY, IHS;
@@ -108,6 +116,10 @@ public class Provider implements QuadTreeElement, Serializable {
   // row: year, column: type, value: count
   private transient Table<Integer, String, AtomicInteger> utilization;
   private static double cliniciansAntivaxPercentage = 0;
+  /** Map storing the percentage for each clinician with last name's first letter to be antivax */
+  private static Map<String, Double> cliniciansAntivaxFirstLetters = new HashMap<>();
+  /** Map storing the percentage for each clinician in zip code prefixes to be antivax */
+  private static Map<String, Double> cliniciansAntivaxZipCodePrefixes = new HashMap<>();
 
   /**
    * Java Serialization support for the utilization field.
@@ -556,6 +568,7 @@ public class Provider implements QuadTreeElement, Serializable {
   private Clinician generateClinician(long clinicianSeed, long clinicianIdentifier,
       RandomNumberGenerator random) {
     Clinician clinician = null;
+    boolean isAntivax = false;
     try {
       Person doc = new Person(clinicianIdentifier);
       Demographics cityDemographics = location.randomCity(doc);
@@ -596,13 +609,44 @@ public class Provider implements QuadTreeElement, Serializable {
           + ((doc.randInt(9999 - 1000 + 1) + 1000));
       clinician.attributes.put(Person.IDENTIFIER_SSN, ssn);
 
+      // Antivax clinicians with argument -cliniciansAntivaxZipCodePrefixes
+      if (cliniciansAntivaxFirstLetters != null){
+        // Check if last name matches any of the specified letters with percentages
+        if (lastName != null && cliniciansAntivaxFirstLetters.containsKey(lastName.substring(0, 1).toLowerCase())) {
+          // If true, person have a certain percentage of chance to be antivax
+          double percentage = cliniciansAntivaxFirstLetters.get(lastName.substring(0, 1).toLowerCase());
+          if (random.rand()*100 < percentage) {
+            isAntivax = true;
+          }
+        }
+      }
+
+      // Antivax clinicians with argument -cliniciansAntivaxLastName
+      if (!isAntivax && cliniciansAntivaxZipCodePrefixes != null){
+        // Check if zip code matches any of the specified prefixes with percentages
+        if (zip != null) {
+          for (String prefix : cliniciansAntivaxZipCodePrefixes.keySet()) {
+            if (zip.startsWith(prefix)) {
+              // If true, person have a certain percentage of chance to be antivax
+              double percentage = cliniciansAntivaxZipCodePrefixes.get(prefix);
+              if (random.rand()*100 < percentage) {
+                isAntivax = true;
+                break;
+              }
+            }
+          }
+        }
+      }
+
       // Clinicians have a percentage of chance of being antivax
 //      System.out.println("Clinician antivax percentage: " + cliniciansAntivaxPercentage);
-      if (random.rand() < cliniciansAntivaxPercentage/100) {
-        clinician.attributes.put(Person.ANTIVAX, true);
-      } else {
-        clinician.attributes.put(Person.ANTIVAX, false);
+      if (cliniciansAntivaxFirstLetters.isEmpty() && cliniciansAntivaxZipCodePrefixes.isEmpty()){
+        if (random.rand()*100 < cliniciansAntivaxPercentage) {
+          isAntivax = true;
+        }
       }
+
+      clinician.attributes.put(Person.ANTIVAX, isAntivax);
 
     } catch (Throwable e) {
       e.printStackTrace();

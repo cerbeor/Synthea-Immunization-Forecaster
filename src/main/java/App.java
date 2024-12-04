@@ -42,6 +42,8 @@ public class App {
     System.out.println("         [-antivaxLastNames firstLetter]");
     System.out.println("         [-antivaxZipCodePrefixes zipPrefixes]");
     System.out.println("         [-cliniciansAntivaxPercentage cliniciansAntivaxPercentage]");
+    System.out.println("         [-cliniciansAntivaxLastName cliniciansAntivaxFirstLetter]");
+    System.out.println("         [-cliniciansAntivaxZipCodePrefixes cliniciansAntivaxZipPrefixes]");
     System.out.println("         [--config*=value]");
     System.out.println("          * any setting from src/main/resources/synthea.properties");
     System.out.println("Examples:");
@@ -56,6 +58,7 @@ public class App {
     System.out.println("run_synthea --exporter.baseDirectory=\"./output_tx/\" Texas");
     System.out.println("run_synthea -antivaxPercentage 90");
     System.out.println("run_synthea -p 50 -antivaxLastNames A:20-B:50-C:30 -antivaxZipCodePrefixes 010:80-023:90");
+    System.out.println("run_synthea -p 50 -cliniciansAntivaxFirstLetter A:20-B:50-C:30 -cliniciansAntivaxZipPrefixes 010:80-023:90");
     System.out.println("run_synthea -cliniciansAntivaxPercentage 100");
   }
 
@@ -247,7 +250,7 @@ public class App {
           } else if (currArg.equals("-antivaxLastNames")) {
             String value = argsQ.poll();
             if (value == null) {
-              System.err.println("Error: No value provided for -antivaxFirstLetter.");
+              System.err.println("Error: No value provided for -antivaxLastNames.");
             } else {
               parseAntivaxMap(value.toLowerCase(), options.antivaxFirstLetters);
               System.out.println("Antivax first letters and percentages: " + options.antivaxFirstLetters);
@@ -267,6 +270,22 @@ public class App {
               throw new IllegalArgumentException("Clinicians antivax percentage must be between 0 and 100.");
             }
             System.out.println("Clinicians Antivax percentage: " + options.cliniciansAntivaxPercentage);
+          } else if (currArg.equals("-cliniciansAntivaxLastName")) {
+            String value = argsQ.poll();
+            if (value == null) {
+              System.err.println("Error: No value provided for -cliniciansAntivaxLastName.");
+            } else {
+              parseAntivaxMap(value.toLowerCase(), options.cliniciansAntivaxFirstLetters);
+              System.out.println("Clinicians antivax first letters and percentages: " + options.cliniciansAntivaxFirstLetters);
+            }
+          } else if (currArg.equals("-cliniciansAntivaxZipCodePrefixes")) {
+            String value = argsQ.poll();
+            if (value == null) {
+              System.err.println("Error: No value provided for -cliniciansAntivaxZipCodePrefixes.");
+            } else {
+              parseAntivaxMap(value, options.cliniciansAntivaxZipCodePrefixes);
+              System.out.println("Clinicians antivax zip code prefixes and percentages: " + options.cliniciansAntivaxZipCodePrefixes);
+            }
           } else if (currArg.startsWith("--")) {
             String configSetting;
             String value;
