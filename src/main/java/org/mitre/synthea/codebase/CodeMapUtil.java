@@ -97,4 +97,45 @@ public class CodeMapUtil {
         // Convert the Set to a List before returning
         return new ArrayList<>(vaccineGroupSet);
     }
+
+
+    /**
+ * Extracts all CVX code values from the given CodeMap instance.
+ * 
+ * This method focuses on the VACCINATION_CVX_CODE CodesetType.
+ * 
+ * @param codeMap The CodeMap instance containing various codesets.
+ * @return A list of CVX code values (strings) extracted from the VACCINATION_CVX_CODE codeset.
+ */
+public static List<String> extractCvxFromCodebase(CodeMap codeMap) {
+    // Use a Set to avoid duplicates
+    Set<String> cvxCodeSet = new HashSet<>();
+
+    // Retrieve the entire CodeBase map from the CodeMap instance
+    Map<CodesetType, Map<String, Code>> codeBaseMap = codeMap.getCodeBaseMap();
+
+    if (codeBaseMap == null || codeBaseMap.isEmpty()) {
+        return new ArrayList<>(); // Return an empty list if no codes are found
+    }
+
+    // Focus only on the VACCINATION_CVX_CODE CodesetType
+    CodesetType cvxType = CodesetType.VACCINATION_CVX_CODE;
+
+    // Retrieve the CVX codeset from the CodeBase map
+    Map<String, Code> cvxCodeset = codeBaseMap.get(cvxType);
+
+    if (cvxCodeset != null) {
+        // Extract all CVX code values from the current codeset
+        for (Map.Entry<String, Code> entry : cvxCodeset.entrySet()) {
+            Code cvxCode = entry.getValue();
+            if (cvxCode != null && cvxCode.getValue() != null) {
+                cvxCodeSet.add(cvxCode.getValue()); // Add the value to the Set
+            }
+        }
+    }
+
+    // Convert the Set to a List before returning
+    return new ArrayList<>(cvxCodeSet);
+}
+
 }
