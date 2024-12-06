@@ -101,6 +101,7 @@ run_synthea -p 50 -antivaxZipCodePrefixes 010:80-023:90 --> people from zip code
 run_synthea -p 50 -antivaxLastNames A:20-B:50-C:30 --> people with last names (maiden names) starting with A will have 20% chance of being antivax, people with last names starting with B will have 50% chance of being antivax, people with last names starting with C will have 30% chance of being antivax
 run_synthea -cliniciansAntivaxPercentage 100
 run_synthea -p 50 -cliniciansAntivaxLastName A:20-B:50-C:30 -cliniciansAntivaxZipCodePrefixes 010:80-023:90
+run_synthea testServer
 ```
 
 Some settings can be changed in `./src/main/resources/synthea.properties`.

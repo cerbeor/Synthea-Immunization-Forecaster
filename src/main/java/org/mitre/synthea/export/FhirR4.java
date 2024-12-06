@@ -545,12 +545,6 @@ public class FhirR4 {
   @SuppressWarnings("rawtypes")
   private static BundleEntryComponent basicInfo(Person person, Bundle bundle, long stopTime) {
     Patient patientResource = new Patient();
-
-    // Adding antivax_status as a custom field
-    BooleanType antivaxStatus = new BooleanType();
-    antivaxStatus.setValue((boolean) person.attributes.getOrDefault(Person.ANTIVAX, false));
-    patientResource.addExtension("antivax_status", antivaxStatus);
-
     patientResource.addIdentifier().setSystem(SYNTHEA_IDENTIFIER)
         .setValue((String) person.attributes.get(Person.ID));
 

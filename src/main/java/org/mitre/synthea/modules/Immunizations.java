@@ -44,6 +44,12 @@ import ca.uhn.fhir.rest.client.api.IGenericClient;
 public class Immunizations {
   public static final String IMMUNIZATIONS = "immunizations";
 
+  /** Name of the two immunization servers (florence and test)*/
+  public static final String FLORENCE = "https://florence.immregistries.org/step/fhir";
+  public static final String TEST = "http://localhost:9999/fhir";
+  /** Server that will be used for the immunization forecaster */
+  private static String immunizationServer = FLORENCE; // default value
+
   @SuppressWarnings({ "unchecked", "rawtypes" })
   private static final Map<String, Map> immunizationSchedule = loadImmunizationSchedule();
 
@@ -333,7 +339,8 @@ public class Immunizations {
 
     // Create FHIR context and client
     FhirContext ctx = FhirContext.forR4();
-    IGenericClient client = ctx.newRestfulGenericClient("http://localhost:9999/fhir");
+
+    IGenericClient client = ctx.newRestfulGenericClient(immunizationServer);
 
     // Build the Parameters resource
     Parameters parameters = new Parameters();
@@ -647,5 +654,9 @@ public class Immunizations {
     String m = Immunizations.class.getSimpleName();
     // Read & Write
     Attributes.inventory(attributes, m, IMMUNIZATIONS, true, true, "Map<String, List<Long>>");
+  }
+
+  public static void setImmunizationServer(String immunizationServer) {
+    Immunizations.immunizationServer = immunizationServer;
   }
 }
