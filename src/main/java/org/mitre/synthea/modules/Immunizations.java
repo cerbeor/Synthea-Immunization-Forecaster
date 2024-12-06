@@ -50,6 +50,15 @@ public class Immunizations {
   /** Server that will be used for the immunization forecaster */
   private static String immunizationServer = FLORENCE; // default value
 
+  /** Probability of a normal person not taking a vaccine */
+  private static double noVaccineProbability = 10; // default value
+  /** Probability of an antivax person not taking a vaccine */
+  private static double noVaccineProbabilityAntivax = 90; // default value
+  /** Probability of a normal clinician not administrating a vaccine */
+  private static double noVaccineProbabilityClinician = 10; // default value
+  /** Probability of an antivax clinician not administrating a vaccine */
+  private static double noVaccineProbabilityAntivaxClinician = 90; // default value
+
   @SuppressWarnings({ "unchecked", "rawtypes" })
   private static final Map<String, Map> immunizationSchedule = loadImmunizationSchedule();
 
@@ -91,30 +100,39 @@ public class Immunizations {
 
           // If antivax person
           if ((boolean) person.attributes.getOrDefault(Person.ANTIVAX, false)){
-            getImmunization = false;
+            if (randomNumber < noVaccineProbabilityAntivax) {
+              getImmunization = false;
+            }
           } else {
-            if (Objects.equals(immunizationKey, "88")) { // for influenza
-              if (person.ageInYears(time) >= 65 && randomNumber >= 75) {
-                // 75% is the target vaccination coverage by the WHO for older people (https://www.who.int/europe/news-room/fact-sheets/item/influenza-vaccination-coverage-and-effectiveness)
-                getImmunization = false;
-              } else if (randomNumber >= 15) {
-                // 15% is an arbitrary number
-                getImmunization = false;
-              }
-            } else if (randomNumber < 5) { // other immunization
-              // 5% is an arbitrary number
+//            if (Objects.equals(immunizationKey, "88")) { // for influenza
+//              if (person.ageInYears(time) >= 65 && randomNumber >= 75) {
+//                // 75% is the target vaccination coverage by the WHO for older people (https://www.who.int/europe/news-room/fact-sheets/item/influenza-vaccination-coverage-and-effectiveness)
+//                getImmunization = false;
+//              } else if (randomNumber >= 15) {
+//                // 15% is an arbitrary number
+//                getImmunization = false;
+//              }
+//            } else if (randomNumber < 5) { // other immunization
+//              // 5% is an arbitrary number
+//              getImmunization = false;
+//            }
+            if (randomNumber < noVaccineProbability) {
               getImmunization = false;
             }
           }
 
           // If antivax clinician
           HealthRecord.Encounter currentEncounter = (HealthRecord.Encounter) person.attributes.get(Person.CURRENT_ENCOUNTER);
+          randomNumber = random.nextInt(100);
           if ((boolean) currentEncounter.clinician.attributes.getOrDefault(Person.ANTIVAX, false)) {
-            getImmunization = false;
-//            System.out.println("Clinician "+ currentEncounter.clinician.attributes.get(Clinician.FIRST_NAME)+" is antivax. Vaccine not administered: " + immunizationKey);
-          } /*else {
-            System.out.println("---- Clinician "+ currentEncounter.clinician.attributes.get(Clinician.FIRST_NAME)+" is pro-vax. Vaccine administered: " + immunizationKey);
-          }*/
+            if (randomNumber < noVaccineProbabilityAntivaxClinician) {
+              getImmunization = false;
+            }
+          } else {
+            if (randomNumber < noVaccineProbabilityClinician) {
+              getImmunization = false;
+            }
+          }
 
           if (getImmunization) {
             /**
@@ -658,5 +676,29 @@ public class Immunizations {
 
   public static void setImmunizationServer(String immunizationServer) {
     Immunizations.immunizationServer = immunizationServer;
+  }
+
+  public static void setNoVaccineProbability(double noVaccineProbability) {
+    Immunizations.noVaccineProbability = noVaccineProbability;
+  }
+
+  public static double getNoVaccineProbability() {
+    return Immunizations.noVaccineProbability;
+  }
+
+  public static double getNoVaccineProbabilityAntivax() {
+    return Immunizations.noVaccineProbabilityAntivax;
+  }
+
+  public static void setNoVaccineProbabilityAntivax(double noVaccineProbabilityAntivax) {
+    Immunizations.noVaccineProbabilityAntivax = noVaccineProbabilityAntivax;
+  }
+
+  public static void setNoVaccineProbabilityClinician(double noVaccineProbabilityClinician) {
+    Immunizations.noVaccineProbabilityClinician = noVaccineProbabilityClinician;
+  }
+
+  public static void setNoVaccineProbabilityAntivaxClinician(double noVaccineProbabilityAntivaxClinician) {
+    Immunizations.noVaccineProbabilityAntivaxClinician = noVaccineProbabilityAntivaxClinician;
   }
 }

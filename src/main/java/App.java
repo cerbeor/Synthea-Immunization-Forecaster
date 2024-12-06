@@ -62,6 +62,10 @@ public class App {
     System.out.println("run_synthea -p 50 -antivaxLastNames A:20-B:50-C:30 -antivaxZipCodePrefixes 010:80-023:90");
     System.out.println("run_synthea -p 50 -cliniciansAntivaxLastName A:20-B:50-C:30 -cliniciansAntivaxZipPrefixes 010:80-023:90");
     System.out.println("run_synthea -cliniciansAntivaxPercentage 100");
+    System.out.println("run_synthea -noVaccineProbability 100"); // probability of a person not getting a vaccine
+    System.out.println("run_synthea -noVaccineProbabilityAntivax 100"); // probability of an antivax person not getting a vaccine
+    System.out.println("run_synthea -noVaccineProbability 100"); // probability of a clinician not administrating a vaccine
+    System.out.println("run_synthea -noVaccineProbabilityAntivax 100"); // probability of a clinician person not administrating a vaccine
     System.out.println("run_synthea testServer"); //change the immunization forecaster server to the test server
   }
 
@@ -288,6 +292,38 @@ public class App {
             } else {
               parseAntivaxMap(value, options.cliniciansAntivaxZipCodePrefixes);
               System.out.println("Clinicians antivax zip code prefixes and percentages: " + options.cliniciansAntivaxZipCodePrefixes);
+            }
+          } else if (currArg.equals("-noVaccineProbability")) {
+            String value = argsQ.poll();
+            if (value == null) {
+              System.err.println("Error: No value provided for -noVaccineProbability.");
+            } else {
+              Immunizations.setNoVaccineProbability(Double.parseDouble(value));
+              System.out.println("Not taking a vaccine probability for normal people: " + options.cliniciansAntivaxZipCodePrefixes);
+            }
+          } else if (currArg.equals("-noVaccineProbabilityAntivax")) {
+            String value = argsQ.poll();
+            if (value == null) {
+              System.err.println("Error: No value provided for -noVaccineProbabilityAntivax.");
+            } else {
+              Immunizations.setNoVaccineProbabilityAntivax(Double.parseDouble(value));
+              System.out.println("Not taking a vaccine probability for antivax people: " + options.cliniciansAntivaxZipCodePrefixes);
+            }
+          } else if (currArg.equals("-noVaccineProbabilityClinician")) {
+            String value = argsQ.poll();
+            if (value == null) {
+              System.err.println("Error: No value provided for -noVaccineProbabilityClinician.");
+            } else {
+              Immunizations.setNoVaccineProbabilityClinician(Double.parseDouble(value));
+              System.out.println("Not taking a vaccine probability for normal clinician: " + options.cliniciansAntivaxZipCodePrefixes);
+            }
+          } else if (currArg.equals("-noVaccineProbabilityAntivaxClinician")) {
+            String value = argsQ.poll();
+            if (value == null) {
+              System.err.println("Error: No value provided for -noVaccineProbabilityAntivaxClinician.");
+            } else {
+              Immunizations.setNoVaccineProbabilityAntivaxClinician(Double.parseDouble(value));
+              System.out.println("Not taking a vaccine probability for antivax clinician: " + options.cliniciansAntivaxZipCodePrefixes);
             }
           } else if (currArg.equals("testServer")) {
             Immunizations.setImmunizationServer(Immunizations.TEST);

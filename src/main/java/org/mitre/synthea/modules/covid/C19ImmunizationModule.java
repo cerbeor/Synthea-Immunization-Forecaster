@@ -2,10 +2,7 @@ package org.mitre.synthea.modules.covid;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.mitre.synthea.engine.Module;
 import org.mitre.synthea.helpers.Attributes;
@@ -266,8 +263,16 @@ public class C19ImmunizationModule extends Module {
       person.attributes.put(C19_VACCINE_STATUS, status);
     }
 
+    Random rand = new Random();
+    int random_number = rand.nextInt(100);
     if ((boolean) person.attributes.getOrDefault(Person.ANTIVAX, false)){
-      status = VaccinationStatus.NEVER_GOING_TO_GET_SHOT;
+      if (random_number < Immunizations.getNoVaccineProbabilityAntivax()){
+        status = VaccinationStatus.NEVER_GOING_TO_GET_SHOT;
+      }
+    } else {
+      if (random_number < Immunizations.getNoVaccineProbability()){
+        status = VaccinationStatus.NEVER_GOING_TO_GET_SHOT;
+      }
     }
 
     switch (status) {
