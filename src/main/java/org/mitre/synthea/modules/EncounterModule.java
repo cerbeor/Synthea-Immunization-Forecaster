@@ -163,6 +163,10 @@ public final class EncounterModule extends Module {
     encounter.provider = prov;
     // assign a clinician
     encounter.clinician = prov.chooseClinicianList(specialty, person);
+
+    // Store the current encounter in the person's attributes
+    person.attributes.put(Person.CURRENT_ENCOUNTER, encounter);
+
     return encounter;
   }
 
@@ -246,6 +250,8 @@ public final class EncounterModule extends Module {
         person.record.encounterEnd(time, EncounterType.URGENTCARE);
         person.attributes.remove(ACTIVE_URGENT_CARE_ENCOUNTER);
       }
+      // Remove the current encounter from person's attributes
+      person.attributes.remove(Person.CURRENT_ENCOUNTER);
       person.releaseCurrentEncounter(time, name);
     }
   }

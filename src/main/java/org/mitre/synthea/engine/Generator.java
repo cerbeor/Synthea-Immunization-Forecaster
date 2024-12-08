@@ -10,12 +10,14 @@ import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -27,6 +29,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.io.IOCase;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.mitre.synthea.editors.GrowthDataErrorsEditor;
+import org.mitre.synthea.engine.Generator.GeneratorOptions;
 import org.mitre.synthea.export.CDWExporter;
 import org.mitre.synthea.export.Exporter;
 import org.mitre.synthea.helpers.Config;
@@ -78,10 +81,29 @@ public class Generator {
   private Module keepPatientsModule;
   private Long maxAttemptsToKeepPatient;
   public TransitionMetrics metrics;
-  public static String DEFAULT_STATE = "Massachusetts";
   private Exporter.ExporterRuntimeOptions exporterRuntimeOptions;
   public static EntityManager entityManager;
   public final int threadPoolSize;
+  public AtomicInteger antivaxCount = new AtomicInteger(0);
+
+  // List of US states without abbreviations
+  private static final List<String> US_STATES = Arrays.asList(
+    "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", 
+    "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", 
+    "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", 
+    "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", 
+    "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", 
+    "New Hampshire", "New Jersey", "New Mexico", "New York", 
+    "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", 
+    "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", 
+    "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", 
+    "West Virginia", "Wisconsin", "Wyoming"
+  );
+
+  private static String getRandomState() {
+    Random random = new Random();
+    return US_STATES.get(random.nextInt(US_STATES.size()));
+  } 
 
   /**
    * Used only for testing and debugging. Populate this field to keep track of all patients
@@ -142,6 +164,18 @@ public class Generator {
     public int daysToTravelForward = -1;
     /** Path to a module defining which patients should be kept and exported. */
     public Path keepPatientsModulePath;
+    /** Percentage of individuals to assign as antivax (default 0), for immunization module */
+    public double antivaxPercentage = 0;
+    /** Map storing the percentage for each person with last name's first letter to be antivax */
+    public Map<String, Double> antivaxFirstLetters = new HashMap<>();
+    /** Map storing the percentage for each person in zip code prefixes to be antivax */
+    public Map<String, Double> antivaxZipCodePrefixes = new HashMap<>();
+    /** Percentage of clinicians to assign as antivax (default 0), for immunization module */
+    public double cliniciansAntivaxPercentage = 0;
+    /** Map storing the percentage for each clinician with last name's first letter to be antivax */
+    public Map<String, Double> cliniciansAntivaxFirstLetters = new HashMap<>();
+    /** Map storing the percentage for each clinician in zip code prefixes to be antivax */
+    public Map<String, Double> cliniciansAntivaxZipCodePrefixes = new HashMap<>();
   }
 
   /**
@@ -213,7 +247,7 @@ public class Generator {
 
   private void init() {
     if (options.state == null) {
-      options.state = DEFAULT_STATE;
+      options.state = getRandomState();
     }
     int stateIndex = Location.getIndex(options.state);
     if (Config.getAsBoolean("exporter.cdw.export")) {
@@ -265,7 +299,10 @@ public class Generator {
       this.metrics = new TransitionMetrics();
     }
 
-    // initialize hospitals
+    // initialize hospitalsgit
+    Provider.setCliniciansAntivaxPercentage(options.cliniciansAntivaxPercentage);
+    Provider.setCliniciansAntivaxFirstLetters(options.cliniciansAntivaxFirstLetters);
+    Provider.setCliniciansAntivaxZipCodePrefixes(options.cliniciansAntivaxZipCodePrefixes);
     Provider.loadProviders(location, this.clinicianRandom);
     // Initialize Payers
     PayerManager.loadPayers(location);
@@ -416,6 +453,10 @@ public class Generator {
             stats.get("alive").get(), stats.get("dead").get());
     System.out.printf("RNG=%d\n", this.populationRandom.getCount());
     System.out.printf("Clinician RNG=%d\n", this.clinicianRandom.getCount());
+    System.out.printf("Antivax patients: %d out of %d (%.2f%%)\n",
+            antivaxCount.get(), totalGeneratedPopulation.get(),
+            ((double) antivaxCount.get() / totalGeneratedPopulation.get()) * 100);
+
 
     if (this.metrics != null) {
       metrics.printStats(totalGeneratedPopulation.get(), Module.getModules(getModulePredicate()));
@@ -653,6 +694,7 @@ public class Generator {
   public Person createPerson(long personSeed, Map<String, Object> demoAttributes) {
 
     // Initialize person.
+    boolean isAntivax = false;
     Person person = new Person(personSeed);
     person.populationSeed = this.options.seed;
     person.attributes.putAll(demoAttributes);
@@ -661,6 +703,52 @@ public class Generator {
     location.setSocialDeterminants(person);
 
     LifecycleModule.birth(person, person.lastUpdated);
+
+
+    if (options.antivaxFirstLetters != null){
+      // Check if last name matches any of the specified letters with percentages
+      String lastName = (String) person.attributes.get(Person.LAST_NAME);
+      if (lastName != null && options.antivaxFirstLetters.containsKey(lastName.substring(0, 1).toLowerCase())) {
+        // If true, person have a certain percentage of chance to be antivax
+        double percentage = options.antivaxFirstLetters.get(lastName.substring(0, 1).toLowerCase());
+        if (person.randInt(100) < percentage) {
+          isAntivax = true;
+        }
+      }
+    }
+
+    if (!isAntivax && options.antivaxZipCodePrefixes != null){
+      // Check if zip code matches any of the specified prefixes with percentages
+      String zipCode = (String) person.attributes.get(Person.ZIP);
+      if (zipCode != null) {
+        for (String prefix : options.antivaxZipCodePrefixes.keySet()) {
+          if (zipCode.startsWith(prefix)) {
+            // If true, person have a certain percentage of chance to be antivax
+            double percentage = options.antivaxZipCodePrefixes.get(prefix);
+            if (person.randInt(100) < percentage) {
+              isAntivax = true;
+              break;
+            }
+          }
+        }
+      }
+    }
+
+    if (options.antivaxZipCodePrefixes.isEmpty() && options.antivaxFirstLetters.isEmpty()){
+      // Randomly assign antivax based on the antivaxPercentage if options.antivaxFirstLetters and options.antivaxZipCodePrefixes are null
+      if (person.randInt(100) < this.options.antivaxPercentage) {
+        isAntivax = true;
+      }
+    }
+
+
+    if(!isAntivax){
+      person.attributes.put(Person.ANTIVAX, false);
+    } else {
+      person.attributes.put(Person.ANTIVAX, true);
+      antivaxCount.incrementAndGet();
+    }
+
 
     person.currentModules = Module.getModules(modulePredicate);
 
@@ -777,10 +865,11 @@ public class Generator {
     // this is synchronized to ensure all lines for a single person are always printed
     // consecutively
     String deceased = isAlive ? "" : "DECEASED";
-    System.out.format("%d -- %s (%d y/o %s) %s, %s %s (%d)\n", index + 1,
-        person.attributes.get(Person.NAME), person.ageInYears(time),
+    System.out.format("%d -- %s (%s) (%d y/o %s) %s, %s, %s %s (%d)\n", index + 1,
+        person.attributes.get(Person.NAME), person.attributes.get(Person.MAIDEN_NAME),
+        person.ageInYears(time),
         person.attributes.get(Person.GENDER),
-        person.attributes.get(Person.CITY), person.attributes.get(Person.STATE),
+        person.attributes.get(Person.CITY), person.attributes.get(Person.STATE), person.attributes.get(Person.ZIP),
         deceased,
         person.getCount());
 
