@@ -274,7 +274,7 @@ public class Immunizations {
    */
   private static HashMap<org.mitre.synthea.codebase.generated.Code, NDC> checkForCombination(ImmunizationRecommendation immunizationRecommendation, long encounterDate){
     if(!immunizationRecommendation.isEmpty()){
-      List<org.mitre.synthea.codebase.generated.Code> combinationVaccines = new ArrayList<>();
+      List<String> combinationVaccines = new ArrayList<>();
       HashMap<org.mitre.synthea.codebase.generated.Code, NDC> cvxMap = new HashMap<>(); // Immunization CVX code to NDC map
 
       // Put all administrable vaccines in a list
@@ -285,13 +285,13 @@ public class Immunizations {
         if (dueDate == null || dueDate.after(new Date(encounterDate))) {
           continue;
         }
-        combinationVaccines.add(codeMap.getCodeForCodeset(CodesetType.VACCINATION_CVX_CODE, immunizationKey));
+        combinationVaccines.add(immunizationKey);
       }
       System.out.println("Combination vaccines : " + combinationVaccines);
         // Check for combination of vaccines
 
       System.out.println("---in getCombosByCVXList---");
-      List<Combo> combinations = codeMap.getCombosByCVXList(combinationVaccines);
+      List<Combo> combinations = codeMap.getCombosByCVXStringList(combinationVaccines);
       System.out.println("---end getCombosByCVXList---");
 
       if (combinations.isEmpty()) {
