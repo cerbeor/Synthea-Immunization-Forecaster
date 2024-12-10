@@ -67,7 +67,7 @@ public class Immunizations {
    * NEW METHOD FETCHING IMMUNIZATION FORECASTER RECOMMENDATION
    */
   @SuppressWarnings({ "unchecked", "rawtypes" })
-  public static void performEncounterWithNewCDS(Person person, long time) {
+  public static void performEncounterWithNewCDS(Person person, long encounterDate) {
     /**
      * Reading patient history
      */
@@ -84,7 +84,7 @@ public class Immunizations {
       /**
        * Querying new CDS
        */
-      ImmunizationRecommendation immunizationRecommendation = queryForecaster(person, time, immunizationsGiven);
+      ImmunizationRecommendation immunizationRecommendation = queryForecaster(person, encounterDate, immunizationsGiven);
       immunizationRecommendation = checkForCombination(immunizationRecommendation);
 
 
@@ -92,6 +92,9 @@ public class Immunizations {
         for (ImmunizationRecommendation.ImmunizationRecommendationRecommendationComponent recommendation : immunizationRecommendation.getRecommendation()) {
           String immunizationKey = recommendation.getVaccineCode().get(0).getCodingFirstRep().getCode(); // CVX code
           Date dueDate = recommendation.getDateCriterionFirstRep().getValue();  // Recommended due date
+          if (dueDate == null || dueDate.after(new Date(encounterDate))) {
+            continue;
+          }
 
           // Decide whether to administer the vaccine
           Random random = new Random();
@@ -145,8 +148,8 @@ public class Immunizations {
               history = new ArrayList<Long>();
               immunizationsGiven.put(immunizationKey, history);
             }
-            history.add(time);
-            HealthRecord.Immunization entry = person.record.immunization(time, immunizationKey);
+            history.add(encounterDate);
+            HealthRecord.Immunization entry = person.record.immunization(encounterDate, immunizationKey);
             HealthRecord.Code immCode = new HealthRecord.Code(
                     "http://hl7.org/fhir/sid/cvx",
                     immunizationKey,
@@ -494,10 +497,10 @@ public class Immunizations {
    * Administer vaccines to the person at the state time according to the
    * required immunization schedule.
    * @param person - the person to vaccinate.
-   * @param time - the current simulation time.
+   * @param encounterDate - the current simulation time.
    */
   @SuppressWarnings({ "unchecked", "rawtypes" })
-  public static void performEncounter(Person person, long time){
+  public static void performEncounter(Person person, long encounterDate){
     {
       // logging immunization strings to compare and do mapping TODO remove
       Gson g = new Gson();
@@ -512,7 +515,7 @@ public class Immunizations {
     /**
      * New code connecting to forecaster
      */
-    performEncounterWithNewCDS(person,time);
+    performEncounterWithNewCDS(person,encounterDate);
     /**
      * old code
      */
