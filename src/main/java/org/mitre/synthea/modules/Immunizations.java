@@ -99,20 +99,25 @@ public class Immunizations {
               List<Long> history = null;
 
               org.mitre.synthea.codebase.generated.Code immunizationCode = entryMap.getKey();
-              System.out.println("Immunization Key : "+ immunizationCode.getValue());
+              String immunizationKey = codeMap.getStringForCode(immunizationCode, CodesetType.VACCINATION_CVX_CODE);
+              String immunizationLabel = immunizationCode.getLabel();
+              String ndcCode = cvxMap.get(immunizationCode).getNdcCode();
+              String ndcLabel = codeMap.getCodeForCodeset(CodesetType.VACCINATION_NDC_CODE_UNIT_OF_USE, ndcCode).getLabel();
 
-              if (immunizationsGiven.containsKey(immunizationCode.getValue())) {
-                history = immunizationsGiven.get(immunizationCode.getValue());
+              System.out.println("Immunization Key : "+ immunizationKey);
+
+              if (immunizationsGiven.containsKey(immunizationKey)) {
+                history = immunizationsGiven.get(immunizationKey);
               } else {
                 history = new ArrayList<Long>();
-                immunizationsGiven.put(immunizationCode.getValue(), history);
+                immunizationsGiven.put(immunizationKey, history);
               }
               history.add(encounterDate);
-              HealthRecord.Immunization entry = person.record.immunization(encounterDate, immunizationCode.getValue());
+              HealthRecord.Immunization entry = person.record.immunization(encounterDate, immunizationKey);
               HealthRecord.Code immCode = new HealthRecord.Code(
                       "http://hl7.org/fhir/sid/cvx",
-                      immunizationCode.getValue(),
-                      immunizationCode.getLabel()
+                      immunizationKey,
+                      immunizationLabel
                       );
               entry.codes.add(immCode);
               entry.series = history.size() + 1;
