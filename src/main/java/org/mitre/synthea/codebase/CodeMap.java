@@ -211,6 +211,21 @@ public String getStringForCode(Code code, CodesetType c) {
 
   //  Combo
 
+
+  public List<Combo> getCombosByCVXStringList(List<String> cvxCodes) {
+    SpecificCase specificCase = new SpecificCase();
+    cvxCodes = specificCase.replaceSpecialCases(cvxCodes, true);
+
+    // String to code
+     List<Code> cvxCodeList = new ArrayList<Code>();
+      for (String cvxCode : cvxCodes) {
+          Code codeObject = this.getCodeForCodeset(CodesetType.VACCINATION_CVX_CODE, cvxCode);
+          cvxCodeList.add(codeObject);
+      }
+      return getCombosByCVXList(cvxCodeList);
+  }
+
+
     /**
      * This method uses the Mapping class to create vaccine combos
      * from a list of CVX codes.
@@ -220,11 +235,13 @@ public String getStringForCode(Code code, CodesetType c) {
      */
     public List<Combo> getCombosByCVXList(List<Code> cvxCodes) {
         // Instantiate the Mapping class with the current CodeMap instance
+
         Mapping mapping = new Mapping(this);
         
         // Step 1: Create NDCs from the provided CVX codes
         List<NDC> ndcList = mapping.createNDCsFromCVX(cvxCodes);
         
+
         // Debugging output to verify NDC creation
         System.out.println("NDC List Created:");
         for (NDC ndc : ndcList) {
@@ -276,16 +293,13 @@ public String getStringForCode(Code code, CodesetType c) {
     }
     Reference r = codeIn.getReference();
     if (r == null) {
-      System.out.println("HERE 3");
       return relatedValue;
     }
 
     List<LinkTo> linkList = r.getLinkTo();
     for (LinkTo link : linkList) {
-      System.out.println("-- HERE 4 --");
       System.out.println("desiredType: " + desiredType+ " link.getCodeset(): " + link.getCodeset());
       if (desiredType.equals(CodesetType.getByTypeCode(link.getCodeset()))) {
-        System.out.println("HERE 5");
         relatedValue = link.getValue();
         break;
       }
