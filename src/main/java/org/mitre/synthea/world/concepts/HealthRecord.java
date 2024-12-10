@@ -382,6 +382,11 @@ public class HealthRecord implements Serializable {
   public class Immunization extends Entry {
     public int series = -1;
 
+    /* Fetch NDC for CVXs */
+
+    public String nameNDC;
+    public String codeStringNDC;
+  
     /**
      * Constructor for Immunization HealthRecord Entry.
      */
