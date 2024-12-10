@@ -103,7 +103,7 @@ public class Immunizations {
               String immunizationLabel = immunizationCode.getLabel();
               String ndcCode = cvxMap.get(immunizationCode).getNdcCode();
               String ndcLabel = codeMap.getCodeForCodeset(CodesetType.VACCINATION_NDC_CODE_UNIT_OF_USE, ndcCode).getLabel();
-
+              
               System.out.println("Immunization Key : "+ immunizationKey);
 
               if (immunizationsGiven.containsKey(immunizationKey)) {
@@ -121,6 +121,10 @@ public class Immunizations {
                       );
               entry.codes.add(immCode);
               entry.series = history.size() + 1;
+
+              // Assign the NDC details to the immunization entry
+              entry.nameNDC = ndcLabel;
+              entry.codeStringNDC = ndcCode;
             }
           }
 
