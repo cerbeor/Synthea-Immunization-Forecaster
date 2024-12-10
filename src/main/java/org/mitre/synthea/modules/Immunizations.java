@@ -292,9 +292,9 @@ public class Immunizations {
         }
 
       }
-
+      return cvxMap;
     }
-    return cvxMap;
+    return null;
   }
 
   private static List<ForecastActual> checkForCombinationDepreciated(List<ForecastActual> forecastActualList) {
