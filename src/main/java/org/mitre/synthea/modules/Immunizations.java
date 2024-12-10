@@ -266,7 +266,7 @@ public class Immunizations {
    * Return a map of CVX codes to NDC codes for the vaccines combination recommended by the CDS that can be administered
    */
   private static HashMap<org.mitre.synthea.codebase.generated.Code, NDC> checkForCombination(ImmunizationRecommendation immunizationRecommendation, long encounterDate){
-    if(immunizationRecommendation != null){
+    if(!immunizationRecommendation.isEmpty()){
       List<org.mitre.synthea.codebase.generated.Code> combinationVaccines = new ArrayList<>();
       HashMap<org.mitre.synthea.codebase.generated.Code, NDC> cvxMap = new HashMap<>(); // Immunization CVX code to NDC map
 
@@ -280,10 +280,16 @@ public class Immunizations {
         }
         combinationVaccines.add(codeMap.getCodeForCodeset(CodesetType.VACCINATION_CVX_CODE, immunizationKey));
       }
-
+      System.out.println("Combination vaccines : " + combinationVaccines);
         // Check for combination of vaccines
       List<Combo> combinations = codeMap.getCombosByCVXList(combinationVaccines);
 
+      if (combinations.isEmpty()) {
+        System.out.println("No combination found");
+        return null;
+      } else {
+
+      }
       // The first combination is the combination with the best scores
       Combo bestCombination = combinations.get(0);
 
@@ -299,6 +305,7 @@ public class Immunizations {
       }
       return cvxMap;
     }
+    System.out.println("Immunization recommendation is empty in checkForCombination");
     return null;
   }
 
