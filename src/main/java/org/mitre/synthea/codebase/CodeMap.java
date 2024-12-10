@@ -151,6 +151,31 @@ public class CodeMap {
       return relatedValues; // Returns the list of related values
   }
 
+  /**
+ * Retrieves the string value associated with a Code object in a specific CodesetType.
+ *
+ * @param c The CodesetType to search in.
+ * @param code The Code object to find the associated string for.
+ * @return The string value associated with the given Code, or null if not found.
+ */
+public String getStringForCode(Code code, CodesetType c) {
+  if (c == null || code == null || codeBaseMap == null) {
+      return null;
+  }
+
+  Map<String, Code> codeSetMap = codeBaseMap.get(c);
+  if (codeSetMap != null) {
+      for (Map.Entry<String, Code> entry : codeSetMap.entrySet()) {
+          if (entry.getValue().equals(code)) {
+              return entry.getKey();
+          }
+      }
+  }
+
+  return null; // Return null if no match is found.
+}
+
+
 
 
   // 
@@ -251,12 +276,16 @@ public class CodeMap {
     }
     Reference r = codeIn.getReference();
     if (r == null) {
+      System.out.println("HERE 3");
       return relatedValue;
     }
 
     List<LinkTo> linkList = r.getLinkTo();
     for (LinkTo link : linkList) {
+      System.out.println("-- HERE 4 --");
+      System.out.println("desiredType: " + desiredType+ " link.getCodeset(): " + link.getCodeset());
       if (desiredType.equals(CodesetType.getByTypeCode(link.getCodeset()))) {
+        System.out.println("HERE 5");
         relatedValue = link.getValue();
         break;
       }

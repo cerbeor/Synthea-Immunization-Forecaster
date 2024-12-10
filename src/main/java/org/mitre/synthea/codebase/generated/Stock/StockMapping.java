@@ -12,14 +12,109 @@ import org.mitre.synthea.codebase.generated.*;;
 public class StockMapping {
 
  private CodeMap codeMap;
+
  private HashMap<String, Boolean> mapStockVaccineGroup;
  int LOADING = 0;
+
+//
+private HashMap<String, Boolean> mapStockVaccineGroupPreviousVersion;
+
 
  public StockMapping(CodeMap codeMap){
     this.codeMap = codeMap;
  }
 
 // New version
+
+/**
+ * Initialize the mapStockVaccineGroup with all NDCs from the code map set to false,
+ * and randomly select N NDCs per vaccine group to set them to true.
+ *
+ * @param vaccineGroupMap A map where the key is a vaccine group, and the value is a list of NDC objects.
+ * @param codeMap The CodeMap instance to extract all NDCs.
+ * @param n The number of random NDCs to select from each vaccine group.
+ */
+public void initializeAndSelectRandomNDCs(Map<String, List<NDC>> vaccineGroupMap, CodeMap codeMap, int n) {
+    // Step 1: Initialize mapStockVaccineGroup with all NDCs set to false
+    mapStockVaccineGroup = new HashMap<>();
+    List<String> allNdcCodes = CodeMapUtil.extractNDCsFromCodebase(codeMap); // Fetch all NDCs
+    for (String ndcCode : allNdcCodes) {
+        mapStockVaccineGroup.put(ndcCode, false);
+    }
+
+    Random random = new Random();
+
+    // Step 2: Iterate through each vaccine group and select N random NDCs
+    for (Map.Entry<String, List<NDC>> entry : vaccineGroupMap.entrySet()) {
+        List<NDC> ndcList = entry.getValue();
+
+        if (!ndcList.isEmpty()) {
+            // Shuffle the list of NDCs for randomness
+            Collections.shuffle(ndcList, random);
+
+            // Select up to N NDCs and mark them as true in mapStockVaccineGroup
+            for (int i = 0; i < Math.min(n, ndcList.size()); i++) {
+                NDC selectedNdc = ndcList.get(i);
+                mapStockVaccineGroup.put(selectedNdc.getNdcCode(), true);
+            }
+        }
+    }
+}
+
+
+/**
+ * Finds all NDCs that are not linked to any vaccine group and provides statistics on the mappings.
+ *
+ * @param vaccineGroupMap A map where the key is a vaccine group, and the value is a list of NDC objects.
+ * @param codeMap The CodeMap instance to extract all NDCs.
+ * @return A list of NDC codes that are not associated with any vaccine group.
+ */
+public List<String> findNDCsWithoutVaccineGroup(Map<String, List<NDC>> vaccineGroupMap, CodeMap codeMap) {
+    // Step 1: Extract all NDCs from the CodeMap
+    List<String> allNdcCodes = CodeMapUtil.extractNDCsFromCodebase(codeMap);
+
+    // Step 2: Collect all NDCs present in the vaccineGroupMap
+    Set<String> linkedNdcCodes = new HashSet<>();
+    int vaccineGroupsWithNDCs = 0;
+    int vaccineGroupsWithoutNDCs = 0;
+
+    for (Map.Entry<String, List<NDC>> entry : vaccineGroupMap.entrySet()) {
+        List<NDC> ndcList = entry.getValue();
+        if (ndcList.isEmpty()) {
+            vaccineGroupsWithoutNDCs++;
+        } else {
+            vaccineGroupsWithNDCs++;
+            for (NDC ndc : ndcList) {
+                linkedNdcCodes.add(ndc.getNdcCode());
+            }
+        }
+    }
+
+    // Step 3: Find NDCs not present in the linkedNdcCodes set
+    List<String> unlinkedNdcCodes = new ArrayList<>();
+    for (String ndcCode : allNdcCodes) {
+        if (!linkedNdcCodes.contains(ndcCode)) {
+            unlinkedNdcCodes.add(ndcCode);
+        }
+    }
+
+    // Step 4: Calculate statistics
+    int totalNDCs = allNdcCodes.size();
+    int linkedNDCCount = linkedNdcCodes.size();
+    int unlinkedNDCCount = unlinkedNdcCodes.size();
+
+    // Print statistics
+    System.out.println("Mapping Statistics:");
+    System.out.println(" - Total NDCs: " + totalNDCs);
+    System.out.println(" - Linked NDCs: " + linkedNDCCount);
+    System.out.println(" - Unlinked NDCs: " + unlinkedNDCCount);
+    System.out.println(" - Vaccine Groups with NDCs: " + vaccineGroupsWithNDCs);
+    System.out.println(" - Vaccine Groups without NDCs: " + vaccineGroupsWithoutNDCs);
+
+    return unlinkedNdcCodes;
+}
+
+
 
 /**
  * Maps CVX codes to their associated Vaccine Groups and NDCs.
@@ -105,7 +200,7 @@ public List<String> getVaccineGroupLabelsFromCvx(String cvx) {
 
 
 
- // old version
+ // Previous version
 
 
  public List<Combo> generateNdcCombinations(int n, int m) {
@@ -212,10 +307,10 @@ private void generateCombinations(List<NDC> currentCombo, List<NDC> remainingNdc
 }
 
 
-// Initialize the mapStockVaccineGroup based on a random or fixed selection of a combo
+// Initialize the mapStockVaccineGroupPreviousVersion based on a random or fixed selection of a combo
 public void initializeStockVaccineGroup(List<Combo> combos, boolean random) {
-    // Initialize mapStockVaccineGroup as empty, with all NDCs set to false by default
-    mapStockVaccineGroup = new HashMap<>();
+    // Initialize mapStockVaccineGroupPreviousVersion as empty, with all NDCs set to false by default
+    mapStockVaccineGroupPreviousVersion = new HashMap<>();
 
     // Step 1: Select the combo based on the 'random' flag
     Combo selectedCombo;
@@ -231,24 +326,32 @@ public void initializeStockVaccineGroup(List<Combo> combos, boolean random) {
     // Step 2: Get the NDCs from the selected combo
     List<NDC> selectedNdcList = selectedCombo.getNdcList();
 
-    // Step 3: Mark the NDCs from the selected combo as true in the mapStockVaccineGroup
+    // Step 3: Mark the NDCs from the selected combo as true in the mapStockVaccineGroupPreviousVersion
     for (NDC ndc : selectedNdcList) {
-        mapStockVaccineGroup.put(ndc.getNdcCode(), true);  // Set selected NDC to true
+        mapStockVaccineGroupPreviousVersion.put(ndc.getNdcCode(), true);  // Set selected NDC to true
     }
 
-    // Step 4: Set all other NDCs in the mapStockVaccineGroup to false (default)
+    // Step 4: Set all other NDCs in the mapStockVaccineGroupPreviousVersion to false (default)
     for (String ndcCode : CodeMapUtil.extractNDCsFromCodebase(codeMap)) {
-        if (!mapStockVaccineGroup.containsKey(ndcCode)) {
-            mapStockVaccineGroup.put(ndcCode, false);  // Set non-selected NDCs to false
+        if (!mapStockVaccineGroupPreviousVersion.containsKey(ndcCode)) {
+            mapStockVaccineGroupPreviousVersion.put(ndcCode, false);  // Set non-selected NDCs to false
         }
     }
 }
 
 
+public HashMap<String, Boolean> getMapStockVaccineGroupPreviousVersion() {
+    return mapStockVaccineGroupPreviousVersion;
+}
+
+
+public void setMapStockVaccineGroupPreviousVersion(HashMap<String, Boolean> mapStockVaccineGroupPreviousVersion) {
+    this.mapStockVaccineGroupPreviousVersion = mapStockVaccineGroupPreviousVersion;
+}
+
 public HashMap<String, Boolean> getMapStockVaccineGroup() {
     return mapStockVaccineGroup;
 }
-
 
 public void setMapStockVaccineGroup(HashMap<String, Boolean> mapStockVaccineGroup) {
     this.mapStockVaccineGroup = mapStockVaccineGroup;
