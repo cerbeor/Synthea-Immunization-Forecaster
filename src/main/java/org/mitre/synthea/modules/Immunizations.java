@@ -100,6 +100,7 @@ public class Immunizations {
 
 //          getImmunization = gettingImmunization(person);
             getImmunization = true;
+          System.out.println("Administrated vaccine : ");
           for (Map.Entry<org.mitre.synthea.codebase.generated.Code, NDC> entryMap : cvxMap.entrySet()) {
 //            System.out.println("---for cvx = " + entryMap.toString() + "---");
             if (getImmunization) {
@@ -113,7 +114,7 @@ public class Immunizations {
               String immunizationLabel = immunizationCode.getLabel();
               String ndcCode = cvxMap.get(immunizationCode).getNdcCode();
               String ndcLabel = codeMap.getCodeForCodeset(CodesetType.VACCINATION_NDC_CODE_UNIT_OF_USE, ndcCode).getLabel();
-              
+              System.out.println("CVX : " + immunizationKey + " " + immunizationLabel + " | NDC : " + ndcCode + " " + ndcLabel);
 //              System.out.println("Immunization Key : "+ immunizationKey);
 
               if (immunizationsGiven.containsKey(immunizationKey)) {
@@ -286,22 +287,24 @@ public class Immunizations {
       HashMap<org.mitre.synthea.codebase.generated.Code, NDC> cvxMap = new HashMap<>(); // Immunization CVX code to NDC map
 
       // Put all administrable vaccines in a list
-//      System.out.println("-----------------------------------------------------------------");
-//      System.out.println("Encounter date : " + new Date(encounterDate));
-//      System.out.print("Immunization cvx : ");
+      System.out.println("-----------------------------------------------------------------");
+      System.out.println("Encounter date : " + new Date(encounterDate));
+      System.out.print("---Immunization cvx recommended : \n");
       for (ImmunizationRecommendation.ImmunizationRecommendationRecommendationComponent recommendation : immunizationRecommendation.getRecommendation()) {
         String immunizationKey = recommendation.getVaccineCode().get(0).getCodingFirstRep().getCode(); // CVX code
         Date dueDate = recommendation.getDateCriterionFirstRep().getValue();  // Recommended due date
-//        System.out.print(immunizationKey + " : " + dueDate + " ; ");
+        System.out.print(immunizationKey + " " + recommendation.getVaccineCode().get(0).getCodingFirstRep().getDisplay() + " | " + dueDate + " ;");
 
 
         if (dueDate == null || dueDate.after(new Date(encounterDate))) {
+          System.out.print("\n");
           continue;
         }
+        System.out.print(" <----- to be administered\n");
         combinationVaccines.add(immunizationKey);
       }
-//      System.out.println(" ");
-//      System.out.println("Combination vaccines : " + combinationVaccines);
+      System.out.println("---");
+      System.out.println("Combination vaccines : " + combinationVaccines);
         // Check for combination of vaccines
 
 //      System.out.println("---in getCombosByCVXList---");
