@@ -28,6 +28,7 @@ public class Mapping {
         Map<String, NDC> ndcMap = new HashMap<>();
 
         for (Code cvxCode : cvxCodes) {
+            //reverseCode(cvxCode);
             List<String> relatedNDCs = codeMap.getRelatedValues(cvxCode, CodesetType.VACCINATION_NDC_CODE_UNIT_OF_USE);
             
             for (String ndcCode : relatedNDCs) {
@@ -41,10 +42,30 @@ public class Mapping {
         return new ArrayList<>(ndcMap.values());
     }
 
+    // function reverse code
+    public void reverseCode(Code cvxCode){
+        // cvx code to string
+        String cvxCodeString = codeMap.getStringForCode(cvxCode, CodesetType.VACCINATION_CVX_CODE);
+        // reverse CVX
+        SpecificCase specificCase = new SpecificCase(codeMap);
+        if(specificCase.getReverseMap().containsKey(cvxCodeString)) {
+            cvxCodeString = specificCase.getReverseMap().get(cvxCodeString);
+        }
+        // reverse CVX
+        cvxCode = codeMap.getCodeForCodeset(CodesetType.VACCINATION_CVX_CODE, cvxCodeString);
+    }
+
     // Method to create NDC objects related to a list of string CVX codes
     public List<NDC> createNDCsFromCVXString(List<String> cvxCodes) {
         List<Code> cvxCodeList = new ArrayList<>();
         for (String cvx : cvxCodes) {
+            // reverse CVX
+            // SpecificCase specificCase = new SpecificCase(codeMap);
+            // if(specificCase.getReverseMap().containsKey(cvx)) {
+            //     cvx = specificCase.getReverseMap().get(cvx);
+            // }
+            // reverse CVX
+
             cvxCodeList.add(codeMap.getCodeForCodeset(CodesetType.VACCINATION_CVX_CODE, cvx));
         }
         return createNDCsFromCVX(cvxCodeList);
