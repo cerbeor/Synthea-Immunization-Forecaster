@@ -744,6 +744,20 @@ public class FhirR4 {
     mothersMaidenNameExtension.setValue(new StringType(mothersMaidenName));
     patientResource.addExtension(mothersMaidenNameExtension);
 
+    // Create an extention for mother and father name 
+    if (person.attributes.get(Person.NAME_FATHER) != null) {
+      Extension fathersNameExtension = new Extension(
+          "http://synthetichealth.github.io/synthea/fathersName");
+      fathersNameExtension.setValue(new StringType((String) person.attributes.get(Person.NAME_FATHER)));
+      patientResource.addExtension(fathersNameExtension);
+    }
+    if (person.attributes.get(Person.NAME_MOTHER) != null) {
+      Extension fathersNameExtension = new Extension(
+          "http://synthetichealth.github.io/synthea/motherName");
+      fathersNameExtension.setValue(new StringType((String) person.attributes.get(Person.NAME_MOTHER)));
+      patientResource.addExtension(fathersNameExtension);
+    }
+    
     long birthdate = (long) person.attributes.get(Person.BIRTHDATE);
     patientResource.setBirthDate(new Date(birthdate));
 
