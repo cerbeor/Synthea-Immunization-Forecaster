@@ -88,7 +88,11 @@ public class Immunizations {
       System.out.println("---------immunizationRecommendation end--------------");
       if(immunizationRecommendation != null){
         System.out.println("--------- in checkForCombination--------------");
-        HashMap<org.mitre.synthea.codebase.generated.Code, NDC> cvxMap = checkForCombination(immunizationRecommendation, encounterDate);
+        // Fetch patient age 
+        System.out.println("Fetch patient age");
+        int agePatient= person.ageInYears(encounterDate);
+        System.out.println("Patient age : "+ agePatient);
+        HashMap<org.mitre.synthea.codebase.generated.Code, NDC> cvxMap = checkForCombination(immunizationRecommendation, encounterDate, agePatient);
         System.out.println("---------checkForCombination end--------------");
         boolean getImmunization;
         if (!cvxMap.isEmpty()){
@@ -274,7 +278,7 @@ public class Immunizations {
   /**
    * Return a map of CVX codes to NDC codes for the vaccines combination recommended by the CDS that can be administered
    */
-  private static HashMap<org.mitre.synthea.codebase.generated.Code, NDC> checkForCombination(ImmunizationRecommendation immunizationRecommendation, long encounterDate){
+  private static HashMap<org.mitre.synthea.codebase.generated.Code, NDC> checkForCombination(ImmunizationRecommendation immunizationRecommendation, long encounterDate, int agePatient) {
     if(!immunizationRecommendation.isEmpty()){
       List<String> combinationVaccines = new ArrayList<>();
       HashMap<org.mitre.synthea.codebase.generated.Code, NDC> cvxMap = new HashMap<>(); // Immunization CVX code to NDC map
@@ -293,7 +297,7 @@ public class Immunizations {
         // Check for combination of vaccines
 
       System.out.println("---in getCombosByCVXList---");
-      List<Combo> combinations = codeMap.getCombosByCVXStringList(combinationVaccines);
+      List<Combo> combinations = codeMap.getCombosByCVXStringList(combinationVaccines, agePatient);
       System.out.println("---end getCombosByCVXList---");
 
       if (combinations.isEmpty()) {
