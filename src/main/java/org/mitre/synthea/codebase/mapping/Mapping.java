@@ -87,7 +87,7 @@ private void findCombos(List<NDC> currentCombo, List<Code> remainingCvx,
     if (remainingCvx.isEmpty()) {
         System.out.println("Remaining CVX is empty");
         combos.add(new Combo(new ArrayList<>(currentCombo), true, 100.0));
-        System.out.println("Combos list end = " + combos);
+        System.out.println("Combos list before return = " + combos);
         return;
     }
     System.out.println("Current Combo = " + currentCombo);
@@ -118,8 +118,14 @@ private void findCombos(List<NDC> currentCombo, List<Code> remainingCvx,
             for (NDC ndc : ndcGroup) {
                 currentCombo.add(ndc);
                 List<Code> newRemaining = new ArrayList<>(remainingCvx);
+//                System.out.println("ndc.getCvxCodes() = " + ndc.getCvxCodes());
+//                System.out.println("New Remaining = " + newRemaining);
                 newRemaining.removeAll(ndc.getCvxCodes());
+//                System.out.println("New Remaining after remove = " + newRemaining);
+                System.out.println("---findCombos start---");
                 findCombos(currentCombo, newRemaining, groupedNDCs, combos);
+                System.out.println("---findCombos end---");
+                System.out.println("Current Combo after findCombos = " + currentCombo);
                 currentCombo.remove(currentCombo.size() - 1);
             }
         }
