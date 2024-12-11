@@ -1,14 +1,7 @@
 package org.mitre.synthea.modules;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -18,10 +11,14 @@ import org.hl7.fhir.r4.model.DateType;
 import org.immregistries.vfa.connect.ConnectFactory;
 import org.immregistries.vfa.connect.ConnectorInterface;
 import org.immregistries.vfa.connect.model.*;
+import org.mitre.synthea.codebase.CodeMap;
+import org.mitre.synthea.codebase.CodeMapBuilder;
+import org.mitre.synthea.codebase.mapping.Combo;
+import org.mitre.synthea.codebase.mapping.NDC;
+import org.mitre.synthea.codebase.reference.CodesetType;
 import org.mitre.synthea.helpers.Attributes;
 import org.mitre.synthea.helpers.Attributes.Inventory;
 import org.mitre.synthea.helpers.Utilities;
-import org.mitre.synthea.world.agents.Clinician;
 import org.mitre.synthea.world.agents.Person;
 import org.mitre.synthea.world.concepts.HealthRecord;
 import org.mitre.synthea.world.concepts.HealthRecord.Code;
@@ -59,6 +56,8 @@ public class Immunizations {
   /** Probability of an antivax clinician not administrating a vaccine */
   private static double noVaccineProbabilityAntivaxClinician = 90; // default value
 
+  private static CodeMap codeMap = CodeMapBuilder.INSTANCE.getDefaultCodeMap();
+
   @SuppressWarnings({ "unchecked", "rawtypes" })
   private static final Map<String, Map> immunizationSchedule = loadImmunizationSchedule();
 
@@ -67,7 +66,7 @@ public class Immunizations {
    * NEW METHOD FETCHING IMMUNIZATION FORECASTER RECOMMENDATION
    */
   @SuppressWarnings({ "unchecked", "rawtypes" })
-  public static void performEncounterWithNewCDS(Person person, long time) {
+  public static void performEncounterWithNewCDS(Person person, long encounterDate) {
     /**
      * Reading patient history
      */
@@ -84,80 +83,66 @@ public class Immunizations {
       /**
        * Querying new CDS
        */
-      ImmunizationRecommendation immunizationRecommendation = queryForecaster(person, time, immunizationsGiven);
-      immunizationRecommendation = checkForCombination(immunizationRecommendation);
-
-
+      System.out.println("---------immunizationRecommendation start--------------");
+      ImmunizationRecommendation immunizationRecommendation = queryForecaster(person, encounterDate, immunizationsGiven);
+      System.out.println("---------immunizationRecommendation end--------------");
       if(immunizationRecommendation != null){
-        for (ImmunizationRecommendation.ImmunizationRecommendationRecommendationComponent recommendation : immunizationRecommendation.getRecommendation()) {
-          String immunizationKey = recommendation.getVaccineCode().get(0).getCodingFirstRep().getCode(); // CVX code
-          Date dueDate = recommendation.getDateCriterionFirstRep().getValue();  // Recommended due date
+        System.out.println("--------- in checkForCombination--------------");
+        // Fetch patient age 
+        System.out.println("Fetch patient age");
+        int agePatient= person.ageInYears(encounterDate);
+        System.out.println("Patient age : "+ agePatient);
+        HashMap<org.mitre.synthea.codebase.generated.Code, NDC> cvxMap = checkForCombination(immunizationRecommendation, encounterDate, agePatient);
+        System.out.println("---------checkForCombination end--------------");
+        boolean getImmunization;
+        if (!cvxMap.isEmpty()){
+          System.out.println("---------cvxMap is not empty--------------");
 
-          // Decide whether to administer the vaccine
-          Random random = new Random();
-          int randomNumber = random.nextInt(100);
-          boolean getImmunization = true;
+//          getImmunization = gettingImmunization(person);
+            getImmunization = true;
+          for (Map.Entry<org.mitre.synthea.codebase.generated.Code, NDC> entryMap : cvxMap.entrySet()) {
+            System.out.println("-----------for cvx = " + entryMap.toString() + "----------------");
+            if (getImmunization) {
+              /**
+               * getting specific history on cvx, name
+               */
+              List<Long> history = null;
 
-          // If antivax person
-          if ((boolean) person.attributes.getOrDefault(Person.ANTIVAX, false)){
-            if (randomNumber < noVaccineProbabilityAntivax) {
-              getImmunization = false;
-            }
-          } else {
-//            if (Objects.equals(immunizationKey, "88")) { // for influenza
-//              if (person.ageInYears(time) >= 65 && randomNumber >= 75) {
-//                // 75% is the target vaccination coverage by the WHO for older people (https://www.who.int/europe/news-room/fact-sheets/item/influenza-vaccination-coverage-and-effectiveness)
-//                getImmunization = false;
-//              } else if (randomNumber >= 15) {
-//                // 15% is an arbitrary number
-//                getImmunization = false;
-//              }
-//            } else if (randomNumber < 5) { // other immunization
-//              // 5% is an arbitrary number
-//              getImmunization = false;
-//            }
-            if (randomNumber < noVaccineProbability) {
-              getImmunization = false;
+              org.mitre.synthea.codebase.generated.Code immunizationCode = entryMap.getKey();
+              String immunizationKey = codeMap.getStringForCode(immunizationCode, CodesetType.VACCINATION_CVX_CODE);
+              String immunizationLabel = immunizationCode.getLabel();
+              String ndcCode = cvxMap.get(immunizationCode).getNdcCode();
+              String ndcLabel = codeMap.getCodeForCodeset(CodesetType.VACCINATION_NDC_CODE_UNIT_OF_USE, ndcCode).getLabel();
+              
+              System.out.println("Immunization Key : "+ immunizationKey);
+
+              if (immunizationsGiven.containsKey(immunizationKey)) {
+                history = immunizationsGiven.get(immunizationKey);
+              } else {
+                history = new ArrayList<Long>();
+                immunizationsGiven.put(immunizationKey, history);
+              }
+              history.add(encounterDate);
+              HealthRecord.Immunization entry = person.record.immunization(encounterDate, immunizationKey);
+              HealthRecord.Code immCode = new HealthRecord.Code(
+                      "http://hl7.org/fhir/sid/cvx",
+                      immunizationKey,
+                      immunizationLabel
+                      );
+              entry.codes.add(immCode);
+              entry.series = history.size() + 1;
+
+              // Assign the NDC details to the immunization entry
+              entry.nameNDC = ndcLabel;
+              entry.codeStringNDC = ndcCode;
             }
           }
 
-          // If antivax clinician
-          HealthRecord.Encounter currentEncounter = (HealthRecord.Encounter) person.attributes.get(Person.CURRENT_ENCOUNTER);
-          randomNumber = random.nextInt(100);
-          if ((boolean) currentEncounter.clinician.attributes.getOrDefault(Person.ANTIVAX, false)) {
-            if (randomNumber < noVaccineProbabilityAntivaxClinician) {
-              getImmunization = false;
-            }
-          } else {
-            if (randomNumber < noVaccineProbabilityClinician) {
-              getImmunization = false;
-            }
-          }
-
-          if (getImmunization) {
-            /**
-             * getting specific history on cvx, name
-             */
-            List<Long> history = null;
-            if (immunizationsGiven.containsKey(immunizationKey)) {
-              history = immunizationsGiven.get(immunizationKey);
-            } else {
-              history = new ArrayList<Long>();
-              immunizationsGiven.put(immunizationKey, history);
-            }
-            history.add(time);
-            HealthRecord.Immunization entry = person.record.immunization(time, immunizationKey);
-            HealthRecord.Code immCode = new HealthRecord.Code(
-                    "http://hl7.org/fhir/sid/cvx",
-                    immunizationKey,
-                    recommendation.getVaccineCode().get(0).getCodingFirstRep().getDisplay());
-            entry.codes.add(immCode);
-            entry.series = history.size() + 1;
-          }
+        } else {
+          System.out.println("---------cvxMap is empty------------");
         }
-
       } else {
-        System.err.println("No immunization recommendation returned from CDS server.");
+        System.err.println("---------------Empty immunization recommendation returned from CDS server.");
       }
 
     } catch (Exception exception) {
@@ -291,10 +276,53 @@ public class Immunizations {
   }
 
   /**
-   * Temporary method to check for combination of vaccines : to be replaced by the real method
+   * Return a map of CVX codes to NDC codes for the vaccines combination recommended by the CDS that can be administered
    */
-  private static ImmunizationRecommendation checkForCombination(ImmunizationRecommendation immunizationRecommendation){
-    return immunizationRecommendation;
+  private static HashMap<org.mitre.synthea.codebase.generated.Code, NDC> checkForCombination(ImmunizationRecommendation immunizationRecommendation, long encounterDate, int agePatient) {
+    if(!immunizationRecommendation.isEmpty()){
+      List<String> combinationVaccines = new ArrayList<>();
+      HashMap<org.mitre.synthea.codebase.generated.Code, NDC> cvxMap = new HashMap<>(); // Immunization CVX code to NDC map
+
+      // Put all administrable vaccines in a list
+      for (ImmunizationRecommendation.ImmunizationRecommendationRecommendationComponent recommendation : immunizationRecommendation.getRecommendation()) {
+        String immunizationKey = recommendation.getVaccineCode().get(0).getCodingFirstRep().getCode(); // CVX code
+        Date dueDate = recommendation.getDateCriterionFirstRep().getValue();  // Recommended due date
+
+        if (dueDate == null || dueDate.after(new Date(encounterDate))) {
+          continue;
+        }
+        combinationVaccines.add(immunizationKey);
+      }
+      System.out.println("Combination vaccines : " + combinationVaccines);
+        // Check for combination of vaccines
+
+      System.out.println("---in getCombosByCVXList---");
+      List<Combo> combinations = codeMap.getCombosByCVXStringList(combinationVaccines, agePatient);
+      System.out.println("---end getCombosByCVXList---");
+
+      if (combinations.isEmpty()) {
+        System.out.println("No combination found");
+        return cvxMap;
+      } else {
+        System.out.println("Combination found");
+      }
+      // The first combination is the combination with the best scores
+      Combo bestCombination = combinations.get(0);
+
+      // Add the combination to the immunization recommendation
+      for (NDC ndc : bestCombination.getNdcList()) {
+//        String ndcCode = bestCombination.getNdcList().get(0).getNdcCode();
+//        String ndcName = codeMap.getCodeForCodeset(CodesetType.VACCINATION_NDC_CODE_UNIT_OF_USE, ndc.getNdcCode()).getLabel();
+          // Get all cvx relating to the NDC
+        for (org.mitre.synthea.codebase.generated.Code cvx : ndc.getCvxCodes()) {
+            cvxMap.put(cvx, ndc);
+        }
+
+      }
+      return cvxMap;
+    }
+    System.out.println("Immunization recommendation is empty in checkForCombination");
+    return new HashMap<>();
   }
 
   private static List<ForecastActual> checkForCombinationDepreciated(List<ForecastActual> forecastActualList) {
@@ -431,6 +459,50 @@ public class Immunizations {
   }
 
 
+  private static boolean gettingImmunization(Person person) {
+    // Decide whether to administer the vaccine
+    Random random = new Random();
+    int randomNumber = random.nextInt(100);
+    boolean getImmunization = true;
+
+    // If antivax person
+    if ((boolean) person.attributes.getOrDefault(Person.ANTIVAX, false)){
+      if (randomNumber < noVaccineProbabilityAntivax) {
+        getImmunization = false;
+      }
+    } else {
+//            if (Objects.equals(immunizationKey, "88")) { // for influenza
+//              if (person.ageInYears(time) >= 65 && randomNumber >= 75) {
+//                // 75% is the target vaccination coverage by the WHO for older people (https://www.who.int/europe/news-room/fact-sheets/item/influenza-vaccination-coverage-and-effectiveness)
+//                getImmunization = false;
+//              } else if (randomNumber >= 15) {
+//                // 15% is an arbitrary number
+//                getImmunization = false;
+//              }
+//            } else if (randomNumber < 5) { // other immunization
+//              // 5% is an arbitrary number
+//              getImmunization = false;
+//            }
+      if (randomNumber < noVaccineProbability) {
+        getImmunization = false;
+      }
+    }
+
+    // If antivax clinician
+    HealthRecord.Encounter currentEncounter = (HealthRecord.Encounter) person.attributes.get(Person.CURRENT_ENCOUNTER);
+    randomNumber = random.nextInt(100);
+    if ((boolean) currentEncounter.clinician.attributes.getOrDefault(Person.ANTIVAX, false)) {
+      if (randomNumber < noVaccineProbabilityAntivaxClinician) {
+        getImmunization = false;
+      }
+    } else {
+      if (randomNumber < noVaccineProbabilityClinician) {
+        getImmunization = false;
+      }
+    }
+    return getImmunization;
+  }
+
   @SuppressWarnings("rawtypes")
   private static Map loadImmunizationSchedule() {
     String filename = "immunization_schedule.json";
@@ -494,10 +566,10 @@ public class Immunizations {
    * Administer vaccines to the person at the state time according to the
    * required immunization schedule.
    * @param person - the person to vaccinate.
-   * @param time - the current simulation time.
+   * @param encounterDate - the current simulation time.
    */
   @SuppressWarnings({ "unchecked", "rawtypes" })
-  public static void performEncounter(Person person, long time){
+  public static void performEncounter(Person person, long encounterDate){
     {
       // logging immunization strings to compare and do mapping TODO remove
       Gson g = new Gson();
@@ -512,7 +584,7 @@ public class Immunizations {
     /**
      * New code connecting to forecaster
      */
-    performEncounterWithNewCDS(person,time);
+    performEncounterWithNewCDS(person,encounterDate);
     /**
      * old code
      */

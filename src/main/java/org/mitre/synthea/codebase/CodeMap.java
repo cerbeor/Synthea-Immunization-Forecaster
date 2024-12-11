@@ -218,6 +218,17 @@ public String getStringForCode(Code code, CodesetType c) {
     return getCombosByCVXStringList(cvxCodes, true);
   }
 
+
+  public List<Combo> getCombosByCVXStringList(List<String> cvxCodes, int agePatient) {
+    boolean isAdult = agePatient >= 18;
+    return getCombosByCVXStringList(cvxCodes, isAdult);
+  }
+
+  public List<Combo> getCombosByCVXStringList(List<String> cvxCodes, int agePatient, List<String> failList) {
+    boolean isAdult = agePatient >= 18;
+    return getCombosByCVXStringList(cvxCodes, isAdult, failList);
+  }
+
   public List<Combo> getCombosByCVXStringList(List<String> cvxCodes, List<String> failList) {
     // set the default value of isAdult to true
     return getCombosByCVXStringList(cvxCodes, true, failList);
@@ -268,7 +279,9 @@ public String getStringForCode(Code code, CodesetType c) {
         System.out.println("End of NDC List\n");
 
         // Step 2: Generate combos from the list of NDCs
+        System.out.println("----createCombosFromNDCs start----");
         List<Combo> comboList = mapping.createCombosFromNDCs(ndcList, cvxCodes);
+        System.out.println("----createCombosFromNDCs end----");
         
         // Step 3: Debugging output to verify Combo creation
         System.out.println("Generated Combos:");

@@ -61,13 +61,17 @@ public class Mapping {
     // Group NDCs by their CVX codes for efficient searching
     Map<Set<Code>, List<NDC>> groupedNDCs = new HashMap<>();
     for (NDC ndc : ndcList) {
+
         Set<Code> cvxSet = new HashSet<>(ndc.getCvxCodes());
         groupedNDCs.computeIfAbsent(cvxSet, k -> new ArrayList<>()).add(ndc);
+        System.out.println("GroupedNDCs = " + groupedNDCs);
     }
 
+        System.out.println("----findCombos start----");
     // Use backtracking to find the best combinations
     findCombos(new ArrayList<>(), targetCvxList, groupedNDCs, combos);
-
+        System.out.println("----findCombos end----");
+        System.out.println("Combos = " + combos);
     // Sort by the number of NDCs (fewer NDCs is better)
     combos.sort(Comparator.comparingInt(c -> c.getNdcList().size()));
     
@@ -81,13 +85,21 @@ public class Mapping {
 private void findCombos(List<NDC> currentCombo, List<Code> remainingCvx, 
                         Map<Set<Code>, List<NDC>> groupedNDCs, List<Combo> combos) {
     if (remainingCvx.isEmpty()) {
+        System.out.println("Remaining CVX is empty");
         combos.add(new Combo(new ArrayList<>(currentCombo), true, 100.0));
+        System.out.println("Combos list end = " + combos);
         return;
     }
+    System.out.println("Current Combo = " + currentCombo);
+    System.out.println("Combos list = " + combos);
 
     for (Map.Entry<Set<Code>, List<NDC>> entry : groupedNDCs.entrySet()) {
         Set<Code> ndcCvxSet = entry.getKey();
         List<NDC> ndcGroup = entry.getValue();
+
+        System.out.println("NDC CVX Set = " + ndcCvxSet);
+        System.out.println("NDC Group = " + ndcGroup);
+
 
         // Skip if this NDC overlaps with existing NDCs in the current combo
         if (currentCombo.stream().anyMatch(ndc -> !Collections.disjoint(ndc.getCvxCodes(), ndcCvxSet))) {
@@ -99,7 +111,10 @@ private void findCombos(List<NDC> currentCombo, List<Code> remainingCvx,
                 .filter(ndcCvxSet::contains)
                 .collect(Collectors.toList());
 
+        System.out.println("Intersecting CVX = " + intersectingCvx);
+
         if (!intersectingCvx.isEmpty()) {
+            System.out.println("intersectingCvx is not empty");
             for (NDC ndc : ndcGroup) {
                 currentCombo.add(ndc);
                 List<Code> newRemaining = new ArrayList<>(remainingCvx);
@@ -109,6 +124,7 @@ private void findCombos(List<NDC> currentCombo, List<Code> remainingCvx,
             }
         }
     }
+    System.out.println("Combos list end = " + combos);
 }
 
 /**
