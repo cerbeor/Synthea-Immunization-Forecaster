@@ -83,7 +83,9 @@ public class Immunizations {
       /**
        * Querying new CDS
        */
+      System.out.println("---------immunizationRecommendation start--------------");
       ImmunizationRecommendation immunizationRecommendation = queryForecaster(person, encounterDate, immunizationsGiven);
+      System.out.println("---------immunizationRecommendation end--------------");
       if(immunizationRecommendation != null){
         System.out.println("--------- in checkForCombination--------------");
         HashMap<org.mitre.synthea.codebase.generated.Code, NDC> cvxMap = checkForCombination(immunizationRecommendation, encounterDate);
@@ -136,7 +138,7 @@ public class Immunizations {
           System.out.println("---------cvxMap is empty------------");
         }
       } else {
-        System.err.println("---------------No immunization recommendation returned from CDS server.");
+        System.err.println("---------------Empty immunization recommendation returned from CDS server.");
       }
 
     } catch (Exception exception) {

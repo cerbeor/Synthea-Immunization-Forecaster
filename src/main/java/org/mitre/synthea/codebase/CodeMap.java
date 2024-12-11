@@ -250,7 +250,9 @@ public String getStringForCode(Code code, CodesetType c) {
         System.out.println("End of NDC List\n");
 
         // Step 2: Generate combos from the list of NDCs
+        System.out.println("----createCombosFromNDCs start----");
         List<Combo> comboList = mapping.createCombosFromNDCs(ndcList, cvxCodes);
+        System.out.println("----createCombosFromNDCs end----");
         
         // Step 3: Debugging output to verify Combo creation
         System.out.println("Generated Combos:");
