@@ -211,16 +211,28 @@ public String getStringForCode(Code code, CodesetType c) {
 
   //  Combo
 
+  // multiple getCombosByCVXStringList methods
 
   public List<Combo> getCombosByCVXStringList(List<String> cvxCodes) {
     // set the default value of isAdult to true
     return getCombosByCVXStringList(cvxCodes, true);
   }
 
+  public List<Combo> getCombosByCVXStringList(List<String> cvxCodes, List<String> failList) {
+    // set the default value of isAdult to true
+    return getCombosByCVXStringList(cvxCodes, true, failList);
+  }
 
   public List<Combo> getCombosByCVXStringList(List<String> cvxCodes, boolean isAdult) {
+    return getCombosByCVXStringList(cvxCodes, isAdult, new ArrayList<>());
+  }
+
+
+  public List<Combo> getCombosByCVXStringList(List<String> cvxCodes, boolean isAdult, List<String> failList) {
     SpecificCase specificCase = new SpecificCase(this);
     cvxCodes = specificCase.replaceSpecialCases(cvxCodes, isAdult);
+
+    specificCase.filterCVXList(cvxCodes, failList);
 
     // String to code
      List<Code> cvxCodeList = new ArrayList<Code>();
