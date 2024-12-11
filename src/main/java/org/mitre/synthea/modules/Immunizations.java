@@ -101,7 +101,7 @@ public class Immunizations {
 //          getImmunization = gettingImmunization(person);
             getImmunization = true;
           for (Map.Entry<org.mitre.synthea.codebase.generated.Code, NDC> entryMap : cvxMap.entrySet()) {
-//            System.out.println("-----------for cvx = " + entryMap.toString() + "----------------");
+//            System.out.println("---for cvx = " + entryMap.toString() + "---");
             if (getImmunization) {
               /**
                * getting specific history on cvx, name
@@ -122,7 +122,9 @@ public class Immunizations {
                 history = new ArrayList<Long>();
                 immunizationsGiven.put(immunizationKey, history);
               }
+//              System.out.println("Immunization history : " + history);
               history.add(encounterDate);
+//              System.out.println("Immunization history after : " + history);
               HealthRecord.Immunization entry = person.record.immunization(encounterDate, immunizationKey);
               HealthRecord.Code immCode = new HealthRecord.Code(
                       "http://hl7.org/fhir/sid/cvx",
@@ -284,15 +286,21 @@ public class Immunizations {
       HashMap<org.mitre.synthea.codebase.generated.Code, NDC> cvxMap = new HashMap<>(); // Immunization CVX code to NDC map
 
       // Put all administrable vaccines in a list
+//      System.out.println("-----------------------------------------------------------------");
+//      System.out.println("Encounter date : " + new Date(encounterDate));
+//      System.out.print("Immunization cvx : ");
       for (ImmunizationRecommendation.ImmunizationRecommendationRecommendationComponent recommendation : immunizationRecommendation.getRecommendation()) {
         String immunizationKey = recommendation.getVaccineCode().get(0).getCodingFirstRep().getCode(); // CVX code
         Date dueDate = recommendation.getDateCriterionFirstRep().getValue();  // Recommended due date
+//        System.out.print(immunizationKey + " : " + dueDate + " ; ");
+
 
         if (dueDate == null || dueDate.after(new Date(encounterDate))) {
           continue;
         }
         combinationVaccines.add(immunizationKey);
       }
+//      System.out.println(" ");
 //      System.out.println("Combination vaccines : " + combinationVaccines);
         // Check for combination of vaccines
 
