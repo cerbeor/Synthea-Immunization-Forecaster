@@ -30,23 +30,46 @@ public class SpecificCase {
         this.codeMap = codeMap;
         
         // Case Hep B
-        List<String> list45 = new ArrayList<>();
-        list45.add("43"); // adult
-        list45.add("08"); // adolescent, geriatric
-        specialCasesMap.put("45", list45);
+        List<String> list_45 = new ArrayList<>();
+        list_45.add("43"); // adult
+        list_45.add("08"); // adolescent, geriatric
+        specialCasesMap.put("45", list_45);
 
         // Case Hep A
-        List<String> list85 = new ArrayList<>();
-        list85.add("52"); // adult
-        list85.add("83"); // Hep A, ped/adol, 2 dose
+        List<String> list_85 = new ArrayList<>();
+        list_85.add("52"); // adult
+        list_85.add("83"); // Hep A, ped/adol, 2 dose   52 = 83 ?
         // 169 Hep A, live attenuated (not available in the US)
         // 31 Hep A, pediatric, unspecified 
         // 83 Hep A, ped/adol, 2 dose
-        specialCasesMap.put("85", list85);
+        specialCasesMap.put("85", list_85);
 
-        // NDC Not found
-        // 109: pneumococcal
-        // 89: polio
+        // 109: pneumococcal --> PCV *
+        // 89: polio // 10 IPV
+        List<String> list_89 = new ArrayList<>();
+        list_89.add("10"); // poliovirus vaccine, inactivated (IPV)
+        list_89.add("10"); // poliovirus vaccine, inactivated (IPV)
+        specialCasesMap.put("89", list_89);
+
+        // 17: Hib, unspecified formulation --> 48 Hib (PRP-T)
+        List<String> list_17 = new ArrayList<>();
+        list_17.add("48"); // Hib (PRP-T)
+        list_17.add("48"); // Hib (PRP-T)
+        specialCasesMap.put("17", list_17);
+
+        // 107: DTaP, unspecified formulation --> 20
+        List<String> list_107 = new ArrayList<>();
+        list_107.add("20"); // diphtheria, tetanus toxoids and acellular pertussis vaccine
+        list_107.add("20"); // diphtheria, tetanus toxoids and acellular pertussis vaccine
+        specialCasesMap.put("17", list_107);
+
+
+        // 88: Influenza (random) --> 320 Influenza, MDCK, trivalent, preservative
+
+        List<String> list_88 = new ArrayList<>();
+        list_88.add("320");
+        list_88.add("320");
+        specialCasesMap.put("17", list_88);
     }
 
 
