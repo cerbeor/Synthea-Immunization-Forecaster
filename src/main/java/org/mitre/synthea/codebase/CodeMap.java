@@ -211,18 +211,28 @@ public String getStringForCode(Code code, CodesetType c) {
 
   //  Combo
 
+  // multiple getCombosByCVXStringList methods
 
-  // public List<Combo> getCombosByCVXStringList(List<String> cvxCodes) {
-  //   // set the default value of isAdult to true
-  //   return getCombosByCVXStringList(cvxCodes, true);
-  // }
-
-
-  public List<Combo> getCombosByCVXStringList(List<String> cvxCodes, int agePatient) {
+  public List<Combo> getCombosByCVXStringList(List<String> cvxCodes) {
     // set the default value of isAdult to true
-    boolean isAdult = agePatient >= 18;
+    return getCombosByCVXStringList(cvxCodes, true);
+  }
+
+  public List<Combo> getCombosByCVXStringList(List<String> cvxCodes, List<String> failList) {
+    // set the default value of isAdult to true
+    return getCombosByCVXStringList(cvxCodes, true, failList);
+  }
+
+  public List<Combo> getCombosByCVXStringList(List<String> cvxCodes, boolean isAdult) {
+    return getCombosByCVXStringList(cvxCodes, isAdult, new ArrayList<>());
+  }
+
+
+  public List<Combo> getCombosByCVXStringList(List<String> cvxCodes, boolean isAdult, List<String> failList) {
     SpecificCase specificCase = new SpecificCase(this);
     cvxCodes = specificCase.replaceSpecialCases(cvxCodes, isAdult);
+
+    specificCase.filterCVXList(cvxCodes, failList);
 
     // String to code
      List<Code> cvxCodeList = new ArrayList<Code>();
@@ -261,7 +271,7 @@ public String getStringForCode(Code code, CodesetType c) {
         System.out.println("----createCombosFromNDCs start----");
         List<Combo> comboList = mapping.createCombosFromNDCs(ndcList, cvxCodes);
         System.out.println("----createCombosFromNDCs end----");
-        
+
         // Step 3: Debugging output to verify Combo creation
         System.out.println("Generated Combos:");
         for (Combo combo : comboList) {

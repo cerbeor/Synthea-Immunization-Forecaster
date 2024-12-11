@@ -31,10 +31,22 @@ public class SpecificCase {
         
         // Case Hep B
         List<String> list45 = new ArrayList<>();
-        list45.add("43");
-        list45.add("08");
+        list45.add("43"); // adult
+        list45.add("08"); // adolescent, geriatric
         specialCasesMap.put("45", list45);
 
+        // Case Hep A
+        List<String> list85 = new ArrayList<>();
+        list85.add("52"); // adult
+        list85.add("84"); // ped/adol, 3 dose
+        // 169 Hep A, live attenuated (not available in the US)
+        // 31 Hep A, pediatric, unspecified 
+        // 83 Hep A, ped/adol, 2 dose
+        specialCasesMap.put("85", list85);
+
+        // NDC Not found
+        // 109: pneumococcal
+        // 89: polio
     }
 
 
