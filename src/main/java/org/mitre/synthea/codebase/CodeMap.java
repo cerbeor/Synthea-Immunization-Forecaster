@@ -219,12 +219,12 @@ public String getStringForCode(Code code, CodesetType c) {
   }
 
 
-  public List<Combo> getCombosByCVXStringList(List<String> cvxCodes, int agePatient) {
+  public List<Combo> getCombosByCVXStringList(List<String> cvxCodes, double agePatient) {
     boolean isAdult = agePatient >= 18;
     return getCombosByCVXStringList(cvxCodes, isAdult);
   }
 
-  public List<Combo> getCombosByCVXStringList(List<String> cvxCodes, int agePatient, List<String> failList) {
+  public List<Combo> getCombosByCVXStringList(List<String> cvxCodes, double agePatient, List<String> failList) {
     boolean isAdult = agePatient >= 18;
     return getCombosByCVXStringList(cvxCodes, isAdult, failList);
   }

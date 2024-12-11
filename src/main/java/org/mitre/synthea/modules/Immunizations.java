@@ -90,7 +90,7 @@ public class Immunizations {
         System.out.println("--------- in checkForCombination--------------");
         // Fetch patient age 
         System.out.println("Fetch patient age");
-        int agePatient= person.ageInYears(encounterDate);
+        double agePatient= person.ageInDecimalYears(encounterDate); // encounterDate is the current simulation time
         System.out.println("Patient age : "+ agePatient);
         HashMap<org.mitre.synthea.codebase.generated.Code, NDC> cvxMap = checkForCombination(immunizationRecommendation, encounterDate, agePatient);
         System.out.println("---------checkForCombination end--------------");
@@ -278,7 +278,7 @@ public class Immunizations {
   /**
    * Return a map of CVX codes to NDC codes for the vaccines combination recommended by the CDS that can be administered
    */
-  private static HashMap<org.mitre.synthea.codebase.generated.Code, NDC> checkForCombination(ImmunizationRecommendation immunizationRecommendation, long encounterDate, int agePatient) {
+  private static HashMap<org.mitre.synthea.codebase.generated.Code, NDC> checkForCombination(ImmunizationRecommendation immunizationRecommendation, long encounterDate, double agePatient) {
     if(!immunizationRecommendation.isEmpty()){
       List<String> combinationVaccines = new ArrayList<>();
       HashMap<org.mitre.synthea.codebase.generated.Code, NDC> cvxMap = new HashMap<>(); // Immunization CVX code to NDC map
