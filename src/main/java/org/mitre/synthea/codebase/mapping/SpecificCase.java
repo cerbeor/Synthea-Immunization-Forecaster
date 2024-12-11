@@ -38,7 +38,7 @@ public class SpecificCase {
         // Case Hep A
         List<String> list85 = new ArrayList<>();
         list85.add("52"); // adult
-        list85.add("84"); // ped/adol, 3 dose
+        list85.add("83"); // Hep A, ped/adol, 2 dose
         // 169 Hep A, live attenuated (not available in the US)
         // 31 Hep A, pediatric, unspecified 
         // 83 Hep A, ped/adol, 2 dose
