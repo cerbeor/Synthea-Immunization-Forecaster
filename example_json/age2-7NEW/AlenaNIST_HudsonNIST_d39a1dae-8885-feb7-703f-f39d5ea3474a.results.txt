@@ -1,0 +1,46 @@
+2022-06-06 Birth 
+           - Well child visit (procedure)
+2022-07-11 - Well child visit (procedure)
+           * Hep B, adolescent or pediatric (08)
+2022-09-12 - Well child visit (procedure)
+           * IPV (10)
+           * Influenza, MDCK, trivalent, preservative (320)
+2022-11-14 - Well child visit (procedure)
+           * Influenza, MDCK, trivalent, preservative (320)
+2023-02-13 - Well child visit (procedure)
+           * Influenza, MDCK, trivalent, preservative (320)
+2023-05-15 - Well child visit (procedure)
+           * Influenza, MDCK, trivalent, preservative (320)
+2023-08-14 - Well child visit (procedure)
+           * varicella (21)
+           * Influenza, MDCK, trivalent, preservative (320)
+           * Hep A, ped/adol, 2 dose (83)
+           * MMR (03)
+2023-11-13 - Well child visit (procedure)
+           * Influenza, MDCK, trivalent, preservative (320)
+2024-01-27 - Encounter for symptom
+2024-05-13 - Well child visit (procedure)
+           * Influenza, MDCK, trivalent, preservative (320)
+2024-08-19 - Emergency room admission (procedure)
+2024-10-27 - Encounter for symptom
+2024-11-11 - Well child visit (procedure)
+           * Influenza, MDCK, trivalent, preservative (320)
+2024-11-18 - Encounter for symptom
+2024-12-07 - Encounter for check up
+
+------------------------------------------------------------------------------------------------------------------------------------------
+| Vaccine        |   Birth   |  2 months |  4 months |  6 months | 12 months | 15 months | 18 months |  4 years  |  11 years |  16 years |
+------------------------------------------------------------------------------------------------------------------------------------------
+| HepB           |     1     |           |           |           |           |           |           |           |           |           |
+| RV             |           |           |           |           |           |           |           |           |           |           |
+| DTaP           |           |           |           |           |           |           |           |           |           |           |
+| Hib            |           |           |           |           |           |           |           |           |           |           |
+| IPV            |           |     1     |           |           |           |           |           |           |           |           |
+| MMR            |           |           |           |           |     1     |           |           |           |           |           |
+| Var            |           |           |           |           |     1     |           |           |           |           |           |
+| HepA           |           |           |           |           |     1     |           |           |           |           |           |
+------------------------------------------------------------------------------------------------------------------------------------------
+| Flu            |           |     1     |     1     |     2     |     1     |     1     |     2     |           |           |           |
+------------------------------------------------------------------------------------------------------------------------------------------
+| Encounters     |     2     |     1     |     1     |     2     |     1     |     1     |     7     |           |           |           |
+------------------------------------------------------------------------------------------------------------------------------------------

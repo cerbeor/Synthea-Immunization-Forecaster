@@ -1,0 +1,56 @@
+2018-02-01 Birth 
+           - Well child visit (procedure)
+           * Hep B, adolescent or pediatric (08)
+2018-03-08 - Well child visit (procedure)
+2018-05-10 - Well child visit (procedure)
+           * IPV (10)
+           * Influenza, MDCK, trivalent, preservative (320)
+2018-07-12 - Well child visit (procedure)
+           * Influenza, MDCK, trivalent, preservative (320)
+2018-10-11 - Well child visit (procedure)
+           * Influenza, MDCK, trivalent, preservative (320)
+2019-01-10 - Well child visit (procedure)
+           * Influenza, MDCK, trivalent, preservative (320)
+2019-04-11 - Well child visit (procedure)
+           * varicella (21)
+           * Influenza, MDCK, trivalent, preservative (320)
+           * Hep A, ped/adol, 2 dose (83)
+           * MMR (03)
+2019-07-11 - Well child visit (procedure)
+           * Influenza, MDCK, trivalent, preservative (320)
+2020-01-09 - Well child visit (procedure)
+           * Influenza, MDCK, trivalent, preservative (320)
+2020-07-09 - Well child visit (procedure)
+           * Influenza, MDCK, trivalent, preservative (320)
+2021-01-07 - Well child visit (procedure)
+           * Influenza, MDCK, trivalent, preservative (320)
+2021-07-08 - Well child visit (procedure)
+           * Influenza, MDCK, trivalent, preservative (320)
+2021-08-14 - Encounter for symptom
+2021-09-05 - Encounter for symptom (procedure)
+           - Hospital admission for isolation (procedure)
+2021-09-17 - Admission to intensive care unit (procedure)
+2021-09-24 - Hospital admission, for observation (procedure)
+2022-01-06 - Well child visit (procedure)
+           * Influenza, MDCK, trivalent, preservative (320)
+2023-01-12 - Well child visit (procedure)
+           * Influenza, MDCK, trivalent, preservative (320)
+2023-07-13 - Encounter for symptom
+2024-01-18 - Well child visit (procedure)
+
+------------------------------------------------------------------------------------------------------------------------------------------
+| Vaccine        |   Birth   |  2 months |  4 months |  6 months | 12 months | 15 months | 18 months |  4 years  |  11 years |  16 years |
+------------------------------------------------------------------------------------------------------------------------------------------
+| HepB           |     1     |           |           |           |           |           |           |           |           |           |
+| RV             |           |           |           |           |           |           |           |           |           |           |
+| DTaP           |           |           |           |           |           |           |           |           |           |           |
+| Hib            |           |           |           |           |           |           |           |           |           |           |
+| IPV            |           |     1     |           |           |           |           |           |           |           |           |
+| MMR            |           |           |           |           |     1     |           |           |           |           |           |
+| Var            |           |           |           |           |     1     |           |           |           |           |           |
+| HepA           |           |           |           |           |     1     |           |           |           |           |           |
+------------------------------------------------------------------------------------------------------------------------------------------
+| Flu            |           |     1     |     1     |     2     |     1     |     1     |     5     |     1     |           |           |
+------------------------------------------------------------------------------------------------------------------------------------------
+| Encounters     |     2     |     1     |     1     |     2     |     1     |     1     |     10    |     3     |           |           |
+------------------------------------------------------------------------------------------------------------------------------------------
