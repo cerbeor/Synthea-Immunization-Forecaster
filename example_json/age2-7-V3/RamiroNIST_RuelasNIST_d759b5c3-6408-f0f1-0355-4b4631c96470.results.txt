@@ -1,0 +1,53 @@
+2018-09-07 Birth 
+           - Well child visit (procedure)
+           * Hep B, adolescent or pediatric (08)
+2018-10-12 - Well child visit (procedure)
+2018-12-14 - Well child visit (procedure)
+           * DTaP (20)
+           * Hib (PRP-T) (48)
+           * IPV (10)
+           * pneumococcal conjugate PCV 7 (100)
+2018-12-21 - Encounter for symptom
+2019-02-15 - Well child visit (procedure)
+2019-05-17 - Well child visit (procedure)
+           * Influenza, MDCK, trivalent, preservative (320)
+2019-07-12 - Urgent care clinic (environment)
+2019-07-19 - Encounter for check up (procedure)
+2019-07-26 - Encounter for symptom
+2019-08-16 - Well child visit (procedure)
+2019-10-08 - Encounter for symptom
+2019-11-15 - Well child visit (procedure)
+           * varicella (21)
+           * MMR (03)
+           * Hep A, ped/adol, 2 dose (83)
+2020-02-14 - Well child visit (procedure)
+2020-07-28 - Encounter for symptom
+2020-08-14 - Well child visit (procedure)
+2021-02-12 - Well child visit (procedure)
+2021-08-13 - Well child visit (procedure)
+2022-02-11 - Well child visit (procedure)
+2022-08-12 - Well child visit (procedure)
+2022-12-10 - Encounter for symptom
+2023-02-21 - Encounter for symptom
+2023-05-18 - Emergency room admission (procedure)
+2023-08-18 - Well child visit (procedure)
+2024-03-23 - Encounter for symptom
+2024-08-23 - Well child visit (procedure)
+
+------------------------------------------------------------------------------------------------------------------------------
+| Vaccine        |   Birth   |  2 months |  4 months |  6 months | 12 months | 18 months |  4 years  |  11 years |  16 years |
+------------------------------------------------------------------------------------------------------------------------------
+| HepB           |     1     |    [ ]    |           |    [ ]    |           |           |           |           |           |
+| RV             |           |    [ ]    |    [ ]    |    [ ]    |           |           |           |           |           |
+| DTaP           |           |     1     |    [ ]    |    [ ]    |    [ ]    |           |           |           |           |
+| Hib            |           |     1     |    [ ]    |    [ ]    |    [ ]    |           |           |           |           |
+| Pneu           |           |     1     |    [ ]    |    [ ]    |    [ ]    |           |           |           |           |
+| IPV            |           |     1     |    [ ]    |    [ ]    |           |           |           |           |           |
+| MMR            |           |           |           |           |     1     |           |           |           |           |
+| Var            |           |           |           |           |     1     |           |           |           |           |
+| HepA           |           |           |           |           |     1     |           |           |           |           |
+------------------------------------------------------------------------------------------------------------------------------
+| Flu            |           |           |           |     1     |           |           |           |           |           |
+------------------------------------------------------------------------------------------------------------------------------
+| Encounters     |     2     |     2     |     1     |     5     |     2     |     1     |     6     |     6     |           |
+------------------------------------------------------------------------------------------------------------------------------
