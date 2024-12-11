@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<codebase>
+
+<!--Specific case 1
+4 cvx in input
+3 ndc exist
+
+ndc 1 linked to cvx 1 and 2
+ndc 2 linked to cvx 2 and 3
+ndc 3 linked to cvx 3 and 4
+
+
+
+
+-->
+
+    <codeset>
+        <label>Vaccination CVX Codes</label>
+        <type>VACCINATION_CVX_CODE</type>
+
+        <code>
+            <value>001</value>
+            <label>Example Vaccine 1</label>
+            <description>Description for Vaccine 1</description>
+            <code-status>
+                <status>Valid</status>
+            </code-status>
+            <reference>
+                <link-to codeset="VACCINATION_NDC_CODE_UNIT_OF_USE">00001-0000-00</link-to>
+            </reference>
+        </code>
+
+        
+
+        <code>
+            <value>002</value>
+            <label>Example Vaccine 2</label>
+            <description>Description for Vaccine 2</description>
+            <code-status>
+                <status>Valid</status>
+            </code-status>
+            <reference>
+                <!-- <link-to codeset="VACCINATION_NDC_CODE_UNIT_OF_USE">00001-0000-01</link-to> -->
+            </reference>
+        </code>
+
+        
+
+        <code>
+            <value>003</value>
+            <label>Example Vaccine 3</label>
+            <description>Description for Vaccine 3</description>
+            <code-status>
+                <status>Valid</status>
+            </code-status>
+            <reference>
+                <!-- <link-to codeset="VACCINATION_NDC_CODE_UNIT_OF_USE">00001-0000-01</link-to> -->
+            </reference>
+        </code>
+
+        
+
+        <code>
+            <value>004</value>
+            <label>Example Vaccine 4</label>
+            <description>Description for Vaccine 4</description>
+            <code-status>
+                <status>Valid</status>
+            </code-status>
+            <reference>
+                <!-- <link-to codeset="VACCINATION_NDC_CODE_UNIT_OF_USE">00001-0000-01</link-to> -->
+            </reference>
+        </code>
+
+        
+
+
+    </codeset>
+
+    <codeset>
+        <label>Vaccination NDC for Unit-of-Use</label>
+        <type>VACCINATION_NDC_CODE_UNIT_OF_USE</type>
+        <!-- NDC code 00001-0000-01 linked to multiple CVX codes -->
+        <code>
+            <value>00001-0000-00</value>
+            <label>NDC Label 1</label>
+            <description>Description for NDC 1</description>
+            <code-status>
+                <status>Valid</status>
+            </code-status>
+            <reference>
+                <link-to codeset="VACCINATION_CVX_CODE">001</link-to>
+                <link-to codeset="VACCINATION_CVX_CODE">002</link-to>
+            </reference>
+        </code>
+
+        <!-- NDC code 00001-0000-05 linked to multiple CVX codes -->
+        <code>
+            <value>00002-0000-00</value>
+            <label>NDC Label 2</label>
+            <description>Description for NDC 2</description>
+            <code-status>
+                <status>Valid</status>
+            </code-status>
+            <reference>
+                <link-to codeset="VACCINATION_CVX_CODE">002</link-to>
+                <link-to codeset="VACCINATION_CVX_CODE">003</link-to>
+            </reference>
+            <use-date>
+                <not-before>20230101</not-before>
+            </use-date>
+        </code>
+
+
+        <code>
+            <value>00003-0000-00</value>
+            <label>NDC Label 3</label>
+            <description>Description for NDC 3</description>
+            <code-status>
+                <status>Valid</status>
+            </code-status>
+            <reference>
+                <link-to codeset="VACCINATION_CVX_CODE">003</link-to>
+                <link-to codeset="VACCINATION_CVX_CODE">004</link-to>
+            </reference>
+            <use-date>
+                <not-before>20230101</not-before>
+            </use-date>
+        </code>
+</codebase>
+
+
+<!-- Others -->
+
+<!-- Vaccine Type  -->
+<!-- Patient Sex -->
+<!-- Forecast Immunization Schedule -->
+<!-- Observation Identifier -->
+<!-- OBSERVATION_IDENTIFIER -->
+<!-- Patient Protection -->
+<!-- CDC PHIN VADS -->
+<!-- Vaccination VIS Doc Type -->
+<!-- VACCINATION_VIS_DOC_TYPE VOIR -->
+<!-- Contraindication or Precaution -->
+<!-- Telecommunication Equipment -->
+<!-- Financial Status Code -->
+<!-- Body Site -->
+<!-- Vaccination Confidentiality -->
+<!-- Vaccination Reaction -->
+<!-- Body Route -->
+
+
+<!-- Person Name Type -->
+<!-- Id Assigning Authority -->
+<!-- Evidence of Immunity -->
+<!-- Vaccination Funding Source -->
+<!-- Physician Number -->
+
+<!-- Vaccination Manufacturer Code -->
+<!-- Vaccination Order Control Code -->
+<!-- Vaccination Action Code -->
+<!-- Patient Ethnicity -->
+<!-- Vaccination Trade Name -->
+<!-- Person Language -->
+<!-- Vaccination Special Indications -->
+<!-- Patient Id -->
+<!-- Id Type Code -->
+<!-- Acknowledgement Type -->
+<!-- ACKNOWLEDGEMENT_TYPE -->
+<!-- Vaccination Lot Number Pattern -->
+<!-- HL7 Value Type -->
+<!-- Facility Type -->
+
+
+<!-- Vaccination Information Source -->
+<!-- Patient Class -->
+<!-- Forecast Reason -->
+<!-- Person Relationship -->
+<!-- Vaccine Product -->
+<!-- Message Profile Id -->
+<!-- Vaccination Validity -->
+<!-- Potential Issue -->
+<!-- Address Type -->
+<!-- Telecommunication Use -->
+<!-- Administration Unit -->
+<!-- Injection Guidance Site -->   
+<!-- Birth Order -->
+<!-- Vaccination VIS Vaccines -->
+<!-- Injection Guidance -->
+<!-- HL7 Coding System -->
+<!-- Vaccination Completion -->
+
+<!-- Registry Status -->
+<!-- Patient Race -->
+
