@@ -212,13 +212,15 @@ public String getStringForCode(Code code, CodesetType c) {
   //  Combo
 
 
-  public List<Combo> getCombosByCVXStringList(List<String> cvxCodes) {
+  // public List<Combo> getCombosByCVXStringList(List<String> cvxCodes) {
+  //   // set the default value of isAdult to true
+  //   return getCombosByCVXStringList(cvxCodes, true);
+  // }
+
+
+  public List<Combo> getCombosByCVXStringList(List<String> cvxCodes, int agePatient) {
     // set the default value of isAdult to true
-    return getCombosByCVXStringList(cvxCodes, true);
-  }
-
-
-  public List<Combo> getCombosByCVXStringList(List<String> cvxCodes, boolean isAdult) {
+    boolean isAdult = agePatient >= 18;
     SpecificCase specificCase = new SpecificCase(this);
     cvxCodes = specificCase.replaceSpecialCases(cvxCodes, isAdult);
 
