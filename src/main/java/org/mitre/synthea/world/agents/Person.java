@@ -122,8 +122,6 @@ public class Person implements Serializable, RandomNumberGenerator, QuadTreeElem
   public static final String UNINSURED = "uninsured";
   public static final String ANTIVAX = "antivax";
   public static final String CURRENT_ENCOUNTER = "current_encounter";
-  public static final String PARENT_FIRST_NAME = "parent_first_name";
-  public static final String PARENT_LAST_NAME = "parent_last_name";
 
   private final DefaultRandomNumberGenerator random;
   public long populationSeed;
