@@ -24,9 +24,12 @@ public class SpecificCase {
     private Map<String, List<String>> specialCasesMap;
     CodeMap codeMap;
 
+    private Map<String, String> reverseMap;
+
 
     public SpecificCase(CodeMap codeMap) {
         this.specialCasesMap = new HashMap<>();
+        this.reverseMap = new HashMap<>();
         this.codeMap = codeMap;
         
         // Case Hep B
@@ -34,6 +37,10 @@ public class SpecificCase {
         list_45.add("43"); // adult
         list_45.add("08"); // adolescent, geriatric
         specialCasesMap.put("45", list_45);
+
+        reverseMap.put("43", "45");
+        reverseMap.put("08", "45");
+
 
         // Case Hep A
         List<String> list_85 = new ArrayList<>();
@@ -43,25 +50,39 @@ public class SpecificCase {
         // 31 Hep A, pediatric, unspecified 
         // 83 Hep A, ped/adol, 2 dose
         specialCasesMap.put("85", list_85);
+        reverseMap.put("52", "85");
+        reverseMap.put("83", "85");
 
-        // 109: pneumococcal --> PCV *
+        // 109: pneumococcal --> PCV * // 100 by default
+        List<String> list_109 = new ArrayList<>();
+        list_109.add("100"); // poliovirus vaccine, inactivated (IPV)
+        list_109.add("100"); // poliovirus vaccine, inactivated (IPV)
+        specialCasesMap.put("109", list_109);
+        reverseMap.put("100", "109");
+
+
+
         // 89: polio // 10 IPV
         List<String> list_89 = new ArrayList<>();
         list_89.add("10"); // poliovirus vaccine, inactivated (IPV)
         list_89.add("10"); // poliovirus vaccine, inactivated (IPV)
         specialCasesMap.put("89", list_89);
+        reverseMap.put("10", "89");
+
 
         // 17: Hib, unspecified formulation --> 48 Hib (PRP-T)
         List<String> list_17 = new ArrayList<>();
         list_17.add("48"); // Hib (PRP-T)
         list_17.add("48"); // Hib (PRP-T)
         specialCasesMap.put("17", list_17);
+        reverseMap.put("48", "17");
 
         // 107: DTaP, unspecified formulation --> 20
         List<String> list_107 = new ArrayList<>();
         list_107.add("20"); // diphtheria, tetanus toxoids and acellular pertussis vaccine
         list_107.add("20"); // diphtheria, tetanus toxoids and acellular pertussis vaccine
-        specialCasesMap.put("17", list_107);
+        specialCasesMap.put("107", list_107);
+        reverseMap.put("20", "107");
 
 
         // 88: Influenza (random) --> 320 Influenza, MDCK, trivalent, preservative
@@ -69,7 +90,11 @@ public class SpecificCase {
         List<String> list_88 = new ArrayList<>();
         list_88.add("320");
         list_88.add("320");
-        specialCasesMap.put("17", list_88);
+        specialCasesMap.put("88", list_88);
+        reverseMap.put("320", "88");
+
+
+
     }
 
 
@@ -131,6 +156,11 @@ public void filterCVXList(List<String> cvxList, List<String> failedCVXList) {
 
 public List<String> replaceSpecialCases(List<String> inputList) {    
     return replaceSpecialCases(inputList, true);
+}
+
+
+public Map<String, String> getReverseMap() {
+    return reverseMap;
 }
 
     

@@ -10,6 +10,8 @@ public class NDC {
     private List<Code> cvxCodes;
     private List<Code> vaccineGroups; // ArrayList for Vaccine Groups
 
+    private List<String> previousCodes;
+
     public NDC(String ndcCode) {
         this.ndcCode = ndcCode;
         this.cvxCodes =  new ArrayList<>();
