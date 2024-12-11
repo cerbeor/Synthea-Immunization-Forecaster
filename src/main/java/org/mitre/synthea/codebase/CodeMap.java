@@ -243,6 +243,21 @@ public String getStringForCode(Code code, CodesetType c) {
       return getCombosByCVXList(cvxCodeList);
   }
 
+  public List<Combo> getCombosByCVXStringList(List<String> cvxCodes, int agePatient) {
+    // set the default value of isAdult to true
+    boolean isAdult = agePatient >= 18;
+    SpecificCase specificCase = new SpecificCase(this);
+    cvxCodes = specificCase.replaceSpecialCases(cvxCodes, isAdult);
+
+    // String to code
+    List<Code> cvxCodeList = new ArrayList<Code>();
+    for (String cvxCode : cvxCodes) {
+      Code codeObject = this.getCodeForCodeset(CodesetType.VACCINATION_CVX_CODE, cvxCode);
+      cvxCodeList.add(codeObject);
+    }
+    return getCombosByCVXList(cvxCodeList);
+  }
+
 
     /**
      * This method uses the Mapping class to create vaccine combos
