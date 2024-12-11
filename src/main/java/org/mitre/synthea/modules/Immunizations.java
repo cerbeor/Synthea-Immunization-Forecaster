@@ -316,6 +316,7 @@ public class Immunizations {
           // Get all cvx relating to the NDC
         for (org.mitre.synthea.codebase.generated.Code cvx : ndc.getCvxCodes()) {
             cvxMap.put(cvx, ndc);
+          System.out.println(" CVX code : " + cvx.getValue() + " CVX name : " + cvx.getLabel() + " NDC code : " + ndc.getNdcCode());
         }
 
       }
