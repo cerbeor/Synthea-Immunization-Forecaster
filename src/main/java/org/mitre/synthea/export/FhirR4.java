@@ -120,6 +120,7 @@ import org.hl7.fhir.r4.model.Provenance;
 import org.hl7.fhir.r4.model.Provenance.ProvenanceAgentComponent;
 import org.hl7.fhir.r4.model.Quantity;
 import org.hl7.fhir.r4.model.Reference;
+import org.hl7.fhir.r4.model.RelatedPerson;
 import org.hl7.fhir.r4.model.Resource;
 import org.hl7.fhir.r4.model.ServiceRequest;
 import org.hl7.fhir.r4.model.SimpleQuantity;
@@ -610,6 +611,21 @@ public class FhirR4 {
       patientResource.addContact(contact);
     }
 
+    if (person.attributes.get(Person.NAME_MOTHER) != null) {
+      RelatedPerson mother = new RelatedPerson();
+      mother.setPatient(new Reference(patientResource.getIdElement().getValue()));
+      mother.addName(new HumanName()
+          .setUse(HumanName.NameUse.OFFICIAL)
+          .setFamily((String) person.attributes.get(Person.MOTHER_LAST_NAME))
+          .addGiven((String) person.attributes.get(Person.MOTHER_FIRST_NAME)));
+      mother.addRelationship(new CodeableConcept().addCoding(
+          new Coding("http://terminology.hl7.org/CodeSystem/v3-RoleCode", "MTH", "Mother")));
+      String motherUUID = ExportHelper.buildUUID(person, 
+          (long) person.attributes.get(Person.BIRTHDATE), 
+          "RelatedPersonMother");
+      newEntry(bundle, mother, motherUUID);
+    }
+
     if (USE_US_CORE_IG) {
       // We do not yet account for mixed race
       Extension raceExtension = new Extension(
@@ -744,19 +760,19 @@ public class FhirR4 {
     mothersMaidenNameExtension.setValue(new StringType(mothersMaidenName));
     patientResource.addExtension(mothersMaidenNameExtension);
 
-    // Create an extention for mother and father name 
-    if (person.attributes.get(Person.NAME_FATHER) != null) {
-      Extension fathersNameExtension = new Extension(
-          "http://synthetichealth.github.io/synthea/fathersName");
-      fathersNameExtension.setValue(new StringType((String) person.attributes.get(Person.NAME_FATHER)));
-      patientResource.addExtension(fathersNameExtension);
-    }
-    if (person.attributes.get(Person.NAME_MOTHER) != null) {
-      Extension fathersNameExtension = new Extension(
-          "http://synthetichealth.github.io/synthea/motherName");
-      fathersNameExtension.setValue(new StringType((String) person.attributes.get(Person.NAME_MOTHER)));
-      patientResource.addExtension(fathersNameExtension);
-    }
+    // // Create an extention for mother and father name 
+    // if (person.attributes.get(Person.NAME_FATHER) != null) {
+    //   Extension fathersNameExtension = new Extension(
+    //       "http://synthetichealth.github.io/synthea/fathersName");
+    //   fathersNameExtension.setValue(new StringType((String) person.attributes.get(Person.NAME_FATHER)));
+    //   patientResource.addExtension(fathersNameExtension);
+    // }
+    // if (person.attributes.get(Person.NAME_MOTHER) != null) {
+    //   Extension fathersNameExtension = new Extension(
+    //       "http://synthetichealth.github.io/synthea/motherName");
+    //   fathersNameExtension.setValue(new StringType((String) person.attributes.get(Person.NAME_MOTHER)));
+    //   patientResource.addExtension(fathersNameExtension);
+    // }
     
     long birthdate = (long) person.attributes.get(Person.BIRTHDATE);
     patientResource.setBirthDate(new Date(birthdate));

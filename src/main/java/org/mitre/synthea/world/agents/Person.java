@@ -73,6 +73,8 @@ public class Person implements Serializable, RandomNumberGenerator, QuadTreeElem
   public static final String BIRTH_COUNTRY = "birth_country";
   public static final String COORDINATE = "coordinate";
   public static final String NAME_MOTHER = "name_mother";
+  public static final String MOTHER_FIRST_NAME = "mother_first_name";
+  public static final String MOTHER_LAST_NAME = "mother_last_name";
   public static final String NAME_FATHER = "name_father";
   public static final String MARITAL_STATUS = "marital_status";
   public static final String SOCIOECONOMIC_SCORE = "socioeconomic_score";

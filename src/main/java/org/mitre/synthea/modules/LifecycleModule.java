@@ -166,6 +166,8 @@ public final class LifecycleModule extends Module {
     String motherFirstName = Names.fakeFirstName("F", language, person);
     String motherLastName = Names.fakeLastName(language, person);
     attributes.put(Person.NAME_MOTHER, motherFirstName + " " + motherLastName);
+    attributes.put(Person.MOTHER_FIRST_NAME, motherFirstName); 
+    attributes.put(Person.MOTHER_LAST_NAME, motherLastName);
 
     String fatherFirstName = Names.fakeFirstName("M", language, person);
     // this is anglocentric where the baby gets the father's last name
