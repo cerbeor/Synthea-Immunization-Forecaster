@@ -1,0 +1,60 @@
+2019-12-16 Birth 
+           - Well child visit (procedure)
+2020-01-20 - Well child visit (procedure)
+           * Hep B, adolescent or pediatric (08)
+2020-01-27 - Encounter for symptom
+2020-03-23 - Well child visit (procedure)
+           * IPV (10)
+           * Influenza, MDCK, trivalent, preservative (320)
+2020-05-25 - Well child visit (procedure)
+           * Influenza, MDCK, trivalent, preservative (320)
+2020-08-24 - Well child visit (procedure)
+           * Influenza, MDCK, trivalent, preservative (320)
+2020-11-23 - Well child visit (procedure)
+           * Influenza, MDCK, trivalent, preservative (320)
+2021-01-15 - Encounter for symptom (procedure)
+2021-02-03 - Encounter for problem
+2021-02-22 - Well child visit (procedure)
+           * varicella (21)
+           * Influenza, MDCK, trivalent, preservative (320)
+           * Hep A, ped/adol, 2 dose (83)
+           * MMR (03)
+2021-03-01 - Encounter for problem
+2021-05-24 - Well child visit (procedure)
+           * Influenza, MDCK, trivalent, preservative (320)
+2021-11-22 - Well child visit (procedure)
+           * Influenza, MDCK, trivalent, preservative (320)
+2022-04-12 - Encounter for symptom
+2022-05-12 - Encounter for symptom
+2022-05-23 - Well child visit (procedure)
+           * Influenza, MDCK, trivalent, preservative (320)
+2022-11-21 - Well child visit (procedure)
+           * Influenza, MDCK, trivalent, preservative (320)
+2023-04-13 - Encounter for symptom
+2023-05-22 - Well child visit (procedure)
+           * Influenza, MDCK, trivalent, preservative (320)
+2023-08-27 - Encounter for symptom
+2023-10-30 - Encounter for symptom
+2023-11-20 - Well child visit (procedure)
+           * Influenza, MDCK, trivalent, preservative (320)
+2024-11-25 - Well child visit (procedure)
+           * Influenza, MDCK, trivalent, preservative (320)
+2024-12-08 - Encounter for symptom
+
+------------------------------------------------------------------------------------------------------------------------------
+| Vaccine        |   Birth   |  2 months |  4 months |  6 months | 12 months | 18 months |  4 years  |  11 years |  16 years |
+------------------------------------------------------------------------------------------------------------------------------
+| HepB           |     1     |    [ ]    |           |    [ ]    |           |           |           |           |           |
+| RV             |           |    [ ]    |    [ ]    |    [ ]    |           |           |           |           |           |
+| DTaP           |           |    [ ]    |    [ ]    |    [ ]    |    [ ]    |           |           |           |           |
+| Hib            |           |    [ ]    |    [ ]    |    [ ]    |    [ ]    |           |           |           |           |
+| Pneu           |           |    [ ]    |    [ ]    |    [ ]    |    [ ]    |           |           |           |           |
+| IPV            |           |     1     |    [ ]    |    [ ]    |           |           |           |           |           |
+| MMR            |           |           |           |           |     1     |           |           |           |           |
+| Var            |           |           |           |           |     1     |           |           |           |           |
+| HepA           |           |           |           |           |     1     |           |           |           |           |
+------------------------------------------------------------------------------------------------------------------------------
+| Flu            |           |     1     |     1     |     2     |     1     |     1     |     5     |     1     |           |
+------------------------------------------------------------------------------------------------------------------------------
+| Encounters     |     3     |     1     |     1     |     2     |     4     |     1     |     10    |     2     |           |
+------------------------------------------------------------------------------------------------------------------------------
