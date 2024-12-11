@@ -213,8 +213,14 @@ public String getStringForCode(Code code, CodesetType c) {
 
 
   public List<Combo> getCombosByCVXStringList(List<String> cvxCodes) {
-    SpecificCase specificCase = new SpecificCase();
-    cvxCodes = specificCase.replaceSpecialCases(cvxCodes, true);
+    // set the default value of isAdult to true
+    return getCombosByCVXStringList(cvxCodes, true);
+  }
+
+
+  public List<Combo> getCombosByCVXStringList(List<String> cvxCodes, boolean isAdult) {
+    SpecificCase specificCase = new SpecificCase(this);
+    cvxCodes = specificCase.replaceSpecialCases(cvxCodes, isAdult);
 
     // String to code
      List<Code> cvxCodeList = new ArrayList<Code>();
