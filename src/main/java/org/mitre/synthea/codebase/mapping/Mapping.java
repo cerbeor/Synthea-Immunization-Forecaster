@@ -41,6 +41,15 @@ public class Mapping {
         return new ArrayList<>(ndcMap.values());
     }
 
+    // Method to create NDC objects related to a list of string CVX codes
+    public List<NDC> createNDCsFromCVXString(List<String> cvxCodes) {
+        List<Code> cvxCodeList = new ArrayList<>();
+        for (String cvx : cvxCodes) {
+            cvxCodeList.add(codeMap.getCodeForCodeset(CodesetType.VACCINATION_CVX_CODE, cvx));
+        }
+        return createNDCsFromCVX(cvxCodeList);
+    }
+
 
 
     /**

@@ -1,6 +1,14 @@
 package org.mitre.synthea.codebase.mapping;
 
 import java.util.*;
+import org.mitre.synthea.codebase.*;
+import org.mitre.synthea.codebase.generated.*;
+import org.mitre.synthea.codebase.generated.Stock.StockMapping;
+import org.mitre.synthea.codebase.reference.*;
+import org.mitre.synthea.codebase.mapping.*;
+
+
+import org.cqframework.cql.elm.execution.Code;
 
 
 /**
@@ -14,9 +22,12 @@ import java.util.*;
 public class SpecificCase {
     // Create map string (key) - list string (value)
     private Map<String, List<String>> specialCasesMap;
+    CodeMap codeMap;
 
-    public SpecificCase() {
+
+    public SpecificCase(CodeMap codeMap) {
         this.specialCasesMap = new HashMap<>();
+        this.codeMap = codeMap;
         
         // Case Hep B
         List<String> list45 = new ArrayList<>();
@@ -52,6 +63,35 @@ public List<String> replaceSpecialCases(List<String> inputList, boolean isAdult)
     }
     return outputList;
 }
+
+
+/**
+ * Processes a list of CVX codes, removing those that do not generate any NDCs and adding them to a separate list.
+ *
+ * @param cvxList the list of CVX codes to process
+ * @param failedCVXList the list where CVX codes without corresponding NDCs will be added
+ * @param mapping the mapping instance to use for creating NDCs from CVX codes
+ */
+public void filterCVXList(List<String> cvxList, List<String> failedCVXList) {
+    // Create an iterator to modify the list while iterating
+    Iterator<String> iterator = cvxList.iterator();
+
+    while (iterator.hasNext()) {
+        String cvx = iterator.next();
+        // Generate the NDC list for the current CVX
+        List<NDC> ndcList = new ArrayList<>();
+
+        Mapping mapping = new Mapping(codeMap);
+        ndcList = mapping.createNDCsFromCVXString(Arrays.asList(cvx));
+
+        // If no NDCs are generated, remove from the input list and add to failedCVXList
+        if (ndcList.isEmpty()) {
+            iterator.remove(); // Remove CVX from the original list
+            failedCVXList.add(cvx); // Add CVX to the failed list
+        }
+    }
+}
+
 
 
 public List<String> replaceSpecialCases(List<String> inputList) {    
