@@ -83,25 +83,25 @@ public class Immunizations {
       /**
        * Querying new CDS
        */
-      System.out.println("---------immunizationRecommendation start--------------");
+//      System.out.println("---------immunizationRecommendation start--------------");
       ImmunizationRecommendation immunizationRecommendation = queryForecaster(person, encounterDate, immunizationsGiven);
-      System.out.println("---------immunizationRecommendation end--------------");
+//      System.out.println("---------immunizationRecommendation end--------------");
       if(immunizationRecommendation != null){
-        System.out.println("--------- in checkForCombination--------------");
+//        System.out.println("--------- in checkForCombination--------------");
         // Fetch patient age 
-        System.out.println("Fetch patient age");
+//        System.out.println("Fetch patient age");
         double agePatient= person.ageInDecimalYears(encounterDate); // encounterDate is the current simulation time
-        System.out.println("Patient age : "+ agePatient);
+//        System.out.println("Patient age : "+ agePatient);
         HashMap<org.mitre.synthea.codebase.generated.Code, NDC> cvxMap = checkForCombination(immunizationRecommendation, encounterDate, agePatient);
-        System.out.println("---------checkForCombination end--------------");
+//        System.out.println("---------checkForCombination end--------------");
         boolean getImmunization;
         if (!cvxMap.isEmpty()){
-          System.out.println("---------cvxMap is not empty--------------");
+//          System.out.println("---------cvxMap is not empty--------------");
 
 //          getImmunization = gettingImmunization(person);
             getImmunization = true;
           for (Map.Entry<org.mitre.synthea.codebase.generated.Code, NDC> entryMap : cvxMap.entrySet()) {
-            System.out.println("-----------for cvx = " + entryMap.toString() + "----------------");
+//            System.out.println("-----------for cvx = " + entryMap.toString() + "----------------");
             if (getImmunization) {
               /**
                * getting specific history on cvx, name
@@ -114,7 +114,7 @@ public class Immunizations {
               String ndcCode = cvxMap.get(immunizationCode).getNdcCode();
               String ndcLabel = codeMap.getCodeForCodeset(CodesetType.VACCINATION_NDC_CODE_UNIT_OF_USE, ndcCode).getLabel();
               
-              System.out.println("Immunization Key : "+ immunizationKey);
+//              System.out.println("Immunization Key : "+ immunizationKey);
 
               if (immunizationsGiven.containsKey(immunizationKey)) {
                 history = immunizationsGiven.get(immunizationKey);
@@ -139,10 +139,10 @@ public class Immunizations {
           }
 
         } else {
-          System.out.println("---------cvxMap is empty------------");
+//          System.out.println("---------cvxMap is empty------------");
         }
       } else {
-        System.err.println("---------------Empty immunization recommendation returned from CDS server.");
+//        System.err.println("---------------Empty immunization recommendation returned from CDS server.");
       }
 
     } catch (Exception exception) {
@@ -293,19 +293,19 @@ public class Immunizations {
         }
         combinationVaccines.add(immunizationKey);
       }
-      System.out.println("Combination vaccines : " + combinationVaccines);
+//      System.out.println("Combination vaccines : " + combinationVaccines);
         // Check for combination of vaccines
 
-      System.out.println("---in getCombosByCVXList---");
+//      System.out.println("---in getCombosByCVXList---");
       List<Combo> combinations = codeMap.getCombosByCVXStringList(combinationVaccines, agePatient);
-      System.out.println("---end getCombosByCVXList---");
+//      System.out.println("---end getCombosByCVXList---");
 
-      if (combinations.isEmpty()) {
-        System.out.println("No combination found");
-        return cvxMap;
-      } else {
-        System.out.println("Combination found");
-      }
+//      if (combinations.isEmpty()) {
+//        System.out.println("No combination found");
+//        return cvxMap;
+//      } else {
+//        System.out.println("Combination found");
+//      }
       // The first combination is the combination with the best scores
       Combo bestCombination = combinations.get(0);
 
@@ -321,7 +321,7 @@ public class Immunizations {
       }
       return cvxMap;
     }
-    System.out.println("Immunization recommendation is empty in checkForCombination");
+//    System.out.println("Immunization recommendation is empty in checkForCombination");
     return new HashMap<>();
   }
 

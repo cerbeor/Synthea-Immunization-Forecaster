@@ -272,23 +272,23 @@ public String getStringForCode(Code code, CodesetType c) {
         
 
         // Debugging output to verify NDC creation
-        System.out.println("NDC List Created:");
-        for (NDC ndc : ndcList) {
-            System.out.println(ndc);
-        }
-        System.out.println("End of NDC List\n");
+//        System.out.println("NDC List Created:");
+//        for (NDC ndc : ndcList) {
+//            System.out.println(ndc);
+//        }
+//        System.out.println("End of NDC List\n");
 
         // Step 2: Generate combos from the list of NDCs
-        System.out.println("----createCombosFromNDCs start----");
+//        System.out.println("----createCombosFromNDCs start----");
         List<Combo> comboList = mapping.createCombosFromNDCs(ndcList, cvxCodes);
-        System.out.println("----createCombosFromNDCs end----");
+//        System.out.println("----createCombosFromNDCs end----");
         
         // Step 3: Debugging output to verify Combo creation
-        System.out.println("Generated Combos:");
-        for (Combo combo : comboList) {
-            System.out.println(combo);
-        }
-        System.out.println("End of Combos\n");
+//        System.out.println("Generated Combos:");
+//        for (Combo combo : comboList) {
+//            System.out.println(combo);
+//        }
+//        System.out.println("End of Combos\n");
 
         // Step 4: Return the list of generated combos
         return comboList;
