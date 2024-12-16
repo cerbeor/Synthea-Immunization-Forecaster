@@ -2,7 +2,10 @@ package org.mitre.synthea.codebase.mapping;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.mitre.synthea.codebase.CodeMap;
 import org.mitre.synthea.codebase.generated.*;
+import org.mitre.synthea.codebase.reference.CodesetType;
 
 
 public class NDC {
@@ -10,12 +13,15 @@ public class NDC {
     private List<Code> cvxCodes;
     private List<Code> vaccineGroups; // ArrayList for Vaccine Groups
 
+    // List of previous codes (before specific cases)
     private List<String> previousCodes;
 
     public NDC(String ndcCode) {
         this.ndcCode = ndcCode;
         this.cvxCodes =  new ArrayList<>();
         this.vaccineGroups = new ArrayList<>();
+
+        previousCodes = new ArrayList<>();
     }
 
     public List<Code> getCvxCodes() {
@@ -74,6 +80,31 @@ public class NDC {
         } else if (!ndcCode.equals(other.ndcCode))
             return false;
         return true;
+    }
+
+    public List<String> getPreviousCodes() {
+        return previousCodes;
+    }
+
+
+    // adding to previous codes
+    public void addPreviousCode(Code code, CodeMap codeMap) {
+        // cvx code to string
+        this.previousCodes.add(this.reverseCode(code, codeMap));
+    }
+
+
+    // function reverse code
+    public String reverseCode(Code cvxCode, CodeMap codeMap) {
+        // cvx code to string
+        String cvxCodeString = codeMap.getStringForCode(cvxCode, CodesetType.VACCINATION_CVX_CODE);
+        // reverse CVX
+        SpecificCase specificCase = new SpecificCase(codeMap);
+        if(specificCase.getReverseMap().containsKey(cvxCodeString)) {
+            cvxCodeString = specificCase.getReverseMap().get(cvxCodeString);
+        }
+        // reverse CVX
+        return cvxCodeString;
     }
 
     
