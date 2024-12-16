@@ -361,6 +361,9 @@ public class App {
       Generator generator = new Generator(options, exportOptions);
       generator.run();
     }
+
+    // Close the logStream when done
+    Immunizations.closeLogStream();
   }
 
   private static boolean validateConfig(Generator.GeneratorOptions options,
