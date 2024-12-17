@@ -92,6 +92,13 @@ public class SpecificCase {
         list_88.add("320");
         specialCasesMap.put("88", list_88);
         reverseMap.put("320", "88");
+
+        // 122: rotavirus, unspecified formulation --> 119 (random)
+        List<String> list_122 = new ArrayList<>();
+        list_122.add("119"); // rotavirus, monovalent
+        list_122.add("119");
+        specialCasesMap.put("122", list_122);
+        reverseMap.put("119", "122");
     }
 
 
