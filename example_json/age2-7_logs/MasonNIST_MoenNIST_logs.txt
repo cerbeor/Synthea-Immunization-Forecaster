@@ -1,62 +1,97 @@
 --------------------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------------------
-Encounter date : Mon Dec 13 16:39:49 CET 2021
+Encounter date : Sun Mar 06 04:52:56 CET 2022
 ---Request Payload Sent to Server:
 {
   "resourceType": "Parameters",
   "parameter": [ {
     "name": "assessmentDate",
-    "valueDate": "2021-12-13"
+    "valueDate": "2022-03-06"
   }, {
     "name": "patient",
     "resource": {
       "resourceType": "Patient",
       "id": "example",
       "gender": "male",
-      "birthDate": "2021-12-13"
+      "birthDate": "2022-03-06"
     }
   } ]
 }
 ---Immunization cvx recommended bys CDSi : 
-   -> 164 Meningococcal B | Sun Dec 13 08:00:00 CET 2037 ;
-   -> 188 Zoster | Sun Dec 13 08:00:00 CET 2071 ;
-   -> 108 Meningococcal | Mon Dec 13 08:00:00 CET 2032 ;
-   -> 89 Polio | Mon Jan 24 08:00:00 CET 2022 ;
-   -> 85 HepA | Tue Dec 13 08:00:00 CET 2022 ;
-   -> 45 HepB | Mon Dec 13 08:00:00 CET 2021 ; <----- to be administered
-   -> 137 HPV | Fri Dec 13 08:00:00 CET 2030 ;
-   -> 109 Pneumococcal | Mon Jan 24 08:00:00 CET 2022 ;
-   -> 21 Varicella | Tue Dec 13 08:00:00 CET 2022 ;
-   -> 17 Hib | Mon Jan 24 08:00:00 CET 2022 ;
-   -> 122 Rotavirus | Mon Jan 24 08:00:00 CET 2022 ;
-   -> 107 DTaP | Mon Jan 24 08:00:00 CET 2022 ;
-   -> 03 MMR | Tue Dec 13 08:00:00 CET 2022 ;
-   -> 88 Influenza | Mon Jun 13 08:00:00 CEST 2022 ;
+   -> 164 Meningococcal B | Sat Mar 06 08:00:00 CET 2038 ;
+   -> 188 Zoster | Sun Mar 06 08:00:00 CET 2072 ;
+   -> 108 Meningococcal | Sun Mar 06 08:00:00 CET 2033 ;
+   -> 89 Polio | Sun Apr 17 08:00:00 CEST 2022 ;
+   -> 85 HepA | Mon Mar 06 08:00:00 CET 2023 ;
+   -> 45 HepB | Sun Mar 06 08:00:00 CET 2022 ;
+   -> 137 HPV | Thu Mar 06 08:00:00 CET 2031 ;
+   -> 109 Pneumococcal | Sun Apr 17 08:00:00 CEST 2022 ;
+   -> 21 Varicella | Mon Mar 06 08:00:00 CET 2023 ;
+   -> 17 Hib | Sun Apr 17 08:00:00 CEST 2022 ;
+   -> 122 Rotavirus | Sun Apr 17 08:00:00 CEST 2022 ;
+   -> 107 DTaP | Sun Apr 17 08:00:00 CEST 2022 ;
+   -> 03 MMR | Mon Mar 06 08:00:00 CET 2023 ;
+   -> 88 Influenza | Tue Sep 06 08:00:00 CEST 2022 ;
+---Vaccines (cvx) to be administered : []
+--------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------
+Encounter date : Sun Apr 10 05:52:56 CEST 2022
+---Request Payload Sent to Server:
+{
+  "resourceType": "Parameters",
+  "parameter": [ {
+    "name": "assessmentDate",
+    "valueDate": "2022-04-10"
+  }, {
+    "name": "patient",
+    "resource": {
+      "resourceType": "Patient",
+      "id": "example",
+      "gender": "male",
+      "birthDate": "2022-03-06"
+    }
+  } ]
+}
+---Immunization cvx recommended bys CDSi : 
+   -> 164 Meningococcal B | Sat Mar 06 08:00:00 CET 2038 ;
+   -> 188 Zoster | Sun Mar 06 08:00:00 CET 2072 ;
+   -> 108 Meningococcal | Sun Mar 06 08:00:00 CET 2033 ;
+   -> 89 Polio | Sun Apr 17 08:00:00 CEST 2022 ;
+   -> 85 HepA | Mon Mar 06 08:00:00 CET 2023 ;
+   -> 45 HepB | Sun Mar 06 08:00:00 CET 2022 ; <----- to be administered
+   -> 137 HPV | Thu Mar 06 08:00:00 CET 2031 ;
+   -> 109 Pneumococcal | Sun Apr 17 08:00:00 CEST 2022 ;
+   -> 21 Varicella | Mon Mar 06 08:00:00 CET 2023 ;
+   -> 17 Hib | Sun Apr 17 08:00:00 CEST 2022 ;
+   -> 122 Rotavirus | Sun Apr 17 08:00:00 CEST 2022 ;
+   -> 107 DTaP | Sun Apr 17 08:00:00 CEST 2022 ;
+   -> 03 MMR | Mon Mar 06 08:00:00 CET 2023 ;
+   -> 88 Influenza | Tue Sep 06 08:00:00 CEST 2022 ;
 ---Vaccines (cvx) to be administered : [45]
 ---Administrated vaccine : 
    -> CVX : 08 Hep B, adolescent or pediatric || NDC : 00006-4093-01 RECOMBIVAX HB
 --------------------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------------------
-Encounter date : Mon Jan 17 16:39:49 CET 2022
+Encounter date : Sun Jun 12 05:52:56 CEST 2022
 ---Request Payload Sent to Server:
 {
   "resourceType": "Parameters",
   "parameter": [ {
     "name": "assessmentDate",
-    "valueDate": "2022-01-17"
+    "valueDate": "2022-06-12"
   }, {
     "name": "patient",
     "resource": {
       "resourceType": "Patient",
       "id": "example",
       "gender": "male",
-      "birthDate": "2021-12-13"
+      "birthDate": "2022-03-06"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1639409989123",
+      "id": "imm-1649562776799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -64,102 +99,54 @@ Encounter date : Mon Jan 17 16:39:49 CET 2022
           "code": "08"
         } ]
       },
-      "occurrenceDateTime": "2021-12-13T16:39:49+01:00"
+      "occurrenceDateTime": "2022-04-10T05:52:56+02:00"
     }
   } ]
 }
 ---Immunization cvx recommended bys CDSi : 
-   -> 164 Meningococcal B | Sun Dec 13 08:00:00 CET 2037 ;
-   -> 188 Zoster | Sun Dec 13 08:00:00 CET 2071 ;
-   -> 108 Meningococcal | Mon Dec 13 08:00:00 CET 2032 ;
-   -> 89 Polio | Mon Jan 24 08:00:00 CET 2022 ;
-   -> 85 HepA | Tue Dec 13 08:00:00 CET 2022 ;
+   -> 164 Meningococcal B | Sat Mar 06 08:00:00 CET 2038 ;
+   -> 188 Zoster | Sun Mar 06 08:00:00 CET 2072 ;
+   -> 108 Meningococcal | Sun Mar 06 08:00:00 CET 2033 ;
+   -> 89 Polio | Sun Apr 17 08:00:00 CEST 2022 ; <----- to be administered
+   -> 85 HepA | Mon Mar 06 08:00:00 CET 2023 ;
    -> 45 HepB | Tue Jan 14 08:00:00 CET 2025 ;
-   -> 137 HPV | Fri Dec 13 08:00:00 CET 2030 ;
-   -> 109 Pneumococcal | Mon Jan 24 08:00:00 CET 2022 ;
-   -> 21 Varicella | Tue Dec 13 08:00:00 CET 2022 ;
-   -> 17 Hib | Mon Jan 24 08:00:00 CET 2022 ;
-   -> 122 Rotavirus | Mon Jan 24 08:00:00 CET 2022 ;
-   -> 107 DTaP | Mon Jan 24 08:00:00 CET 2022 ;
-   -> 03 MMR | Tue Dec 13 08:00:00 CET 2022 ;
-   -> 88 Influenza | Mon Jun 13 08:00:00 CEST 2022 ;
----Vaccines (cvx) to be administered : []
---------------------------------------------------------------------------------------------------------
---------------------------------------------------------------------------------------------------------
-Encounter date : Mon Mar 21 16:39:49 CET 2022
----Request Payload Sent to Server:
-{
-  "resourceType": "Parameters",
-  "parameter": [ {
-    "name": "assessmentDate",
-    "valueDate": "2022-03-21"
-  }, {
-    "name": "patient",
-    "resource": {
-      "resourceType": "Patient",
-      "id": "example",
-      "gender": "male",
-      "birthDate": "2021-12-13"
-    }
-  }, {
-    "name": "immunization",
-    "resource": {
-      "resourceType": "Immunization",
-      "id": "imm-1639409989123",
-      "status": "completed",
-      "vaccineCode": {
-        "coding": [ {
-          "system": "http://hl7.org/fhir/sid/cvx",
-          "code": "08"
-        } ]
-      },
-      "occurrenceDateTime": "2021-12-13T16:39:49+01:00"
-    }
-  } ]
-}
----Immunization cvx recommended bys CDSi : 
-   -> 164 Meningococcal B | Sun Dec 13 08:00:00 CET 2037 ;
-   -> 188 Zoster | Sun Dec 13 08:00:00 CET 2071 ;
-   -> 108 Meningococcal | Mon Dec 13 08:00:00 CET 2032 ;
-   -> 89 Polio | Mon Jan 24 08:00:00 CET 2022 ; <----- to be administered
-   -> 85 HepA | Tue Dec 13 08:00:00 CET 2022 ;
-   -> 45 HepB | Tue Jan 14 08:00:00 CET 2025 ;
-   -> 137 HPV | Fri Dec 13 08:00:00 CET 2030 ;
-   -> 109 Pneumococcal | Mon Jan 24 08:00:00 CET 2022 ; <----- to be administered
-   -> 21 Varicella | Tue Dec 13 08:00:00 CET 2022 ;
-   -> 17 Hib | Mon Jan 24 08:00:00 CET 2022 ; <----- to be administered
-   -> 122 Rotavirus | Mon Jan 24 08:00:00 CET 2022 ; <----- to be administered
-   -> 107 DTaP | Mon Jan 24 08:00:00 CET 2022 ; <----- to be administered
-   -> 03 MMR | Tue Dec 13 08:00:00 CET 2022 ;
-   -> 88 Influenza | Mon Jun 13 08:00:00 CEST 2022 ;
+   -> 137 HPV | Thu Mar 06 08:00:00 CET 2031 ;
+   -> 109 Pneumococcal | Sun Apr 17 08:00:00 CEST 2022 ; <----- to be administered
+   -> 21 Varicella | Mon Mar 06 08:00:00 CET 2023 ;
+   -> 17 Hib | Sun Apr 17 08:00:00 CEST 2022 ; <----- to be administered
+   -> 122 Rotavirus | Sun Apr 17 08:00:00 CEST 2022 ; <----- to be administered
+   -> 107 DTaP | Sun Apr 17 08:00:00 CEST 2022 ; <----- to be administered
+   -> 03 MMR | Mon Mar 06 08:00:00 CET 2023 ;
+   -> 88 Influenza | Tue Sep 06 08:00:00 CEST 2022 ;
 ---Vaccines (cvx) to be administered : [89, 109, 17, 122, 107]
 ---Administrated vaccine : 
-   -> CVX : 10 IPV || NDC : 50090-1693-00 IPOL
-   -> CVX : 48 Hib (PRP-T) || NDC : 49281-0547-58 ACTHIB
+   -> CVX : 119 rotavirus, monovalent || NDC : 58160-0851-01 ROTARIX
    -> CVX : 20 DTaP || NDC : 49281-0298-10 TRIPEDIA
+   -> CVX : 10 IPV || NDC : 50090-1693-00 IPOL
    -> CVX : 100 pneumococcal conjugate PCV 7 || NDC : 00005-1970-49 Prevnar
+   -> CVX : 48 Hib (PRP-T) || NDC : 49281-0547-58 ACTHIB
 --------------------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------------------
-Encounter date : Mon May 23 17:39:49 CEST 2022
+Encounter date : Sun Jun 19 05:52:56 CEST 2022
 ---Request Payload Sent to Server:
 {
   "resourceType": "Parameters",
   "parameter": [ {
     "name": "assessmentDate",
-    "valueDate": "2022-05-23"
+    "valueDate": "2022-06-19"
   }, {
     "name": "patient",
     "resource": {
       "resourceType": "Patient",
       "id": "example",
       "gender": "male",
-      "birthDate": "2021-12-13"
+      "birthDate": "2022-03-06"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1647877189123",
+      "id": "imm-1655005976799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -167,13 +154,13 @@ Encounter date : Mon May 23 17:39:49 CEST 2022
           "code": "100"
         } ]
       },
-      "occurrenceDateTime": "2022-03-21T16:39:49+01:00"
+      "occurrenceDateTime": "2022-06-12T05:52:56+02:00"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1647877189123",
+      "id": "imm-1655005976799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -181,13 +168,13 @@ Encounter date : Mon May 23 17:39:49 CEST 2022
           "code": "48"
         } ]
       },
-      "occurrenceDateTime": "2022-03-21T16:39:49+01:00"
+      "occurrenceDateTime": "2022-06-12T05:52:56+02:00"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1639409989123",
+      "id": "imm-1649562776799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -195,13 +182,27 @@ Encounter date : Mon May 23 17:39:49 CEST 2022
           "code": "08"
         } ]
       },
-      "occurrenceDateTime": "2021-12-13T16:39:49+01:00"
+      "occurrenceDateTime": "2022-04-10T05:52:56+02:00"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1647877189123",
+      "id": "imm-1655005976799",
+      "status": "completed",
+      "vaccineCode": {
+        "coding": [ {
+          "system": "http://hl7.org/fhir/sid/cvx",
+          "code": "119"
+        } ]
+      },
+      "occurrenceDateTime": "2022-06-12T05:52:56+02:00"
+    }
+  }, {
+    "name": "immunization",
+    "resource": {
+      "resourceType": "Immunization",
+      "id": "imm-1655005976799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -209,13 +210,13 @@ Encounter date : Mon May 23 17:39:49 CEST 2022
           "code": "20"
         } ]
       },
-      "occurrenceDateTime": "2022-03-21T16:39:49+01:00"
+      "occurrenceDateTime": "2022-06-12T05:52:56+02:00"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1647877189123",
+      "id": "imm-1655005976799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -223,48 +224,48 @@ Encounter date : Mon May 23 17:39:49 CEST 2022
           "code": "10"
         } ]
       },
-      "occurrenceDateTime": "2022-03-21T16:39:49+01:00"
+      "occurrenceDateTime": "2022-06-12T05:52:56+02:00"
     }
   } ]
 }
 ---Immunization cvx recommended bys CDSi : 
-   -> 164 Meningococcal B | Sun Dec 13 08:00:00 CET 2037 ;
-   -> 188 Zoster | Sun Dec 13 08:00:00 CET 2071 ;
-   -> 108 Meningococcal | Mon Dec 13 08:00:00 CET 2032 ;
+   -> 164 Meningococcal B | Sat Mar 06 08:00:00 CET 2038 ;
+   -> 188 Zoster | Sun Mar 06 08:00:00 CET 2072 ;
+   -> 108 Meningococcal | Sun Mar 06 08:00:00 CET 2033 ;
    -> 89 Polio | Tue Jan 14 08:00:00 CET 2025 ;
-   -> 85 HepA | Tue Dec 13 08:00:00 CET 2022 ;
+   -> 85 HepA | Mon Mar 06 08:00:00 CET 2023 ;
    -> 45 HepB | Tue Jan 14 08:00:00 CET 2025 ;
-   -> 137 HPV | Fri Dec 13 08:00:00 CET 2030 ;
+   -> 137 HPV | Thu Mar 06 08:00:00 CET 2031 ;
    -> 109 Pneumococcal | Tue Jan 14 08:00:00 CET 2025 ;
-   -> 21 Varicella | Tue Dec 13 08:00:00 CET 2022 ;
+   -> 21 Varicella | Mon Mar 06 08:00:00 CET 2023 ;
    -> 17 Hib | Tue Jan 14 08:00:00 CET 2025 ;
    -> 122 Rotavirus | null ;
    -> 107 DTaP | Tue Jan 14 08:00:00 CET 2025 ;
-   -> 03 MMR | Tue Dec 13 08:00:00 CET 2022 ;
-   -> 88 Influenza | Mon Jun 13 08:00:00 CEST 2022 ;
+   -> 03 MMR | Mon Mar 06 08:00:00 CET 2023 ;
+   -> 88 Influenza | Tue Sep 06 08:00:00 CEST 2022 ;
 ---Vaccines (cvx) to be administered : []
 --------------------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------------------
-Encounter date : Mon Aug 22 17:39:49 CEST 2022
+Encounter date : Sun Aug 14 05:52:56 CEST 2022
 ---Request Payload Sent to Server:
 {
   "resourceType": "Parameters",
   "parameter": [ {
     "name": "assessmentDate",
-    "valueDate": "2022-08-22"
+    "valueDate": "2022-08-14"
   }, {
     "name": "patient",
     "resource": {
       "resourceType": "Patient",
       "id": "example",
       "gender": "male",
-      "birthDate": "2021-12-13"
+      "birthDate": "2022-03-06"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1647877189123",
+      "id": "imm-1655005976799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -272,13 +273,13 @@ Encounter date : Mon Aug 22 17:39:49 CEST 2022
           "code": "100"
         } ]
       },
-      "occurrenceDateTime": "2022-03-21T16:39:49+01:00"
+      "occurrenceDateTime": "2022-06-12T05:52:56+02:00"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1647877189123",
+      "id": "imm-1655005976799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -286,13 +287,13 @@ Encounter date : Mon Aug 22 17:39:49 CEST 2022
           "code": "48"
         } ]
       },
-      "occurrenceDateTime": "2022-03-21T16:39:49+01:00"
+      "occurrenceDateTime": "2022-06-12T05:52:56+02:00"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1639409989123",
+      "id": "imm-1649562776799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -300,13 +301,27 @@ Encounter date : Mon Aug 22 17:39:49 CEST 2022
           "code": "08"
         } ]
       },
-      "occurrenceDateTime": "2021-12-13T16:39:49+01:00"
+      "occurrenceDateTime": "2022-04-10T05:52:56+02:00"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1647877189123",
+      "id": "imm-1655005976799",
+      "status": "completed",
+      "vaccineCode": {
+        "coding": [ {
+          "system": "http://hl7.org/fhir/sid/cvx",
+          "code": "119"
+        } ]
+      },
+      "occurrenceDateTime": "2022-06-12T05:52:56+02:00"
+    }
+  }, {
+    "name": "immunization",
+    "resource": {
+      "resourceType": "Immunization",
+      "id": "imm-1655005976799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -314,13 +329,13 @@ Encounter date : Mon Aug 22 17:39:49 CEST 2022
           "code": "20"
         } ]
       },
-      "occurrenceDateTime": "2022-03-21T16:39:49+01:00"
+      "occurrenceDateTime": "2022-06-12T05:52:56+02:00"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1647877189123",
+      "id": "imm-1655005976799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -328,50 +343,169 @@ Encounter date : Mon Aug 22 17:39:49 CEST 2022
           "code": "10"
         } ]
       },
-      "occurrenceDateTime": "2022-03-21T16:39:49+01:00"
+      "occurrenceDateTime": "2022-06-12T05:52:56+02:00"
     }
   } ]
 }
 ---Immunization cvx recommended bys CDSi : 
-   -> 164 Meningococcal B | Sun Dec 13 08:00:00 CET 2037 ;
-   -> 188 Zoster | Sun Dec 13 08:00:00 CET 2071 ;
-   -> 108 Meningococcal | Mon Dec 13 08:00:00 CET 2032 ;
+   -> 164 Meningococcal B | Sat Mar 06 08:00:00 CET 2038 ;
+   -> 188 Zoster | Sun Mar 06 08:00:00 CET 2072 ;
+   -> 108 Meningococcal | Sun Mar 06 08:00:00 CET 2033 ;
    -> 89 Polio | Tue Jan 14 08:00:00 CET 2025 ;
-   -> 85 HepA | Tue Dec 13 08:00:00 CET 2022 ;
+   -> 85 HepA | Mon Mar 06 08:00:00 CET 2023 ;
    -> 45 HepB | Tue Jan 14 08:00:00 CET 2025 ;
-   -> 137 HPV | Fri Dec 13 08:00:00 CET 2030 ;
+   -> 137 HPV | Thu Mar 06 08:00:00 CET 2031 ;
    -> 109 Pneumococcal | Tue Jan 14 08:00:00 CET 2025 ;
-   -> 21 Varicella | Tue Dec 13 08:00:00 CET 2022 ;
+   -> 21 Varicella | Mon Mar 06 08:00:00 CET 2023 ;
    -> 17 Hib | Tue Jan 14 08:00:00 CET 2025 ;
    -> 122 Rotavirus | null ;
    -> 107 DTaP | Tue Jan 14 08:00:00 CET 2025 ;
-   -> 03 MMR | Tue Dec 13 08:00:00 CET 2022 ;
-   -> 88 Influenza | Mon Jun 13 08:00:00 CEST 2022 ; <----- to be administered
+   -> 03 MMR | Mon Mar 06 08:00:00 CET 2023 ;
+   -> 88 Influenza | Tue Sep 06 08:00:00 CEST 2022 ;
+---Vaccines (cvx) to be administered : []
+--------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------
+Encounter date : Sun Nov 13 04:52:56 CET 2022
+---Request Payload Sent to Server:
+{
+  "resourceType": "Parameters",
+  "parameter": [ {
+    "name": "assessmentDate",
+    "valueDate": "2022-11-13"
+  }, {
+    "name": "patient",
+    "resource": {
+      "resourceType": "Patient",
+      "id": "example",
+      "gender": "male",
+      "birthDate": "2022-03-06"
+    }
+  }, {
+    "name": "immunization",
+    "resource": {
+      "resourceType": "Immunization",
+      "id": "imm-1655005976799",
+      "status": "completed",
+      "vaccineCode": {
+        "coding": [ {
+          "system": "http://hl7.org/fhir/sid/cvx",
+          "code": "100"
+        } ]
+      },
+      "occurrenceDateTime": "2022-06-12T05:52:56+02:00"
+    }
+  }, {
+    "name": "immunization",
+    "resource": {
+      "resourceType": "Immunization",
+      "id": "imm-1655005976799",
+      "status": "completed",
+      "vaccineCode": {
+        "coding": [ {
+          "system": "http://hl7.org/fhir/sid/cvx",
+          "code": "48"
+        } ]
+      },
+      "occurrenceDateTime": "2022-06-12T05:52:56+02:00"
+    }
+  }, {
+    "name": "immunization",
+    "resource": {
+      "resourceType": "Immunization",
+      "id": "imm-1649562776799",
+      "status": "completed",
+      "vaccineCode": {
+        "coding": [ {
+          "system": "http://hl7.org/fhir/sid/cvx",
+          "code": "08"
+        } ]
+      },
+      "occurrenceDateTime": "2022-04-10T05:52:56+02:00"
+    }
+  }, {
+    "name": "immunization",
+    "resource": {
+      "resourceType": "Immunization",
+      "id": "imm-1655005976799",
+      "status": "completed",
+      "vaccineCode": {
+        "coding": [ {
+          "system": "http://hl7.org/fhir/sid/cvx",
+          "code": "119"
+        } ]
+      },
+      "occurrenceDateTime": "2022-06-12T05:52:56+02:00"
+    }
+  }, {
+    "name": "immunization",
+    "resource": {
+      "resourceType": "Immunization",
+      "id": "imm-1655005976799",
+      "status": "completed",
+      "vaccineCode": {
+        "coding": [ {
+          "system": "http://hl7.org/fhir/sid/cvx",
+          "code": "20"
+        } ]
+      },
+      "occurrenceDateTime": "2022-06-12T05:52:56+02:00"
+    }
+  }, {
+    "name": "immunization",
+    "resource": {
+      "resourceType": "Immunization",
+      "id": "imm-1655005976799",
+      "status": "completed",
+      "vaccineCode": {
+        "coding": [ {
+          "system": "http://hl7.org/fhir/sid/cvx",
+          "code": "10"
+        } ]
+      },
+      "occurrenceDateTime": "2022-06-12T05:52:56+02:00"
+    }
+  } ]
+}
+---Immunization cvx recommended bys CDSi : 
+   -> 164 Meningococcal B | Sat Mar 06 08:00:00 CET 2038 ;
+   -> 188 Zoster | Sun Mar 06 08:00:00 CET 2072 ;
+   -> 108 Meningococcal | Sun Mar 06 08:00:00 CET 2033 ;
+   -> 89 Polio | Tue Jan 14 08:00:00 CET 2025 ;
+   -> 85 HepA | Mon Mar 06 08:00:00 CET 2023 ;
+   -> 45 HepB | Tue Jan 14 08:00:00 CET 2025 ;
+   -> 137 HPV | Thu Mar 06 08:00:00 CET 2031 ;
+   -> 109 Pneumococcal | Tue Jan 14 08:00:00 CET 2025 ;
+   -> 21 Varicella | Mon Mar 06 08:00:00 CET 2023 ;
+   -> 17 Hib | Tue Jan 14 08:00:00 CET 2025 ;
+   -> 122 Rotavirus | null ;
+   -> 107 DTaP | Tue Jan 14 08:00:00 CET 2025 ;
+   -> 03 MMR | Mon Mar 06 08:00:00 CET 2023 ;
+   -> 88 Influenza | Tue Sep 06 08:00:00 CEST 2022 ; <----- to be administered
 ---Vaccines (cvx) to be administered : [88]
 ---Administrated vaccine : 
    -> CVX : 320 Influenza, MDCK, trivalent, preservative || NDC : 70461-0554-11 Flucelvax
 --------------------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------------------
-Encounter date : Mon Nov 21 16:39:49 CET 2022
+Encounter date : Sun Feb 12 04:52:56 CET 2023
 ---Request Payload Sent to Server:
 {
   "resourceType": "Parameters",
   "parameter": [ {
     "name": "assessmentDate",
-    "valueDate": "2022-11-21"
+    "valueDate": "2023-02-12"
   }, {
     "name": "patient",
     "resource": {
       "resourceType": "Patient",
       "id": "example",
       "gender": "male",
-      "birthDate": "2021-12-13"
+      "birthDate": "2022-03-06"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1647877189123",
+      "id": "imm-1655005976799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -379,13 +513,13 @@ Encounter date : Mon Nov 21 16:39:49 CET 2022
           "code": "100"
         } ]
       },
-      "occurrenceDateTime": "2022-03-21T16:39:49+01:00"
+      "occurrenceDateTime": "2022-06-12T05:52:56+02:00"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1661182789123",
+      "id": "imm-1668311576799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -393,13 +527,13 @@ Encounter date : Mon Nov 21 16:39:49 CET 2022
           "code": "320"
         } ]
       },
-      "occurrenceDateTime": "2022-08-22T17:39:49+02:00"
+      "occurrenceDateTime": "2022-11-13T04:52:56+01:00"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1647877189123",
+      "id": "imm-1655005976799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -407,13 +541,13 @@ Encounter date : Mon Nov 21 16:39:49 CET 2022
           "code": "48"
         } ]
       },
-      "occurrenceDateTime": "2022-03-21T16:39:49+01:00"
+      "occurrenceDateTime": "2022-06-12T05:52:56+02:00"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1639409989123",
+      "id": "imm-1649562776799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -421,13 +555,27 @@ Encounter date : Mon Nov 21 16:39:49 CET 2022
           "code": "08"
         } ]
       },
-      "occurrenceDateTime": "2021-12-13T16:39:49+01:00"
+      "occurrenceDateTime": "2022-04-10T05:52:56+02:00"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1647877189123",
+      "id": "imm-1655005976799",
+      "status": "completed",
+      "vaccineCode": {
+        "coding": [ {
+          "system": "http://hl7.org/fhir/sid/cvx",
+          "code": "119"
+        } ]
+      },
+      "occurrenceDateTime": "2022-06-12T05:52:56+02:00"
+    }
+  }, {
+    "name": "immunization",
+    "resource": {
+      "resourceType": "Immunization",
+      "id": "imm-1655005976799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -435,13 +583,13 @@ Encounter date : Mon Nov 21 16:39:49 CET 2022
           "code": "20"
         } ]
       },
-      "occurrenceDateTime": "2022-03-21T16:39:49+01:00"
+      "occurrenceDateTime": "2022-06-12T05:52:56+02:00"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1647877189123",
+      "id": "imm-1655005976799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -449,48 +597,48 @@ Encounter date : Mon Nov 21 16:39:49 CET 2022
           "code": "10"
         } ]
       },
-      "occurrenceDateTime": "2022-03-21T16:39:49+01:00"
+      "occurrenceDateTime": "2022-06-12T05:52:56+02:00"
     }
   } ]
 }
 ---Immunization cvx recommended bys CDSi : 
-   -> 164 Meningococcal B | Sun Dec 13 08:00:00 CET 2037 ;
-   -> 188 Zoster | Sun Dec 13 08:00:00 CET 2071 ;
-   -> 108 Meningococcal | Mon Dec 13 08:00:00 CET 2032 ;
+   -> 164 Meningococcal B | Sat Mar 06 08:00:00 CET 2038 ;
+   -> 188 Zoster | Sun Mar 06 08:00:00 CET 2072 ;
+   -> 108 Meningococcal | Sun Mar 06 08:00:00 CET 2033 ;
    -> 89 Polio | Tue Jan 14 08:00:00 CET 2025 ;
-   -> 85 HepA | Tue Dec 13 08:00:00 CET 2022 ;
+   -> 85 HepA | Mon Mar 06 08:00:00 CET 2023 ;
    -> 45 HepB | Tue Jan 14 08:00:00 CET 2025 ;
-   -> 137 HPV | Fri Dec 13 08:00:00 CET 2030 ;
+   -> 137 HPV | Thu Mar 06 08:00:00 CET 2031 ;
    -> 109 Pneumococcal | Tue Jan 14 08:00:00 CET 2025 ;
-   -> 21 Varicella | Tue Dec 13 08:00:00 CET 2022 ;
+   -> 21 Varicella | Mon Mar 06 08:00:00 CET 2023 ;
    -> 17 Hib | Tue Jan 14 08:00:00 CET 2025 ;
    -> 122 Rotavirus | null ;
    -> 107 DTaP | Tue Jan 14 08:00:00 CET 2025 ;
-   -> 03 MMR | Tue Dec 13 08:00:00 CET 2022 ;
+   -> 03 MMR | Mon Mar 06 08:00:00 CET 2023 ;
    -> 88 Influenza | Tue Jan 14 08:00:00 CET 2025 ;
 ---Vaccines (cvx) to be administered : []
 --------------------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------------------
-Encounter date : Mon Feb 20 16:39:49 CET 2023
+Encounter date : Sun May 14 05:52:56 CEST 2023
 ---Request Payload Sent to Server:
 {
   "resourceType": "Parameters",
   "parameter": [ {
     "name": "assessmentDate",
-    "valueDate": "2023-02-20"
+    "valueDate": "2023-05-14"
   }, {
     "name": "patient",
     "resource": {
       "resourceType": "Patient",
       "id": "example",
       "gender": "male",
-      "birthDate": "2021-12-13"
+      "birthDate": "2022-03-06"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1647877189123",
+      "id": "imm-1655005976799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -498,13 +646,13 @@ Encounter date : Mon Feb 20 16:39:49 CET 2023
           "code": "100"
         } ]
       },
-      "occurrenceDateTime": "2022-03-21T16:39:49+01:00"
+      "occurrenceDateTime": "2022-06-12T05:52:56+02:00"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1661182789123",
+      "id": "imm-1668311576799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -512,13 +660,13 @@ Encounter date : Mon Feb 20 16:39:49 CET 2023
           "code": "320"
         } ]
       },
-      "occurrenceDateTime": "2022-08-22T17:39:49+02:00"
+      "occurrenceDateTime": "2022-11-13T04:52:56+01:00"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1647877189123",
+      "id": "imm-1655005976799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -526,13 +674,13 @@ Encounter date : Mon Feb 20 16:39:49 CET 2023
           "code": "48"
         } ]
       },
-      "occurrenceDateTime": "2022-03-21T16:39:49+01:00"
+      "occurrenceDateTime": "2022-06-12T05:52:56+02:00"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1639409989123",
+      "id": "imm-1649562776799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -540,13 +688,27 @@ Encounter date : Mon Feb 20 16:39:49 CET 2023
           "code": "08"
         } ]
       },
-      "occurrenceDateTime": "2021-12-13T16:39:49+01:00"
+      "occurrenceDateTime": "2022-04-10T05:52:56+02:00"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1647877189123",
+      "id": "imm-1655005976799",
+      "status": "completed",
+      "vaccineCode": {
+        "coding": [ {
+          "system": "http://hl7.org/fhir/sid/cvx",
+          "code": "119"
+        } ]
+      },
+      "occurrenceDateTime": "2022-06-12T05:52:56+02:00"
+    }
+  }, {
+    "name": "immunization",
+    "resource": {
+      "resourceType": "Immunization",
+      "id": "imm-1655005976799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -554,13 +716,13 @@ Encounter date : Mon Feb 20 16:39:49 CET 2023
           "code": "20"
         } ]
       },
-      "occurrenceDateTime": "2022-03-21T16:39:49+01:00"
+      "occurrenceDateTime": "2022-06-12T05:52:56+02:00"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1647877189123",
+      "id": "imm-1655005976799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -568,52 +730,52 @@ Encounter date : Mon Feb 20 16:39:49 CET 2023
           "code": "10"
         } ]
       },
-      "occurrenceDateTime": "2022-03-21T16:39:49+01:00"
+      "occurrenceDateTime": "2022-06-12T05:52:56+02:00"
     }
   } ]
 }
 ---Immunization cvx recommended bys CDSi : 
-   -> 164 Meningococcal B | Sun Dec 13 08:00:00 CET 2037 ;
-   -> 188 Zoster | Sun Dec 13 08:00:00 CET 2071 ;
-   -> 108 Meningococcal | Mon Dec 13 08:00:00 CET 2032 ;
+   -> 164 Meningococcal B | Sat Mar 06 08:00:00 CET 2038 ;
+   -> 188 Zoster | Sun Mar 06 08:00:00 CET 2072 ;
+   -> 108 Meningococcal | Sun Mar 06 08:00:00 CET 2033 ;
    -> 89 Polio | Tue Jan 14 08:00:00 CET 2025 ;
-   -> 85 HepA | Tue Dec 13 08:00:00 CET 2022 ; <----- to be administered
+   -> 85 HepA | Mon Mar 06 08:00:00 CET 2023 ; <----- to be administered
    -> 45 HepB | Tue Jan 14 08:00:00 CET 2025 ;
-   -> 137 HPV | Fri Dec 13 08:00:00 CET 2030 ;
+   -> 137 HPV | Thu Mar 06 08:00:00 CET 2031 ;
    -> 109 Pneumococcal | Tue Jan 14 08:00:00 CET 2025 ;
-   -> 21 Varicella | Tue Dec 13 08:00:00 CET 2022 ; <----- to be administered
+   -> 21 Varicella | Mon Mar 06 08:00:00 CET 2023 ; <----- to be administered
    -> 17 Hib | Tue Jan 14 08:00:00 CET 2025 ;
    -> 122 Rotavirus | null ;
    -> 107 DTaP | Tue Jan 14 08:00:00 CET 2025 ;
-   -> 03 MMR | Tue Dec 13 08:00:00 CET 2022 ; <----- to be administered
+   -> 03 MMR | Mon Mar 06 08:00:00 CET 2023 ; <----- to be administered
    -> 88 Influenza | Tue Jan 14 08:00:00 CET 2025 ;
 ---Vaccines (cvx) to be administered : [85, 21, 03]
 ---Administrated vaccine : 
-   -> CVX : 21 varicella || NDC : 00006-4827-01 VARIVAX
    -> CVX : 03 MMR || NDC : 54868-0980-00 M-M-R II
    -> CVX : 83 Hep A, ped/adol, 2 dose || NDC : 58160-0825-01 HAVRIX
+   -> CVX : 21 varicella || NDC : 00006-4827-01 VARIVAX
 --------------------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------------------
-Encounter date : Mon May 22 17:39:49 CEST 2023
+Encounter date : Sun Aug 13 05:52:56 CEST 2023
 ---Request Payload Sent to Server:
 {
   "resourceType": "Parameters",
   "parameter": [ {
     "name": "assessmentDate",
-    "valueDate": "2023-05-22"
+    "valueDate": "2023-08-13"
   }, {
     "name": "patient",
     "resource": {
       "resourceType": "Patient",
       "id": "example",
       "gender": "male",
-      "birthDate": "2021-12-13"
+      "birthDate": "2022-03-06"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1647877189123",
+      "id": "imm-1655005976799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -621,13 +783,13 @@ Encounter date : Mon May 22 17:39:49 CEST 2023
           "code": "100"
         } ]
       },
-      "occurrenceDateTime": "2022-03-21T16:39:49+01:00"
+      "occurrenceDateTime": "2022-06-12T05:52:56+02:00"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1661182789123",
+      "id": "imm-1668311576799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -635,13 +797,13 @@ Encounter date : Mon May 22 17:39:49 CEST 2023
           "code": "320"
         } ]
       },
-      "occurrenceDateTime": "2022-08-22T17:39:49+02:00"
+      "occurrenceDateTime": "2022-11-13T04:52:56+01:00"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1676907589123",
+      "id": "imm-1684036376799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -649,13 +811,13 @@ Encounter date : Mon May 22 17:39:49 CEST 2023
           "code": "03"
         } ]
       },
-      "occurrenceDateTime": "2023-02-20T16:39:49+01:00"
+      "occurrenceDateTime": "2023-05-14T05:52:56+02:00"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1647877189123",
+      "id": "imm-1655005976799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -663,13 +825,13 @@ Encounter date : Mon May 22 17:39:49 CEST 2023
           "code": "48"
         } ]
       },
-      "occurrenceDateTime": "2022-03-21T16:39:49+01:00"
+      "occurrenceDateTime": "2022-06-12T05:52:56+02:00"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1639409989123",
+      "id": "imm-1649562776799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -677,13 +839,27 @@ Encounter date : Mon May 22 17:39:49 CEST 2023
           "code": "08"
         } ]
       },
-      "occurrenceDateTime": "2021-12-13T16:39:49+01:00"
+      "occurrenceDateTime": "2022-04-10T05:52:56+02:00"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1676907589123",
+      "id": "imm-1655005976799",
+      "status": "completed",
+      "vaccineCode": {
+        "coding": [ {
+          "system": "http://hl7.org/fhir/sid/cvx",
+          "code": "119"
+        } ]
+      },
+      "occurrenceDateTime": "2022-06-12T05:52:56+02:00"
+    }
+  }, {
+    "name": "immunization",
+    "resource": {
+      "resourceType": "Immunization",
+      "id": "imm-1684036376799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -691,13 +867,13 @@ Encounter date : Mon May 22 17:39:49 CEST 2023
           "code": "83"
         } ]
       },
-      "occurrenceDateTime": "2023-02-20T16:39:49+01:00"
+      "occurrenceDateTime": "2023-05-14T05:52:56+02:00"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1647877189123",
+      "id": "imm-1655005976799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -705,13 +881,13 @@ Encounter date : Mon May 22 17:39:49 CEST 2023
           "code": "20"
         } ]
       },
-      "occurrenceDateTime": "2022-03-21T16:39:49+01:00"
+      "occurrenceDateTime": "2022-06-12T05:52:56+02:00"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1647877189123",
+      "id": "imm-1655005976799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -719,13 +895,13 @@ Encounter date : Mon May 22 17:39:49 CEST 2023
           "code": "10"
         } ]
       },
-      "occurrenceDateTime": "2022-03-21T16:39:49+01:00"
+      "occurrenceDateTime": "2022-06-12T05:52:56+02:00"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1676907589123",
+      "id": "imm-1684036376799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -733,18 +909,18 @@ Encounter date : Mon May 22 17:39:49 CEST 2023
           "code": "21"
         } ]
       },
-      "occurrenceDateTime": "2023-02-20T16:39:49+01:00"
+      "occurrenceDateTime": "2023-05-14T05:52:56+02:00"
     }
   } ]
 }
 ---Immunization cvx recommended bys CDSi : 
-   -> 164 Meningococcal B | Sun Dec 13 08:00:00 CET 2037 ;
-   -> 188 Zoster | Sun Dec 13 08:00:00 CET 2071 ;
-   -> 108 Meningococcal | Mon Dec 13 08:00:00 CET 2032 ;
+   -> 164 Meningococcal B | Sat Mar 06 08:00:00 CET 2038 ;
+   -> 188 Zoster | Sun Mar 06 08:00:00 CET 2072 ;
+   -> 108 Meningococcal | Sun Mar 06 08:00:00 CET 2033 ;
    -> 89 Polio | Tue Jan 14 08:00:00 CET 2025 ;
    -> 85 HepA | Tue Jun 17 08:00:00 CEST 2025 ;
    -> 45 HepB | Tue Jan 14 08:00:00 CET 2025 ;
-   -> 137 HPV | Fri Dec 13 08:00:00 CET 2030 ;
+   -> 137 HPV | Thu Mar 06 08:00:00 CET 2031 ;
    -> 109 Pneumococcal | Tue Jan 14 08:00:00 CET 2025 ;
    -> 21 Varicella | Tue Mar 11 07:00:00 CET 2025 ;
    -> 17 Hib | Tue Jan 14 08:00:00 CET 2025 ;
@@ -755,26 +931,26 @@ Encounter date : Mon May 22 17:39:49 CEST 2023
 ---Vaccines (cvx) to be administered : []
 --------------------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------------------
-Encounter date : Mon Nov 20 16:39:49 CET 2023
+Encounter date : Sun Feb 11 04:52:56 CET 2024
 ---Request Payload Sent to Server:
 {
   "resourceType": "Parameters",
   "parameter": [ {
     "name": "assessmentDate",
-    "valueDate": "2023-11-20"
+    "valueDate": "2024-02-11"
   }, {
     "name": "patient",
     "resource": {
       "resourceType": "Patient",
       "id": "example",
       "gender": "male",
-      "birthDate": "2021-12-13"
+      "birthDate": "2022-03-06"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1647877189123",
+      "id": "imm-1655005976799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -782,13 +958,13 @@ Encounter date : Mon Nov 20 16:39:49 CET 2023
           "code": "100"
         } ]
       },
-      "occurrenceDateTime": "2022-03-21T16:39:49+01:00"
+      "occurrenceDateTime": "2022-06-12T05:52:56+02:00"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1661182789123",
+      "id": "imm-1668311576799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -796,13 +972,13 @@ Encounter date : Mon Nov 20 16:39:49 CET 2023
           "code": "320"
         } ]
       },
-      "occurrenceDateTime": "2022-08-22T17:39:49+02:00"
+      "occurrenceDateTime": "2022-11-13T04:52:56+01:00"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1676907589123",
+      "id": "imm-1684036376799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -810,13 +986,13 @@ Encounter date : Mon Nov 20 16:39:49 CET 2023
           "code": "03"
         } ]
       },
-      "occurrenceDateTime": "2023-02-20T16:39:49+01:00"
+      "occurrenceDateTime": "2023-05-14T05:52:56+02:00"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1647877189123",
+      "id": "imm-1655005976799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -824,13 +1000,13 @@ Encounter date : Mon Nov 20 16:39:49 CET 2023
           "code": "48"
         } ]
       },
-      "occurrenceDateTime": "2022-03-21T16:39:49+01:00"
+      "occurrenceDateTime": "2022-06-12T05:52:56+02:00"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1639409989123",
+      "id": "imm-1649562776799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -838,13 +1014,27 @@ Encounter date : Mon Nov 20 16:39:49 CET 2023
           "code": "08"
         } ]
       },
-      "occurrenceDateTime": "2021-12-13T16:39:49+01:00"
+      "occurrenceDateTime": "2022-04-10T05:52:56+02:00"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1676907589123",
+      "id": "imm-1655005976799",
+      "status": "completed",
+      "vaccineCode": {
+        "coding": [ {
+          "system": "http://hl7.org/fhir/sid/cvx",
+          "code": "119"
+        } ]
+      },
+      "occurrenceDateTime": "2022-06-12T05:52:56+02:00"
+    }
+  }, {
+    "name": "immunization",
+    "resource": {
+      "resourceType": "Immunization",
+      "id": "imm-1684036376799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -852,13 +1042,13 @@ Encounter date : Mon Nov 20 16:39:49 CET 2023
           "code": "83"
         } ]
       },
-      "occurrenceDateTime": "2023-02-20T16:39:49+01:00"
+      "occurrenceDateTime": "2023-05-14T05:52:56+02:00"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1647877189123",
+      "id": "imm-1655005976799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -866,13 +1056,13 @@ Encounter date : Mon Nov 20 16:39:49 CET 2023
           "code": "20"
         } ]
       },
-      "occurrenceDateTime": "2022-03-21T16:39:49+01:00"
+      "occurrenceDateTime": "2022-06-12T05:52:56+02:00"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1647877189123",
+      "id": "imm-1655005976799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -880,13 +1070,13 @@ Encounter date : Mon Nov 20 16:39:49 CET 2023
           "code": "10"
         } ]
       },
-      "occurrenceDateTime": "2022-03-21T16:39:49+01:00"
+      "occurrenceDateTime": "2022-06-12T05:52:56+02:00"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1676907589123",
+      "id": "imm-1684036376799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -894,18 +1084,18 @@ Encounter date : Mon Nov 20 16:39:49 CET 2023
           "code": "21"
         } ]
       },
-      "occurrenceDateTime": "2023-02-20T16:39:49+01:00"
+      "occurrenceDateTime": "2023-05-14T05:52:56+02:00"
     }
   } ]
 }
 ---Immunization cvx recommended bys CDSi : 
-   -> 164 Meningococcal B | Sun Dec 13 08:00:00 CET 2037 ;
-   -> 188 Zoster | Sun Dec 13 08:00:00 CET 2071 ;
-   -> 108 Meningococcal | Mon Dec 13 08:00:00 CET 2032 ;
+   -> 164 Meningococcal B | Sat Mar 06 08:00:00 CET 2038 ;
+   -> 188 Zoster | Sun Mar 06 08:00:00 CET 2072 ;
+   -> 108 Meningococcal | Sun Mar 06 08:00:00 CET 2033 ;
    -> 89 Polio | Tue Jan 14 08:00:00 CET 2025 ;
    -> 85 HepA | Tue Jun 17 08:00:00 CEST 2025 ;
    -> 45 HepB | Tue Jan 14 08:00:00 CET 2025 ;
-   -> 137 HPV | Fri Dec 13 08:00:00 CET 2030 ;
+   -> 137 HPV | Thu Mar 06 08:00:00 CET 2031 ;
    -> 109 Pneumococcal | Tue Jan 14 08:00:00 CET 2025 ;
    -> 21 Varicella | Tue Mar 11 07:00:00 CET 2025 ;
    -> 17 Hib | Tue Jan 14 08:00:00 CET 2025 ;
@@ -916,26 +1106,26 @@ Encounter date : Mon Nov 20 16:39:49 CET 2023
 ---Vaccines (cvx) to be administered : []
 --------------------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------------------
-Encounter date : Mon May 20 17:39:49 CEST 2024
+Encounter date : Sun Aug 11 05:52:56 CEST 2024
 ---Request Payload Sent to Server:
 {
   "resourceType": "Parameters",
   "parameter": [ {
     "name": "assessmentDate",
-    "valueDate": "2024-05-20"
+    "valueDate": "2024-08-11"
   }, {
     "name": "patient",
     "resource": {
       "resourceType": "Patient",
       "id": "example",
       "gender": "male",
-      "birthDate": "2021-12-13"
+      "birthDate": "2022-03-06"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1647877189123",
+      "id": "imm-1655005976799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -943,13 +1133,13 @@ Encounter date : Mon May 20 17:39:49 CEST 2024
           "code": "100"
         } ]
       },
-      "occurrenceDateTime": "2022-03-21T16:39:49+01:00"
+      "occurrenceDateTime": "2022-06-12T05:52:56+02:00"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1661182789123",
+      "id": "imm-1668311576799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -957,13 +1147,13 @@ Encounter date : Mon May 20 17:39:49 CEST 2024
           "code": "320"
         } ]
       },
-      "occurrenceDateTime": "2022-08-22T17:39:49+02:00"
+      "occurrenceDateTime": "2022-11-13T04:52:56+01:00"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1676907589123",
+      "id": "imm-1684036376799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -971,13 +1161,13 @@ Encounter date : Mon May 20 17:39:49 CEST 2024
           "code": "03"
         } ]
       },
-      "occurrenceDateTime": "2023-02-20T16:39:49+01:00"
+      "occurrenceDateTime": "2023-05-14T05:52:56+02:00"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1647877189123",
+      "id": "imm-1655005976799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -985,13 +1175,13 @@ Encounter date : Mon May 20 17:39:49 CEST 2024
           "code": "48"
         } ]
       },
-      "occurrenceDateTime": "2022-03-21T16:39:49+01:00"
+      "occurrenceDateTime": "2022-06-12T05:52:56+02:00"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1639409989123",
+      "id": "imm-1649562776799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -999,13 +1189,27 @@ Encounter date : Mon May 20 17:39:49 CEST 2024
           "code": "08"
         } ]
       },
-      "occurrenceDateTime": "2021-12-13T16:39:49+01:00"
+      "occurrenceDateTime": "2022-04-10T05:52:56+02:00"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1676907589123",
+      "id": "imm-1655005976799",
+      "status": "completed",
+      "vaccineCode": {
+        "coding": [ {
+          "system": "http://hl7.org/fhir/sid/cvx",
+          "code": "119"
+        } ]
+      },
+      "occurrenceDateTime": "2022-06-12T05:52:56+02:00"
+    }
+  }, {
+    "name": "immunization",
+    "resource": {
+      "resourceType": "Immunization",
+      "id": "imm-1684036376799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -1013,13 +1217,13 @@ Encounter date : Mon May 20 17:39:49 CEST 2024
           "code": "83"
         } ]
       },
-      "occurrenceDateTime": "2023-02-20T16:39:49+01:00"
+      "occurrenceDateTime": "2023-05-14T05:52:56+02:00"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1647877189123",
+      "id": "imm-1655005976799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -1027,13 +1231,13 @@ Encounter date : Mon May 20 17:39:49 CEST 2024
           "code": "20"
         } ]
       },
-      "occurrenceDateTime": "2022-03-21T16:39:49+01:00"
+      "occurrenceDateTime": "2022-06-12T05:52:56+02:00"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1647877189123",
+      "id": "imm-1655005976799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -1041,13 +1245,13 @@ Encounter date : Mon May 20 17:39:49 CEST 2024
           "code": "10"
         } ]
       },
-      "occurrenceDateTime": "2022-03-21T16:39:49+01:00"
+      "occurrenceDateTime": "2022-06-12T05:52:56+02:00"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1676907589123",
+      "id": "imm-1684036376799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -1055,18 +1259,18 @@ Encounter date : Mon May 20 17:39:49 CEST 2024
           "code": "21"
         } ]
       },
-      "occurrenceDateTime": "2023-02-20T16:39:49+01:00"
+      "occurrenceDateTime": "2023-05-14T05:52:56+02:00"
     }
   } ]
 }
 ---Immunization cvx recommended bys CDSi : 
-   -> 164 Meningococcal B | Sun Dec 13 08:00:00 CET 2037 ;
-   -> 188 Zoster | Sun Dec 13 08:00:00 CET 2071 ;
-   -> 108 Meningococcal | Mon Dec 13 08:00:00 CET 2032 ;
+   -> 164 Meningococcal B | Sat Mar 06 08:00:00 CET 2038 ;
+   -> 188 Zoster | Sun Mar 06 08:00:00 CET 2072 ;
+   -> 108 Meningococcal | Sun Mar 06 08:00:00 CET 2033 ;
    -> 89 Polio | Tue Jan 14 08:00:00 CET 2025 ;
    -> 85 HepA | Tue Jun 17 08:00:00 CEST 2025 ;
    -> 45 HepB | Tue Jan 14 08:00:00 CET 2025 ;
-   -> 137 HPV | Fri Dec 13 08:00:00 CET 2030 ;
+   -> 137 HPV | Thu Mar 06 08:00:00 CET 2031 ;
    -> 109 Pneumococcal | Tue Jan 14 08:00:00 CET 2025 ;
    -> 21 Varicella | Tue Mar 11 07:00:00 CET 2025 ;
    -> 17 Hib | Tue Jan 14 08:00:00 CET 2025 ;
@@ -1077,26 +1281,26 @@ Encounter date : Mon May 20 17:39:49 CEST 2024
 ---Vaccines (cvx) to be administered : []
 --------------------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------------------
-Encounter date : Mon Nov 18 16:39:49 CET 2024
+Encounter date : Sun Dec 08 04:52:56 CET 2024
 ---Request Payload Sent to Server:
 {
   "resourceType": "Parameters",
   "parameter": [ {
     "name": "assessmentDate",
-    "valueDate": "2024-11-18"
+    "valueDate": "2024-12-08"
   }, {
     "name": "patient",
     "resource": {
       "resourceType": "Patient",
       "id": "example",
       "gender": "male",
-      "birthDate": "2021-12-13"
+      "birthDate": "2022-03-06"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1647877189123",
+      "id": "imm-1655005976799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -1104,13 +1308,13 @@ Encounter date : Mon Nov 18 16:39:49 CET 2024
           "code": "100"
         } ]
       },
-      "occurrenceDateTime": "2022-03-21T16:39:49+01:00"
+      "occurrenceDateTime": "2022-06-12T05:52:56+02:00"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1661182789123",
+      "id": "imm-1668311576799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -1118,13 +1322,13 @@ Encounter date : Mon Nov 18 16:39:49 CET 2024
           "code": "320"
         } ]
       },
-      "occurrenceDateTime": "2022-08-22T17:39:49+02:00"
+      "occurrenceDateTime": "2022-11-13T04:52:56+01:00"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1676907589123",
+      "id": "imm-1684036376799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -1132,13 +1336,13 @@ Encounter date : Mon Nov 18 16:39:49 CET 2024
           "code": "03"
         } ]
       },
-      "occurrenceDateTime": "2023-02-20T16:39:49+01:00"
+      "occurrenceDateTime": "2023-05-14T05:52:56+02:00"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1647877189123",
+      "id": "imm-1655005976799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -1146,13 +1350,13 @@ Encounter date : Mon Nov 18 16:39:49 CET 2024
           "code": "48"
         } ]
       },
-      "occurrenceDateTime": "2022-03-21T16:39:49+01:00"
+      "occurrenceDateTime": "2022-06-12T05:52:56+02:00"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1639409989123",
+      "id": "imm-1649562776799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -1160,13 +1364,27 @@ Encounter date : Mon Nov 18 16:39:49 CET 2024
           "code": "08"
         } ]
       },
-      "occurrenceDateTime": "2021-12-13T16:39:49+01:00"
+      "occurrenceDateTime": "2022-04-10T05:52:56+02:00"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1676907589123",
+      "id": "imm-1655005976799",
+      "status": "completed",
+      "vaccineCode": {
+        "coding": [ {
+          "system": "http://hl7.org/fhir/sid/cvx",
+          "code": "119"
+        } ]
+      },
+      "occurrenceDateTime": "2022-06-12T05:52:56+02:00"
+    }
+  }, {
+    "name": "immunization",
+    "resource": {
+      "resourceType": "Immunization",
+      "id": "imm-1684036376799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -1174,13 +1392,13 @@ Encounter date : Mon Nov 18 16:39:49 CET 2024
           "code": "83"
         } ]
       },
-      "occurrenceDateTime": "2023-02-20T16:39:49+01:00"
+      "occurrenceDateTime": "2023-05-14T05:52:56+02:00"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1647877189123",
+      "id": "imm-1655005976799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -1188,13 +1406,13 @@ Encounter date : Mon Nov 18 16:39:49 CET 2024
           "code": "20"
         } ]
       },
-      "occurrenceDateTime": "2022-03-21T16:39:49+01:00"
+      "occurrenceDateTime": "2022-06-12T05:52:56+02:00"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1647877189123",
+      "id": "imm-1655005976799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -1202,13 +1420,13 @@ Encounter date : Mon Nov 18 16:39:49 CET 2024
           "code": "10"
         } ]
       },
-      "occurrenceDateTime": "2022-03-21T16:39:49+01:00"
+      "occurrenceDateTime": "2022-06-12T05:52:56+02:00"
     }
   }, {
     "name": "immunization",
     "resource": {
       "resourceType": "Immunization",
-      "id": "imm-1676907589123",
+      "id": "imm-1684036376799",
       "status": "completed",
       "vaccineCode": {
         "coding": [ {
@@ -1216,18 +1434,18 @@ Encounter date : Mon Nov 18 16:39:49 CET 2024
           "code": "21"
         } ]
       },
-      "occurrenceDateTime": "2023-02-20T16:39:49+01:00"
+      "occurrenceDateTime": "2023-05-14T05:52:56+02:00"
     }
   } ]
 }
 ---Immunization cvx recommended bys CDSi : 
-   -> 164 Meningococcal B | Sun Dec 13 08:00:00 CET 2037 ;
-   -> 188 Zoster | Sun Dec 13 08:00:00 CET 2071 ;
-   -> 108 Meningococcal | Mon Dec 13 08:00:00 CET 2032 ;
+   -> 164 Meningococcal B | Sat Mar 06 08:00:00 CET 2038 ;
+   -> 188 Zoster | Sun Mar 06 08:00:00 CET 2072 ;
+   -> 108 Meningococcal | Sun Mar 06 08:00:00 CET 2033 ;
    -> 89 Polio | Tue Jan 14 08:00:00 CET 2025 ;
    -> 85 HepA | Tue Jun 17 08:00:00 CEST 2025 ;
    -> 45 HepB | Tue Jan 14 08:00:00 CET 2025 ;
-   -> 137 HPV | Fri Dec 13 08:00:00 CET 2030 ;
+   -> 137 HPV | Thu Mar 06 08:00:00 CET 2031 ;
    -> 109 Pneumococcal | Tue Jan 14 08:00:00 CET 2025 ;
    -> 21 Varicella | Tue Mar 11 07:00:00 CET 2025 ;
    -> 17 Hib | Tue Jan 14 08:00:00 CET 2025 ;
@@ -1236,8 +1454,183 @@ Encounter date : Mon Nov 18 16:39:49 CET 2024
    -> 03 MMR | Tue Jan 14 08:00:00 CET 2025 ;
    -> 88 Influenza | Tue Jan 14 08:00:00 CET 2025 ;
 ---Vaccines (cvx) to be administered : []
-1 -- RubénNIST PreciadoNIST (null) (3 y/o M) New York, New York, 11362  (4700)
+--------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------
+Encounter date : Sun Dec 15 04:52:56 CET 2024
+---Request Payload Sent to Server:
+{
+  "resourceType": "Parameters",
+  "parameter": [ {
+    "name": "assessmentDate",
+    "valueDate": "2024-12-15"
+  }, {
+    "name": "patient",
+    "resource": {
+      "resourceType": "Patient",
+      "id": "example",
+      "gender": "male",
+      "birthDate": "2022-03-06"
+    }
+  }, {
+    "name": "immunization",
+    "resource": {
+      "resourceType": "Immunization",
+      "id": "imm-1655005976799",
+      "status": "completed",
+      "vaccineCode": {
+        "coding": [ {
+          "system": "http://hl7.org/fhir/sid/cvx",
+          "code": "100"
+        } ]
+      },
+      "occurrenceDateTime": "2022-06-12T05:52:56+02:00"
+    }
+  }, {
+    "name": "immunization",
+    "resource": {
+      "resourceType": "Immunization",
+      "id": "imm-1668311576799",
+      "status": "completed",
+      "vaccineCode": {
+        "coding": [ {
+          "system": "http://hl7.org/fhir/sid/cvx",
+          "code": "320"
+        } ]
+      },
+      "occurrenceDateTime": "2022-11-13T04:52:56+01:00"
+    }
+  }, {
+    "name": "immunization",
+    "resource": {
+      "resourceType": "Immunization",
+      "id": "imm-1684036376799",
+      "status": "completed",
+      "vaccineCode": {
+        "coding": [ {
+          "system": "http://hl7.org/fhir/sid/cvx",
+          "code": "03"
+        } ]
+      },
+      "occurrenceDateTime": "2023-05-14T05:52:56+02:00"
+    }
+  }, {
+    "name": "immunization",
+    "resource": {
+      "resourceType": "Immunization",
+      "id": "imm-1655005976799",
+      "status": "completed",
+      "vaccineCode": {
+        "coding": [ {
+          "system": "http://hl7.org/fhir/sid/cvx",
+          "code": "48"
+        } ]
+      },
+      "occurrenceDateTime": "2022-06-12T05:52:56+02:00"
+    }
+  }, {
+    "name": "immunization",
+    "resource": {
+      "resourceType": "Immunization",
+      "id": "imm-1649562776799",
+      "status": "completed",
+      "vaccineCode": {
+        "coding": [ {
+          "system": "http://hl7.org/fhir/sid/cvx",
+          "code": "08"
+        } ]
+      },
+      "occurrenceDateTime": "2022-04-10T05:52:56+02:00"
+    }
+  }, {
+    "name": "immunization",
+    "resource": {
+      "resourceType": "Immunization",
+      "id": "imm-1655005976799",
+      "status": "completed",
+      "vaccineCode": {
+        "coding": [ {
+          "system": "http://hl7.org/fhir/sid/cvx",
+          "code": "119"
+        } ]
+      },
+      "occurrenceDateTime": "2022-06-12T05:52:56+02:00"
+    }
+  }, {
+    "name": "immunization",
+    "resource": {
+      "resourceType": "Immunization",
+      "id": "imm-1684036376799",
+      "status": "completed",
+      "vaccineCode": {
+        "coding": [ {
+          "system": "http://hl7.org/fhir/sid/cvx",
+          "code": "83"
+        } ]
+      },
+      "occurrenceDateTime": "2023-05-14T05:52:56+02:00"
+    }
+  }, {
+    "name": "immunization",
+    "resource": {
+      "resourceType": "Immunization",
+      "id": "imm-1655005976799",
+      "status": "completed",
+      "vaccineCode": {
+        "coding": [ {
+          "system": "http://hl7.org/fhir/sid/cvx",
+          "code": "20"
+        } ]
+      },
+      "occurrenceDateTime": "2022-06-12T05:52:56+02:00"
+    }
+  }, {
+    "name": "immunization",
+    "resource": {
+      "resourceType": "Immunization",
+      "id": "imm-1655005976799",
+      "status": "completed",
+      "vaccineCode": {
+        "coding": [ {
+          "system": "http://hl7.org/fhir/sid/cvx",
+          "code": "10"
+        } ]
+      },
+      "occurrenceDateTime": "2022-06-12T05:52:56+02:00"
+    }
+  }, {
+    "name": "immunization",
+    "resource": {
+      "resourceType": "Immunization",
+      "id": "imm-1684036376799",
+      "status": "completed",
+      "vaccineCode": {
+        "coding": [ {
+          "system": "http://hl7.org/fhir/sid/cvx",
+          "code": "21"
+        } ]
+      },
+      "occurrenceDateTime": "2023-05-14T05:52:56+02:00"
+    }
+  } ]
+}
+---Immunization cvx recommended bys CDSi : 
+   -> 164 Meningococcal B | Sat Mar 06 08:00:00 CET 2038 ;
+   -> 188 Zoster | Sun Mar 06 08:00:00 CET 2072 ;
+   -> 108 Meningococcal | Sun Mar 06 08:00:00 CET 2033 ;
+   -> 89 Polio | Tue Jan 14 08:00:00 CET 2025 ;
+   -> 85 HepA | Tue Jun 17 08:00:00 CEST 2025 ;
+   -> 45 HepB | Tue Jan 14 08:00:00 CET 2025 ;
+   -> 137 HPV | Thu Mar 06 08:00:00 CET 2031 ;
+   -> 109 Pneumococcal | Tue Jan 14 08:00:00 CET 2025 ;
+   -> 21 Varicella | Tue Mar 11 07:00:00 CET 2025 ;
+   -> 17 Hib | Tue Jan 14 08:00:00 CET 2025 ;
+   -> 122 Rotavirus | null ;
+   -> 107 DTaP | Tue Jan 14 08:00:00 CET 2025 ;
+   -> 03 MMR | Tue Jan 14 08:00:00 CET 2025 ;
+   -> 88 Influenza | Tue Jan 14 08:00:00 CET 2025 ;
+---Vaccines (cvx) to be administered : []
+1 -- MasonNIST MoenNIST (null) (2 y/o M) Enterprise, Alabama, 36330  (4574)
 Records: total=1, alive=1, dead=0
 RNG=1
-Clinician RNG=15490
+Clinician RNG=8444
 Antivax patients: 0 out of 1 (0,00%)
