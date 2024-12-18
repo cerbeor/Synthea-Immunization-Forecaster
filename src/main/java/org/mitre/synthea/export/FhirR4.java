@@ -2305,30 +2305,18 @@ public class FhirR4 {
     immResource.setOccurrence(convertFhirDateTime(immunization.start, true));
     immResource.setVaccineCode(mapCodeToCodeableConcept(immunization.codes.get(0), CVX_URI));
     
-    //  NDC code to the immunization resources
-    // create an extension for the NDC code in order to avoid conflic 
+    // We already have immResource (Immunization) and it has a vaccineCode set
     if (immunization instanceof HealthRecord.Immunization) {
       HealthRecord.Immunization imm = (HealthRecord.Immunization) immunization;
       if (imm.codeStringNDC != null && imm.nameNDC != null) {
-        // Create a custom extension URL for vaccineNDC
-        // Use a URI that's unique to your implementation
-        Extension ndcExtension = new Extension("http://synthetichealth.github.io/synthea/vaccineNDC");
-    
-        // We'll store the NDC code and display in a CodeableConcept for consistency
-        CodeableConcept ndcConcept = new CodeableConcept();
-        ndcConcept.addCoding()
+        // Adding another coding to the existing vaccineCode CodeableConcept
+        immResource.getVaccineCode().addCoding()
           .setSystem("http://hl7.org/fhir/sid/ndc")
           .setCode(imm.codeStringNDC)
           .setDisplay(imm.nameNDC);
-    
-        // Set the extension's value to the CodeableConcept containing the NDC code
-        ndcExtension.setValue(ndcConcept);
-    
-        // Add the extension to the Immunization resource
-        immResource.addExtension(ndcExtension);
       }
     }
-    
+
     immResource.setPrimarySource(true);
     immResource.setPatient(new Reference(personEntry.getFullUrl()));
     immResource.setEncounter(new Reference(encounterEntry.getFullUrl()));
