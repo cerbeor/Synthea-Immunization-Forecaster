@@ -1,0 +1,49 @@
+2018-09-03 Birth 
+2018-09-02 - Well child visit (procedure)
+2018-10-07 - Well child visit (procedure)
+           * Hep B, adolescent or pediatric (08)
+2018-12-09 - Well child visit (procedure)
+           * Hib (PRP-T) (48)
+           * IPV (10)
+           * rotavirus, monovalent (119)
+           * pneumococcal conjugate PCV 7 (100)
+           * DTaP (20)
+2019-02-10 - Well child visit (procedure)
+2019-05-12 - Well child visit (procedure)
+           * Influenza, MDCK, trivalent, preservative (320)
+2019-08-11 - Well child visit (procedure)
+2019-11-10 - Well child visit (procedure)
+           * Hep A, ped/adol, 2 dose (83)
+           * MMR (03)
+           * varicella (21)
+2020-02-09 - Well child visit (procedure)
+2020-08-09 - Well child visit (procedure)
+2021-02-07 - Well child visit (procedure)
+2021-08-08 - Well child visit (procedure)
+2022-01-16 - Encounter for symptom
+2022-02-06 - Well child visit (procedure)
+2022-08-07 - Well child visit (procedure)
+2022-10-28 - Encounter for symptom
+2022-11-06 - Encounter for check up (procedure)
+2023-08-13 - Well child visit (procedure)
+2023-09-06 - Encounter for symptom
+2024-08-18 - Well child visit (procedure)
+
+------------------------------------------------------------------------------------------------------------------------------
+| Vaccine        |   Birth   |  2 months |  4 months |  6 months | 12 months | 18 months |  4 years  |  11 years |  16 years |
+------------------------------------------------------------------------------------------------------------------------------
+| HepB           |     1     |    [ ]    |           |    [ ]    |           |           |           |           |           |
+| RV             |           |    [ ]    |    [ ]    |    [ ]    |           |           |           |           |           |
+| DTaP           |           |     1     |    [ ]    |    [ ]    |    [ ]    |           |           |           |           |
+| Hib            |           |     1     |    [ ]    |    [ ]    |    [ ]    |           |           |           |           |
+| Pneu           |           |     1     |    [ ]    |    [ ]    |    [ ]    |           |           |           |           |
+| IPV            |           |     1     |    [ ]    |    [ ]    |           |           |           |           |           |
+| MMR            |           |           |           |           |     1     |           |           |           |           |
+| Var            |           |           |           |           |     1     |           |           |           |           |
+| HepA           |           |           |           |           |     1     |           |           |           |           |
+------------------------------------------------------------------------------------------------------------------------------
+| 119 rotavirus, |           |     1     |           |           |           |           |           |           |           |
+| Flu            |           |           |           |     1     |           |           |           |           |           |
+------------------------------------------------------------------------------------------------------------------------------
+| Encounters     |     2     |     1     |     1     |     2     |     1     |     1     |     6     |     5     |           |
+------------------------------------------------------------------------------------------------------------------------------
