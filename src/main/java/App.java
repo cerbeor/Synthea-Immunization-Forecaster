@@ -299,7 +299,7 @@ public class App {
               System.err.println("Error: No value provided for -noVaccineProbability.");
             } else {
               Immunizations.setNoVaccineProbability(Double.parseDouble(value));
-              System.out.println("Not taking a vaccine probability for normal people: " + options.cliniciansAntivaxZipCodePrefixes);
+              System.out.println("Not taking a vaccine probability for normal people: " + Immunizations.getNoVaccineProbability());
             }
           } else if (currArg.equals("-noVaccineProbabilityAntivax")) {
             String value = argsQ.poll();
@@ -307,7 +307,7 @@ public class App {
               System.err.println("Error: No value provided for -noVaccineProbabilityAntivax.");
             } else {
               Immunizations.setNoVaccineProbabilityAntivax(Double.parseDouble(value));
-              System.out.println("Not taking a vaccine probability for antivax people: " + options.cliniciansAntivaxZipCodePrefixes);
+              System.out.println("Not taking a vaccine probability for antivax people: " + Immunizations.getNoVaccineProbabilityAntivax());
             }
           } else if (currArg.equals("-noVaccineProbabilityClinician")) {
             String value = argsQ.poll();

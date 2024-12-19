@@ -118,8 +118,8 @@ public class Immunizations {
         if (!cvxMap.isEmpty()){
 //          System.out.println("---------cvxMap is not empty--------------");
 
-//          getImmunization = gettingImmunization(person);
-            getImmunization = true;
+          getImmunization = gettingImmunization(person);
+
 //          System.out.println("---Administrated vaccine : ");
           for (Map.Entry<org.mitre.synthea.codebase.generated.Code, NDC> entryMap : cvxMap.entrySet()) {
 //            System.out.println("---for cvx = " + entryMap.toString() + "---");
@@ -503,7 +503,7 @@ public class Immunizations {
     boolean getImmunization = true;
 
     // If antivax person
-    if ((boolean) person.attributes.getOrDefault(Person.ANTIVAX, false)){
+    if ((boolean) person.attributes.getOrDefault(Person.ANTIVAX, true)){
       if (randomNumber < noVaccineProbabilityAntivax) {
         getImmunization = false;
       }
