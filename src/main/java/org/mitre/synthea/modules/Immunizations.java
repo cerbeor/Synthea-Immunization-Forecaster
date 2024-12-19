@@ -54,7 +54,7 @@ public class Immunizations {
   /** Probability of an antivax person not taking a vaccine */
   private static double noVaccineProbabilityAntivax = 90; // default value
   /** Probability of a normal clinician not administrating a vaccine */
-  private static double noVaccineProbabilityClinician = 10; // default value
+  private static double noVaccineProbabilityClinician = 0; // default value
   /** Probability of an antivax clinician not administrating a vaccine */
   private static double noVaccineProbabilityAntivaxClinician = 90; // default value
 
@@ -528,7 +528,7 @@ public class Immunizations {
     // If antivax clinician
     HealthRecord.Encounter currentEncounter = (HealthRecord.Encounter) person.attributes.get(Person.CURRENT_ENCOUNTER);
     randomNumber = random.nextInt(100);
-    if ((boolean) currentEncounter.clinician.attributes.getOrDefault(Person.ANTIVAX, false)) {
+    if ((boolean) currentEncounter.clinician.attributes.getOrDefault(Person.ANTIVAX, true)) {
       if (randomNumber < noVaccineProbabilityAntivaxClinician) {
         getImmunization = false;
       }
