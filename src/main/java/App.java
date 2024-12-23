@@ -46,6 +46,10 @@ public class App {
     System.out.println("         [-cliniciansAntivaxPercentage cliniciansAntivaxPercentage]");
     System.out.println("         [-cliniciansAntivaxLastName cliniciansAntivaxFirstLetter]");
     System.out.println("         [-cliniciansAntivaxZipCodePrefixes cliniciansAntivaxZipPrefixes]");
+    System.out.println("         [-noVaccineProbability noVaccineProbability]");
+    System.out.println("         [-noVaccineProbabilityAntivax noVaccineProbabilityAntivax]");
+    System.out.println("         [-noVaccineProbabilityClinician noVaccineProbabilityClinician]");
+    System.out.println("         [-noVaccineProbabilityAntivaxClinician noVaccineProbabilityAntivaxClinician]");
     System.out.println("         [--config*=value]");
     System.out.println("          * any setting from src/main/resources/synthea.properties");
     System.out.println("Examples:");
@@ -64,8 +68,8 @@ public class App {
     System.out.println("run_synthea -cliniciansAntivaxPercentage 100");
     System.out.println("run_synthea -noVaccineProbability 100"); // probability of a person not getting a vaccine
     System.out.println("run_synthea -noVaccineProbabilityAntivax 100"); // probability of an antivax person not getting a vaccine
-    System.out.println("run_synthea -noVaccineProbability 100"); // probability of a clinician not administrating a vaccine
-    System.out.println("run_synthea -noVaccineProbabilityAntivax 100"); // probability of a clinician person not administrating a vaccine
+    System.out.println("run_synthea -noVaccineProbabilityClinician 100"); // probability of a clinician not administrating a vaccine
+    System.out.println("run_synthea -noVaccineProbabilityAntivaxClinician 100"); // probability of a clinician person not administrating a vaccine
     System.out.println("run_synthea testServer"); //change the immunization forecaster server to the test server
   }
 

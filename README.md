@@ -84,6 +84,10 @@ Options: [-s seed]
          [-cliniciansAntivaxPercentage percentage]
          [-cliniciansAntivaxLastName cliniciansAntivaxFirstLetter]
          [-cliniciansAntivaxZipCodePrefixes cliniciansAntivaxZipPrefixes]
+         [-noVaccineProbability percentage]
+         [-noVaccineProbabilityAntivax percentage]
+         [-noVaccineProbabilityClinician percentage]
+         [-noVaccineProbabilityAntivaxClinician percentage]
           * any setting from src/main/resources/synthea.properties
 
 Examples:
