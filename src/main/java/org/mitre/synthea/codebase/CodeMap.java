@@ -27,8 +27,6 @@ public class CodeMap {
       return codeBaseMap; // Retourne la carte des codes
   }
 
-  private List<NDC> ndcList;
-
   private static final Logger logger = LoggerFactory.getLogger(CodeMap.class);
 
   private Map<CodesetType, Map<String, Code>> codeBaseMap;

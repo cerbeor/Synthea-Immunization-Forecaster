@@ -18,7 +18,7 @@ import org.mitre.synthea.codebase.reference.CodesetType;
 public class Mapping {
     private CodeMap codeMap;
     // Maximum depth for backtracking recursion
-    private int MAXDEPTH = 5;
+    private static int MAXDEPTH = 5;
 
     // Constructor that takes a CodeMap instance
     public Mapping(CodeMap codeMap) {
@@ -89,8 +89,12 @@ public class Mapping {
  */
 private void findCombos(List<NDC> currentCombo, List<Code> remainingCvx, 
                         Map<Set<Code>, List<NDC>> groupedNDCs, List<Combo> combos) {
-    // Call the recursive helper method with a maximum depth of 5
-    this.findCombos(currentCombo, remainingCvx, groupedNDCs, combos, MAXDEPTH, 0);
+        // Call the recursive helper method with a maximum depth
+        if(groupedNDCs.size() > 7) {
+            this.findCombos(currentCombo, remainingCvx, groupedNDCs, combos, MAXDEPTH, 0);
+        } else {
+            this.findCombos(currentCombo, remainingCvx, groupedNDCs, combos, 10, 0);
+        }
     }
 
 /**
