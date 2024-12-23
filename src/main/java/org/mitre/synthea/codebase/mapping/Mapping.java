@@ -17,6 +17,8 @@ import org.mitre.synthea.codebase.reference.CodesetType;
 
 public class Mapping {
     private CodeMap codeMap;
+    // Maximum depth for backtracking recursion
+    private int MAXDEPTH = 5;
 
     // Constructor that takes a CodeMap instance
     public Mapping(CodeMap codeMap) {
@@ -68,68 +70,93 @@ public class Mapping {
 
         Set<Code> cvxSet = new HashSet<>(ndc.getCvxCodes());
         groupedNDCs.computeIfAbsent(cvxSet, k -> new ArrayList<>()).add(ndc);
-//        System.out.println("GroupedNDCs = " + groupedNDCs);
     }
-
-//        System.out.println("----findCombos start----");
     // Use backtracking to find the best combinations
     findCombos(new ArrayList<>(), targetCvxList, groupedNDCs, combos);
-//        System.out.println("----findCombos end----");
-//        System.out.println("Combos = " + combos);
     // Sort by the number of NDCs (fewer NDCs is better)
     combos.sort(Comparator.comparingInt(c -> c.getNdcList().size()));
-    
-    // Éliminer les doublons
+    // Remove duplicate combinations
     return removeDuplicateCombos(combos);
 }
 
 /**
  * Helper method to recursively find combinations of NDCs to match the target CVX list.
+ * 
+ * @param currentCombo Current list of NDCs being evaluated as a potential combination.
+ * @param remainingCvx List of CVX codes that still need to be covered.
+ * @param groupedNDCs Map where the key is a set of CVX codes and the value is a list of NDCs covering those codes.
+ * @param combos List of valid combinations found.
  */
 private void findCombos(List<NDC> currentCombo, List<Code> remainingCvx, 
                         Map<Set<Code>, List<NDC>> groupedNDCs, List<Combo> combos) {
+    // Call the recursive helper method with a maximum depth of 5
+    this.findCombos(currentCombo, remainingCvx, groupedNDCs, combos, MAXDEPTH, 0);
+    }
+
+/**
+ * Helper method to recursively find combinations of NDCs to match the target CVX list.
+ * 
+ * @param currentCombo Current list of NDCs being evaluated as a potential combination.
+ * @param remainingCvx List of CVX codes that still need to be covered.
+ * @param groupedNDCs Map where the key is a set of CVX codes and the value is a list of NDCs covering those codes.
+ * @param combos List of valid combinations found.
+ * @param maxDepth Maximum recursion depth to avoid excessive computation.
+ * @param currentDepth Current depth of the recursion.
+ */
+private void findCombos(List<NDC> currentCombo, List<Code> remainingCvx, 
+                        Map<Set<Code>, List<NDC>> groupedNDCs, List<Combo> combos, 
+                        int maxDepth, int currentDepth) {
+    // Base case: If no CVX codes remain to be covered, add the current combination.
     if (remainingCvx.isEmpty()) {
-//        System.out.println("Remaining CVX is empty");
         combos.add(new Combo(new ArrayList<>(currentCombo), true, 100.0));
-//        System.out.println("Combos list end = " + combos);
         return;
     }
-//    System.out.println("Current Combo = " + currentCombo);
-//    System.out.println("Combos list = " + combos);
 
+    // Terminate recursion if maximum depth is reached.
+    if (currentDepth >= maxDepth) {
+        // If the recursion reached the max depth and combos is still empty,
+        // add an "incomplete" combination to indicate failure to fully cover CVX.
+        if (combos.isEmpty() && !currentCombo.isEmpty()) {
+            combos.add(new Combo(new ArrayList<>(currentCombo), false, 0.0));
+        }
+        return;
+    }
+
+    // Iterate through each entry in the grouped NDCs.
     for (Map.Entry<Set<Code>, List<NDC>> entry : groupedNDCs.entrySet()) {
         Set<Code> ndcCvxSet = entry.getKey();
         List<NDC> ndcGroup = entry.getValue();
 
-//        System.out.println("NDC CVX Set = " + ndcCvxSet);
-//        System.out.println("NDC Group = " + ndcGroup);
-
-
-        // Skip if this NDC overlaps with existing NDCs in the current combo
+        // Skip if any NDC in the current combo overlaps with this NDC group.
         if (currentCombo.stream().anyMatch(ndc -> !Collections.disjoint(ndc.getCvxCodes(), ndcCvxSet))) {
             continue;
         }
 
-        // Check if this NDC can help cover the remaining CVX codes
+        // Identify CVX codes in the remaining list that intersect with this NDC group.
         List<Code> intersectingCvx = remainingCvx.stream()
                 .filter(ndcCvxSet::contains)
                 .collect(Collectors.toList());
 
-//        System.out.println("Intersecting CVX = " + intersectingCvx);
-
+        // If there are intersecting CVX codes, recursively process them.
         if (!intersectingCvx.isEmpty()) {
-//            System.out.println("intersectingCvx is not empty");
             for (NDC ndc : ndcGroup) {
-                currentCombo.add(ndc);
+                currentCombo.add(ndc); // Add current NDC to the combo.
                 List<Code> newRemaining = new ArrayList<>(remainingCvx);
-                newRemaining.removeAll(ndc.getCvxCodes());
-                findCombos(currentCombo, newRemaining, groupedNDCs, combos);
-                currentCombo.remove(currentCombo.size() - 1);
+                newRemaining.removeAll(ndc.getCvxCodes()); // Remove covered CVX codes.
+                findCombos(currentCombo, newRemaining, groupedNDCs, combos, maxDepth, currentDepth + 1);
+                currentCombo.remove(currentCombo.size() - 1); // Backtrack by removing the last NDC.
             }
         }
     }
-//    System.out.println("Combos list end = " + combos);
+
+    // If no valid combinations were found and combos is still empty at this level,
+    // add a fallback entry indicating incomplete coverage.
+    if (currentDepth == 0 && combos.isEmpty() && !currentCombo.isEmpty()) {
+        combos.add(new Combo(new ArrayList<>(currentCombo), false, 0.0));
+    }
 }
+
+
 
 /**
  * Method to remove duplicate Combos from the list.

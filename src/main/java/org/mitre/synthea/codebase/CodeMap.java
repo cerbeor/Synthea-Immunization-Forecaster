@@ -264,55 +264,18 @@ public String getStringForCode(Code code, CodesetType c) {
      */
     public List<Combo> getCombosByCVXList(List<Code> cvxCodes) {
         // Instantiate the Mapping class with the current CodeMap instance
-
         Mapping mapping = new Mapping(this);
         
         // Step 1: Create NDCs from the provided CVX codes
         List<NDC> ndcList = mapping.createNDCsFromCVX(cvxCodes);
         
-
-        // Debugging output to verify NDC creation
-//        System.out.println("NDC List Created:");
-//        for (NDC ndc : ndcList) {
-//            System.out.println(ndc);
-//        }
-//        System.out.println("End of NDC List\n");
-
         // Step 2: Generate combos from the list of NDCs
-//        System.out.println("----createCombosFromNDCs start----");
         List<Combo> comboList = mapping.createCombosFromNDCs(ndcList, cvxCodes);
-//        System.out.println("----createCombosFromNDCs end----");
-        
-        // Step 3: Debugging output to verify Combo creation
-//        System.out.println("Generated Combos:");
-//        for (Combo combo : comboList) {
-//            System.out.println(combo);
-//        }
-//        System.out.println("End of Combos\n");
-
-        // Step 4: Return the list of generated combos
+        // Step 3: Return the list of generated combos
         return comboList;
     }
 
 
-
-
-// 
-
-
-// Stock simulation part
-
-
-
-
-
-
-
-//
-
-
-
-    
 
   public String getRelatedValue(Code codeIn, CodesetType desiredType) {
     String relatedValue = "";
