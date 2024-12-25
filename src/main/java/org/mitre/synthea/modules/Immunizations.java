@@ -63,24 +63,24 @@ public class Immunizations {
   @SuppressWarnings({ "unchecked", "rawtypes" })
   private static final Map<String, Map> immunizationSchedule = loadImmunizationSchedule();
 
-  // Shared PrintStream for logging
-  private static PrintStream logStream;
-  static {
-    try {
-      // Initialize the PrintStream to log into "output_log.txt"
-      logStream = new PrintStream(new FileOutputStream("output_log.txt", true)); // Append mode
-      System.setOut(logStream); // Redirect System.out to the file
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
-
-  // Close the logStream when the application ends
-  public static void closeLogStream() {
-    if (logStream != null) {
-      logStream.close();
-    }
-  }
+//  // Shared PrintStream for logging
+//  private static PrintStream logStream;
+//  static {
+//    try {
+//      // Initialize the PrintStream to log into "output_log.txt"
+//      logStream = new PrintStream(new FileOutputStream("output_log.txt", true)); // Append mode
+//      System.setOut(logStream); // Redirect System.out to the file
+//    } catch (Exception e) {
+//      e.printStackTrace();
+//    }
+//  }
+//
+//  // Close the logStream when the application ends
+//  public static void closeLogStream() {
+//    if (logStream != null) {
+//      logStream.close();
+//    }
+//  }
 
   /**
    * NEW METHOD FETCHING IMMUNIZATION FORECASTER RECOMMENDATION
@@ -111,11 +111,11 @@ public class Immunizations {
   //        System.out.println("Fetch patient age");
           double agePatient= person.ageInDecimalYears(encounterDate); // encounterDate is the current simulation time
   //        System.out.println("Patient age : "+ agePatient);
-          System.out.println("---In checkForCombination---");
+//          System.out.println("---In checkForCombination---");
           HashMap<org.mitre.synthea.codebase.generated.Code, NDC> cvxMap = checkForCombination(immunizationRecommendation, encounterDate, agePatient);
-          System.out.println("---End checkForCombination---");
+//          System.out.println("---End checkForCombination---");
           if (!cvxMap.isEmpty()){
-            System.out.println("---Administrated vaccine : ");
+//            System.out.println("---Administrated vaccine : ");
             for (Map.Entry<org.mitre.synthea.codebase.generated.Code, NDC> entryMap : cvxMap.entrySet()) {
 //            System.out.println("---for cvx = " + entryMap.toString() + "---");
 
@@ -129,7 +129,7 @@ public class Immunizations {
               String immunizationLabel = immunizationCode.getLabel();
               String ndcCode = cvxMap.get(immunizationCode).getNdcCode();
               String ndcLabel = codeMap.getCodeForCodeset(CodesetType.VACCINATION_NDC_CODE_UNIT_OF_USE, ndcCode).getLabel();
-              System.out.println("   -> CVX : " + immunizationKey + " " + immunizationLabel + " || NDC : " + ndcCode + " " + ndcLabel);
+//              System.out.println("   -> CVX : " + immunizationKey + " " + immunizationLabel + " || NDC : " + ndcCode + " " + ndcLabel);
 //              System.out.println("Immunization Key : "+ immunizationKey);
 
               if (immunizationsGiven.containsKey(immunizationKey)) {
@@ -298,21 +298,21 @@ public class Immunizations {
       HashMap<org.mitre.synthea.codebase.generated.Code, NDC> cvxMap = new HashMap<>(); // Immunization CVX code to NDC map
 
       // Put all administrable vaccines in a list
-      System.out.print("---Immunization cvx recommended bys CDSi : \n");
+//      System.out.print("---Immunization cvx recommended bys CDSi : \n");
       for (ImmunizationRecommendation.ImmunizationRecommendationRecommendationComponent recommendation : immunizationRecommendation.getRecommendation()) {
         String immunizationKey = recommendation.getVaccineCode().get(0).getCodingFirstRep().getCode(); // CVX code
         Date dueDate = recommendation.getDateCriterionFirstRep().getValue();  // Recommended due date
-        System.out.print("   -> " + immunizationKey + " " + recommendation.getVaccineCode().get(0).getCodingFirstRep().getDisplay() + " | " + dueDate + " ;");
+//        System.out.print("   -> " + immunizationKey + " " + recommendation.getVaccineCode().get(0).getCodingFirstRep().getDisplay() + " | " + dueDate + " ;");
 
 
         if (dueDate == null || dueDate.after(new Date(encounterDate))) {
-          System.out.print("\n");
+//          System.out.print("\n");
           continue;
         }
-        System.out.print(" <----- to be administered\n");
+//        System.out.print(" <----- to be administered\n");
         combinationVaccines.add(immunizationKey);
       }
-      System.out.println("---Vaccines (cvx) to be administered : " + combinationVaccines);
+//      System.out.println("---Vaccines (cvx) to be administered : " + combinationVaccines);
         // Check for combination of vaccines
 
 //      System.out.println("---in getCombosByCVXList---");
@@ -335,7 +335,7 @@ public class Immunizations {
           // Get all cvx relating to the NDC
         for (org.mitre.synthea.codebase.generated.Code cvx : ndc.getCvxCodes()) {
             cvxMap.put(cvx, ndc);
-          System.out.println(" CVX code : " + cvx.getValue() + " CVX name : " + cvx.getLabel() + " NDC code : " + ndc.getNdcCode());
+//          System.out.println(" CVX code : " + cvx.getValue() + " CVX name : " + cvx.getLabel() + " NDC code : " + ndc.getNdcCode());
         }
 
       }
@@ -456,14 +456,14 @@ public class Immunizations {
                 .setResource(immunization);
       }
     }
-    System.out.println("--------------------------------------------------------------------------------------------------------");
-    System.out.println("--------------------------------------------------------------------------------------------------------");
-    System.out.println("Encounter date : " + new Date(encounterDate));
+//    System.out.println("--------------------------------------------------------------------------------------------------------");
+//    System.out.println("--------------------------------------------------------------------------------------------------------");
+//    System.out.println("Encounter date : " + new Date(encounterDate));
     // Serialize Parameters to JSON for logging
     String parametersJson = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(parameters);
-    System.out.println("---Request Payload Sent to Server:");
-    System.out.println(parametersJson);
-    System.out.flush(); // Ensure this line is written to the file
+//    System.out.println("---Request Payload Sent to Server:");
+//    System.out.println(parametersJson);
+//    System.out.flush(); // Ensure this line is written to the file
 
     // Invoke the $immds-forecast operation
     Parameters out = client
@@ -481,7 +481,7 @@ public class Immunizations {
         break;
       }
     }
-    System.out.println("---Immunization Recommendation Received from Server:");
+//    System.out.println("---Immunization Recommendation Received from Server:");
     // Return the ImmunizationRecommendation resource
     return immunizationRecommendation;
   }
