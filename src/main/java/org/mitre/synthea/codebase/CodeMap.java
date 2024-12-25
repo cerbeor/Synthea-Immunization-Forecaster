@@ -252,6 +252,30 @@ public String getStringForCode(Code code, CodesetType c) {
       return getCombosByCVXList(cvxCodeList);
   }
 
+  /**
+   * This method uses the Mapping class to create vaccine combos
+   * @param cvxCodes
+   * @param isAdult
+   * @param failList
+   * @param maxDepth
+   * @param minCombos
+   * @return
+   */
+  public List<Combo> getCombosByCVXStringList(List<String> cvxCodes, boolean isAdult, List<String> failList, int maxDepth, int minCombos) {
+    SpecificCase specificCase = new SpecificCase(this);
+    cvxCodes = specificCase.replaceSpecialCases(cvxCodes, isAdult);
+
+    specificCase.filterCVXList(cvxCodes, failList);
+
+    // String to code
+     List<Code> cvxCodeList = new ArrayList<Code>();
+      for (String cvxCode : cvxCodes) {
+          Code codeObject = this.getCodeForCodeset(CodesetType.VACCINATION_CVX_CODE, cvxCode);
+          cvxCodeList.add(codeObject);
+      }
+      return getCombosByCVXList(cvxCodeList, maxDepth, minCombos);
+  }
+
 
     /**
      * This method uses the Mapping class to create vaccine combos
@@ -272,6 +296,28 @@ public String getStringForCode(Code code, CodesetType c) {
         // Step 3: Return the list of generated combos
         return comboList;
     }
+
+    /**
+      * This method uses the Mapping class to create vaccine combos
+      * from a list of CVX codes, with the specified parameters.
+      *
+      * @param cvxCodes List of CVX codes.
+      * @param maxDepth Maximum depth of the combo tree.
+      * @param minCombos Minimum number of combos to generate.
+      * @return List of combos generated from the provided CVX codes.
+      */
+    public List<Combo> getCombosByCVXList(List<Code> cvxCodes, int maxDepth, int minCombos) {
+      // Instantiate the Mapping class with the current CodeMap instance
+      Mapping mapping = new Mapping(this);
+      
+      // Step 1: Create NDCs from the provided CVX codes
+      List<NDC> ndcList = mapping.createNDCsFromCVX(cvxCodes);
+      
+      // Step 2: Generate combos from the list of NDCs, with the specified parameters
+      List<Combo> comboList = mapping.createCombosFromNDCs(ndcList, cvxCodes, maxDepth, minCombos);
+      // Step 3: Return the list of generated combos
+      return comboList;
+  }
 
 
 
