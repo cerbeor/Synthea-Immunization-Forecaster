@@ -396,76 +396,83 @@ public class Immunizations {
     return forecastActualList;
   }
 
+  /**
+   * This method queries the new Clinical Decision Support (CDS) system to retrieve 
+   * an Immunization Recommendation for a given patient based on their immunization history 
+   * and demographic details. The method constructs and sends an operation request 
+   * to a FHIR server and processes the response.
+   *
+   * @param person            The patient for whom the immunization recommendation is queried.
+   * @param encounterDate     The date of the current encounter or assessment in milliseconds.
+   * @param immunizationsGiven A map of immunization history, where the key is the vaccine 
+   *                           code (CVX) and the value is a list of administration timestamps.
+   * @return ImmunizationRecommendation object containing the immunization forecast for the patient.
+   * @throws Exception If there is an error in the communication with the FHIR server or
+   *                   during the construction or parsing of the request/response.
+   */
   public static ImmunizationRecommendation queryForecaster(Person person, long encounterDate, Map<String, List<Long>> immunizationsGiven) throws Exception {
-    // This fonction is going to ask the new CDS the Immunization Recommendation of the patient
-
-//        System.out.println("person :" + person);
-//        System.out.println("time :" + time);
-//        System.out.println("immunizationsGiven :" + immunizationsGiven);
-
-    // Create FHIR context and client
+    // Initialize the FHIR context for R4 and create a client to communicate with the FHIR server
     FhirContext ctx = FhirContext.forR4();
-
     IGenericClient client = ctx.newRestfulGenericClient(immunizationServer);
 
-    // Build the Parameters resource
+    // Construct a FHIR Parameters resource to hold the inputs for the CDS operation
     Parameters parameters = new Parameters();
 
-    // Add assessmentDate parameter
+    // Add the assessment date to the Parameters resource
     parameters.addParameter()
             .setName("assessmentDate")
             .setValue(new DateType(new Date(encounterDate)));
 
-    // Convert patient gender to FHIR format
+    // Retrieve and convert the patient's gender to match FHIR's gender codes
     String patientGender = person.attributes.get("gender").toString();
     if (patientGender.equals("M")) {
-      patientGender = "male";
+        patientGender = "male";
     } else if (patientGender.equals("F")) {
-      patientGender = "female";
+        patientGender = "female";
     }
 
-    // Create Patient resource
+    // Construct a FHIR Patient resource using the patient's demographic information
     Patient patient = new Patient();
-    patient.setId("example");
-    patient.setGender(Enumerations.AdministrativeGender.fromCode((patientGender)));
+    patient.setId("example"); // Example ID for the patient
+    patient.setGender(Enumerations.AdministrativeGender.fromCode(patientGender));
     patient.setBirthDate(new Date((Long) person.attributes.get("birthdate")));
 
-    // Add patient parameter
+    // Add the Patient resource to the Parameters resource
     parameters.addParameter()
             .setName("patient")
             .setResource(patient);
 
-    // Add immunization parameters
+    // Iterate over the immunization history and construct FHIR Immunization resources
     for (Map.Entry<String, List<Long>> immunizationEntry : immunizationsGiven.entrySet()) {
-      String vaccineCodeStr = immunizationEntry.getKey();
-      for (Long eventTime : immunizationEntry.getValue()) {
-        Immunization immunization = new Immunization();
-        immunization.setStatus(Immunization.ImmunizationStatus.COMPLETED);
-        immunization.setId("imm-" + eventTime);
+        String vaccineCodeStr = immunizationEntry.getKey();
+        for (Long eventTime : immunizationEntry.getValue()) {
+            Immunization immunization = new Immunization();
+            immunization.setStatus(Immunization.ImmunizationStatus.COMPLETED); // Immunization status
+            immunization.setId("imm-" + eventTime); // Unique identifier for the immunization event
 
-        CodeableConcept vaccineCode = new CodeableConcept();
-        vaccineCode.addCoding()
-                .setSystem("http://hl7.org/fhir/sid/cvx")
-                .setCode(vaccineCodeStr);
-        immunization.setVaccineCode(vaccineCode);
+            // Set the vaccine code using the CVX code system
+            CodeableConcept vaccineCode = new CodeableConcept();
+            vaccineCode.addCoding()
+                    .setSystem("http://hl7.org/fhir/sid/cvx")
+                    .setCode(vaccineCodeStr);
+            immunization.setVaccineCode(vaccineCode);
 
-        immunization.setOccurrence(new DateTimeType(new Date(eventTime)));
+            // Set the occurrence date of the immunization
+            immunization.setOccurrence(new DateTimeType(new Date(eventTime)));
 
-        parameters.addParameter()
-                .setName("immunization")
-                .setResource(immunization);
-      }
+            // Add the Immunization resource to the Parameters resource
+            parameters.addParameter()
+                    .setName("immunization")
+                    .setResource(immunization);
+        }
     }
-//    System.out.println("--------------------------------------------------------------------------------------------------------");
-//    System.out.println("--------------------------------------------------------------------------------------------------------");
-//    System.out.println("Encounter date : " + new Date(encounterDate));
-    // Serialize Parameters to JSON for logging
-    String parametersJson = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(parameters);
-//    System.out.println("---Request Payload Sent to Server:");
-//    System.out.println(parametersJson);
-//    System.out.flush(); // Ensure this line is written to the file
 
-    // Invoke the $immds-forecast operation
+    // Log the serialized Parameters resource in JSON format for debugging (optional)
+  //    String parametersJson = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(parameters);
+  //    System.out.println("---Request Payload Sent to Server:");
+  //    System.out.println(parametersJson);
+
+    // Perform the $immds-forecast operation on the FHIR server
     Parameters out = client
             .operation()
             .onServer()
@@ -473,18 +480,19 @@ public class Immunizations {
             .withParameters(parameters)
             .execute();
 
-    // Fetch the ImmunizationRecommendation from the response
+    // Extract the ImmunizationRecommendation resource from the operation response
     ImmunizationRecommendation immunizationRecommendation = null;
     for (Parameters.ParametersParameterComponent parameter : out.getParameter()) {
-      if (parameter.getName().equals("recommendation") && parameter.hasResource() && parameter.getResource() instanceof ImmunizationRecommendation) {
-        immunizationRecommendation = (ImmunizationRecommendation) parameter.getResource();
-        break;
-      }
+        if (parameter.getName().equals("recommendation") && parameter.hasResource() && parameter.getResource() instanceof ImmunizationRecommendation) {
+            immunizationRecommendation = (ImmunizationRecommendation) parameter.getResource();
+            break;
+        }
     }
-//    System.out.println("---Immunization Recommendation Received from Server:");
-    // Return the ImmunizationRecommendation resource
+
+    // Return the ImmunizationRecommendation resource to the caller
     return immunizationRecommendation;
   }
+
 
 
   private static boolean gettingImmunization(Person person) {

@@ -5,56 +5,92 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+/**
+ * The `Stock` class simulates a stock management system where each item (represented by NDCs) 
+ * is associated with a boolean value indicating its availability.
+ * 
+ * This class provides functionality to initialize the stock with random values 
+ * and retrieve the stock map for further operations.
+ */
 public class Stock {
 
+    /**
+     * A private HashMap to store the stock status of items.
+     * Key: A string representing the National Drug Code (NDC).
+     * Value: A boolean indicating availability (`true` if in stock, `false` otherwise).
+     */
     private HashMap<String, Boolean> mapStock; // Private due to encapsulation principles
 
-
-    // Function that creates the stock map from the list of existing NDCs
-    // by randomly assigning true or false
+    /**
+     * Initializes the stock map with a list of NDCs, assigning each a random boolean value 
+     * to indicate its stock status.
+     * 
+     * @param ndcList A list of strings representing NDCs to initialize the stock map.
+     *                Each NDC is mapped to a randomly assigned `true` or `false` value.
+     */
     public void initializeMapStock(List<String> ndcList) {
+        // Log the initialization process
         System.out.println("Initializing the stock map with the following NDC list: " + ndcList);
-        mapStock = new HashMap<>();
-        Random random = new Random();
-        int trueCount = 0;
-        int falseCount = 0;
 
+        // Initialize the stock map
+        mapStock = new HashMap<>();
+        Random random = new Random(); // Random generator for assigning stock values
+        int trueCount = 0;  // Counter for the number of `true` entries
+        int falseCount = 0; // Counter for the number of `false` entries
+
+        // Loop through the NDC list and assign random boolean values
         for (String ndc : ndcList) {
-            boolean value = random.nextBoolean();
-            mapStock.put(ndc, value);
+            boolean value = random.nextBoolean(); // Randomly assign `true` or `false`
+            mapStock.put(ndc, value); // Add the NDC and its value to the map
             if (value) {
-                trueCount++;
+                trueCount++; // Increment the count for `true` values
             } else {
-                falseCount++;
+                falseCount++; // Increment the count for `false` values
             }
         }
 
-        int total = trueCount + falseCount;
-        double truePercentage = (trueCount * 100.0) / total;
-        double falsePercentage = (falseCount * 100.0) / total;
+        // Calculate percentages for `true` and `false` values
+        int total = trueCount + falseCount; // Total number of entries
+        double truePercentage = (trueCount * 100.0) / total; // Percentage of `true` values
+        double falsePercentage = (falseCount * 100.0) / total; // Percentage of `false` values
 
+        // Log the percentages
         System.out.println("Percentage of true: " + truePercentage + "%");
         System.out.println("Percentage of false: " + falsePercentage + "%");
     }
-    // Getter method to access mapStock
+
+    /**
+     * Provides access to the stock map (`mapStock`).
+     * 
+     * @return The `mapStock` HashMap containing NDCs and their availability status.
+     */
     public HashMap<String, Boolean> getMapStock() {
         return mapStock;
     }
 
+    /**
+     * Main method to demonstrate and test the functionality of the `Stock` class.
+     * Initializes a sample stock map and prints its contents.
+     * 
+     * @param args Command-line arguments (not used in this implementation).
+     */
     public static void main(String[] args) {
-    // Sample list of NDCs for testing
-    List<String> ndcList = List.of("12345-6789", "98765-4321", "11111-2222", "33333-4444");
+        // Sample list of NDCs for testing
+        List<String> ndcList = List.of("12345-6789", "98765-4321", "11111-2222", "33333-4444");
 
-    Stock stock = new Stock();
-    stock.initializeMapStock(ndcList);
+        // Create an instance of the `Stock` class
+        Stock stock = new Stock();
 
-    // Accessing mapStock using the getter method
-    HashMap<String, Boolean> mapStock = stock.getMapStock();
+        // Initialize the stock map with the provided NDC list
+        stock.initializeMapStock(ndcList);
 
-    // Printing the contents of mapStock
-    System.out.println("\nContents of mapStock:");
-    for (Map.Entry<String, Boolean> entry : mapStock.entrySet()) {
-        System.out.println("NDC: " + entry.getKey() + " - Value: " + entry.getValue());
+        // Access the stock map using the getter method
+        HashMap<String, Boolean> mapStock = stock.getMapStock();
+
+        // Print the contents of the stock map
+        System.out.println("\nContents of mapStock:");
+        for (Map.Entry<String, Boolean> entry : mapStock.entrySet()) {
+            System.out.println("NDC: " + entry.getKey() + " - Value: " + entry.getValue());
         }
     }
 }
