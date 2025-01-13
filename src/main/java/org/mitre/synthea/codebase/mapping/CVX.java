@@ -3,6 +3,17 @@ package org.mitre.synthea.codebase.mapping;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/**
+ * The CVX class represents a CVX (Clinical Vaccine Code) and its associated vaccine groups.
+ * It holds a CVX code and a list of vaccine groups that are linked to that specific CVX code.
+ * This class provides methods to manage the CVX code and the associated vaccine groups, 
+ * including adding and removing vaccine groups, and accessing the information.
+ * 
+ * The class also offers getter and setter methods for the CVX code and vaccine groups,
+ * ensuring that the list of vaccine groups is never null.
+ */
+
 public class CVX {
     private String code; // The CVX code
     private List<String> vaccineGroups; // List of vaccine groups associated with this CVX

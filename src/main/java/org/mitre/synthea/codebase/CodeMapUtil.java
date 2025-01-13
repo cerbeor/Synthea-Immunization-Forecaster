@@ -9,6 +9,31 @@ import java.util.Set;
 import org.mitre.synthea.codebase.generated.Code;
 import org.mitre.synthea.codebase.reference.CodesetType;
 
+/**
+ * CodeMapUtil is a utility class that provides static methods to extract various 
+ * types of code values from a given CodeMap instance. It focuses on specific 
+ * CodesetTypes, such as NDC (National Drug Code), Vaccine Groups, and CVX codes, 
+ * and returns the extracted values in the form of lists.
+ * 
+ * Key methods include:
+ * - extractNDCsFromCodebase(CodeMap codeMap): Extracts NDC values from the 
+ *   specified CodeMap instance, focusing on the NDC-related codeset types.
+ * - extractVaccineGroupsFromCodebase(CodeMap codeMap): Extracts Vaccine Group 
+ *   labels from the given CodeMap instance.
+ * - extractCvxFromCodebase(CodeMap codeMap): Extracts CVX code values from the 
+ *   specified CodeMap instance.
+ * 
+ * The utility methods use Sets to ensure that duplicate code values are avoided 
+ * during extraction. After extraction, the unique values are returned in a List 
+ * format for further use.
+ * 
+ * This class is designed to help manage and extract specific code values related 
+ * to vaccines, drugs, and medical codes from a CodeMap, which is a central repository 
+ * of codes used in the Synthea system.
+ */
+
+
+
 public class CodeMapUtil {
 
     /**

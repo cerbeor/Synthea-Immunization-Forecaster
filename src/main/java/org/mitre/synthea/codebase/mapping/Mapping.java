@@ -14,6 +14,29 @@ import org.mitre.synthea.codebase.CodeMap;
 import org.mitre.synthea.codebase.generated.Code;
 import org.mitre.synthea.codebase.reference.CodesetType;
 
+/**
+ * The Mapping class is designed to facilitate the creation of NDC (National Drug Code) 
+ * objects and their combinations based on related CVX (Vaccination) codes. It provides 
+ * methods to generate valid combinations of NDC codes that cover a list of target CVX codes.
+ * 
+ * Key methods include:
+ * - createNDCsFromCVX(List<Code> cvxCodes): Creates NDC objects related to the given list 
+ *   of CVX codes, with each NDC containing its associated CVX codes.
+ * - createNDCsFromCVXString(List<String> cvxCodes): Similar to the above method but accepts 
+ *   a list of CVX codes as strings and converts them into Code objects before creating NDCs.
+ * - createCombosFromNDCs(List<NDC> ndcList, List<Code> targetCvxList): Generates valid 
+ *   combinations of NDCs to match the target CVX codes.
+ * - createCombosFromNDCs(List<NDC> ndcList, List<Code> targetCvxList, int maxDepth, int minCombos): 
+ *   Similar to the above method but allows for customization of maximum recursion depth 
+ *   and minimum number of combinations to find.
+ * 
+ * This class implements a backtracking algorithm to find optimal combinations of NDCs that 
+ * cover all target CVX codes, with optimization to handle deeper recursions and ensure 
+ * uniqueness of combinations.
+ */
+
+
+
 public class Mapping {
     private CodeMap codeMap;
     // Maximum depth for backtracking recursion
@@ -25,7 +48,19 @@ public class Mapping {
         this.codeMap = codeMap;
     }
 
-    // Method to create NDC objects related to a list of CVX codes
+    /**
+     * Creates a list of NDC objects related to a given list of CVX codes.
+     * This method maps each CVX code to its corresponding NDC codes, and associates them
+     * in the resulting NDC objects. It also tracks any previous code associated with each NDC.
+     *
+     * For each CVX code in the provided list, the method retrieves the related NDC codes,
+     * creates or updates the corresponding NDC objects, and adds the CVX code to the NDC object.
+     * Additionally, it adds any previous code if available.
+     *
+     * @param cvxCodes A list of CVX codes to map to NDC codes.
+     * @return A list of NDC objects that are related to the provided CVX codes.
+     */
+
     public List<NDC> createNDCsFromCVX(List<Code> cvxCodes) {
         Map<String, NDC> ndcMap = new HashMap<>();
 
@@ -47,7 +82,20 @@ public class Mapping {
         return new ArrayList<>(ndcMap.values());
     }
 
-    // Method to create NDC objects related to a list of string CVX codes
+    /**
+     * Creates a list of NDC objects related to a given list of string CVX codes.
+     * This method first converts the list of CVX code strings into `Code` objects,
+     * then it maps each CVX code to its corresponding NDC codes, and associates them
+     * in the resulting NDC objects.
+     *
+     * The method calls `createNDCsFromCVX` to handle the actual creation of NDC objects
+     * using the converted `Code` objects. It simplifies the process of working with string-based
+     * CVX codes by converting them into `Code` objects before proceeding.
+     *
+     * @param cvxCodes A list of CVX code strings to map to NDC codes.
+     * @return A list of NDC objects that are related to the provided CVX codes.
+     */
+
     public List<NDC> createNDCsFromCVXString(List<String> cvxCodes) {
         List<Code> cvxCodeList = new ArrayList<>();
         for (String cvx : cvxCodes) {
@@ -58,9 +106,18 @@ public class Mapping {
 
     /**
      * Creates combinations of NDCs to match the input list of CVX codes.
-     * @param ndcList
-     * @param targetCvxList
-     * @return
+     * This method serves as a wrapper for the more flexible version of the method
+     * `createCombosFromNDCs` that allows specifying a maximum recursion depth and
+     * a minimum number of combinations to be found. The default values for maximum
+     * depth and minimum combinations are used.
+     *
+     * The method attempts to find valid combinations of NDC codes that cover the given
+     * list of CVX codes. The combination process optimizes for fewer NDCs while ensuring
+     * all target CVX codes are covered.
+     *
+     * @param ndcList The list of NDC objects to search for combinations.
+     * @param targetCvxList The list of CVX codes to match in the combinations.
+     * @return A list of valid combinations of NDCs that cover the provided CVX codes.
      */
     public List<Combo> createCombosFromNDCs(List<NDC> ndcList, List<Code> targetCvxList){
         return createCombosFromNDCs(ndcList, targetCvxList, MAXDEPTH, MINCOMBOS);

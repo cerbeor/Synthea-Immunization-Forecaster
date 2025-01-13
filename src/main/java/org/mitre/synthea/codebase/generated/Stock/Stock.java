@@ -5,6 +5,34 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+/**
+ * The Stock class represents a mapping between NDC codes and their availability status
+ * (true for in-stock, false for out-of-stock). It provides functionality to initialize
+ * this mapping based on a given list of NDC codes by randomly assigning each NDC a
+ * status of true or false.
+ *
+ * This class encapsulates a private `mapStock` field, which is a HashMap storing NDC codes
+ * as keys and their corresponding stock status as boolean values. It includes methods to:
+ * - Initialize the stock map with a list of NDCs by randomly assigning availability.
+ * - Retrieve the stock map using a getter method.
+ *
+ * The class also calculates and prints the percentage distribution of true (in-stock) and false
+ * (out-of-stock) values after initializing the map. The distribution percentages provide insights
+ * into the proportion of NDCs marked as in-stock and out-of-stock.
+ *
+ * Usage:
+ * - Call `initializeMapStock()` to initialize the stock status for a list of NDC codes.
+ * - Access the stock map using `getMapStock()`.
+ *
+ * Example:
+ * ```
+ * Stock stock = new Stock();
+ * stock.initializeMapStock(ndcList);
+ * HashMap<String, Boolean> stockMap = stock.getMapStock();
+ * ```
+ */
+
+
 public class Stock {
 
     private HashMap<String, Boolean> mapStock; // Private due to encapsulation principles

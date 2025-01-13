@@ -12,7 +12,7 @@ import org.cqframework.cql.elm.execution.Code;
 
 
 /**
- * The {@code SpecificCase} class is designed to handle specific scenarios 
+ * SpecificCase class is designed to handle specific scenarios 
  * where a CVX (vaccine code) is not directly associated with an NDC (National Drug Code). 
  * These scenarios typically arise when a CVX code has multiple possible mappings, 
  * resembling a tree structure, such as when a CVX is associated with categories like 

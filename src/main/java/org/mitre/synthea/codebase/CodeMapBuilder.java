@@ -12,6 +12,31 @@ import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
 
+/**
+ * CodeMapBuilder is a singleton class responsible for building and retrieving 
+ * a CodeMap object. It offers functionality to load a CodeMap either from 
+ * an XML file or from a classpath resource. The class supports multiple ways 
+ * to obtain the CodeMap, including reading it from a file system, from resources 
+ * inside a JAR, or from an XML string.
+ * 
+ * Key methods include:
+ * - getCodeMap(InputStream inputStream): Loads a CodeMap from an input stream.
+ * - getCodeMap(String codebaseXml): Loads a CodeMap from a provided XML string.
+ * - findAndReadCodeMapIntoMemory(String path): Attempts to load the CodeMap 
+ *   from a file in the specified path, checking the local directory and classpath.
+ * - getDefaultCodeMap(): Returns the default CodeMap, which is pre-built.
+ * - getCompiledCodeMap(): Loads and returns the compiled CodeMap from a file.
+ * - getCodeMapFromClasspathResource(String resourcePath): Retrieves a CodeMap 
+ *   from a classpath resource.
+ * - getCodeMapFromSameDirAsJar(String resourcePath): Retrieves a CodeMap from 
+ *   a file located in the same directory as the JAR file.
+ * 
+ * This class is designed to centralize the logic for obtaining and caching 
+ * CodeMap objects, simplifying the management of codebase configurations within 
+ * the system.
+ */
+
+
 public enum CodeMapBuilder {
   INSTANCE;
 
