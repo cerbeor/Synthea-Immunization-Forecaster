@@ -611,20 +611,36 @@ public class FhirR4 {
       patientResource.addContact(contact);
     }
 
+    // Check if the mother's name is available in the person's attributes
     if (person.attributes.get(Person.NAME_MOTHER) != null) {
+      // Create a new FHIR RelatedPerson resource for the mother
       RelatedPerson mother = new RelatedPerson();
+
+      // Link the RelatedPerson resource to the Patient resource
       mother.setPatient(new Reference(patientResource.getIdElement().getValue()));
+
+      // Add the mother's name to the RelatedPerson resource
       mother.addName(new HumanName()
-          .setUse(HumanName.NameUse.OFFICIAL)
-          .setFamily((String) person.attributes.get(Person.MOTHER_LAST_NAME))
-          .addGiven((String) person.attributes.get(Person.MOTHER_FIRST_NAME)));
+          .setUse(HumanName.NameUse.OFFICIAL) // Specify that this is the official name
+          .setFamily((String) person.attributes.get(Person.MOTHER_LAST_NAME)) // Set the mother's last name
+          .addGiven((String) person.attributes.get(Person.MOTHER_FIRST_NAME))); // Set the mother's first name
+
+      // Add the relationship type (Mother) to the RelatedPerson resource
       mother.addRelationship(new CodeableConcept().addCoding(
-          new Coding("http://terminology.hl7.org/CodeSystem/v3-RoleCode", "MTH", "Mother")));
-      String motherUUID = ExportHelper.buildUUID(person, 
-          (long) person.attributes.get(Person.BIRTHDATE), 
-          "RelatedPersonMother");
+          new Coding("http://terminology.hl7.org/CodeSystem/v3-RoleCode", "MTH", "Mother"))); 
+          // "MTH" is the code for "Mother" in the v3 Role Code system
+
+      // Generate a UUID for the RelatedPerson resource using a helper method
+      String motherUUID = ExportHelper.buildUUID(
+          person, // The person object
+          (long) person.attributes.get(Person.BIRTHDATE), // Use the person's birthdate as a parameter
+          "RelatedPersonMother" // A unique string to identify the mother's relationship
+      );
+
+      // Add the RelatedPerson resource to the FHIR Bundle
       newEntry(bundle, mother, motherUUID);
     }
+
 
     if (USE_US_CORE_IG) {
       // We do not yet account for mixed race
@@ -2283,55 +2299,92 @@ public class FhirR4 {
     return newEntry(bundle, provenance, uuid);
   }
 
+  /**
+   * Creates a FHIR `Immunization` resource from a given immunization record and adds it to a FHIR `Bundle`.
+   * This method applies different FHIR profiles and extensions based on configuration, and links the
+   * immunization to a patient and an encounter.
+   * 
+   * @param personEntry     The FHIR `BundleEntryComponent` representing the patient.
+   * @param bundle          The FHIR `Bundle` to which the new immunization entry will be added.
+   * @param encounterEntry  The FHIR `BundleEntryComponent` representing the encounter associated with the immunization.
+   * @param immunization    The `HealthRecord.Entry` representing the immunization details from the health record.
+   * @return The `BundleEntryComponent` representing the created `Immunization` resource.
+   */
   private static BundleEntryComponent immunization(
-          BundleEntryComponent personEntry, Bundle bundle, BundleEntryComponent encounterEntry,
+          BundleEntryComponent personEntry, 
+          Bundle bundle, 
+          BundleEntryComponent encounterEntry, 
           HealthRecord.Entry immunization) {
-    Immunization immResource = new Immunization();
-    if (USE_US_CORE_IG) {
-      Meta meta = new Meta();
-      meta.addProfile(
-          "http://hl7.org/fhir/us/core/StructureDefinition/us-core-immunization");
-      immResource.setMeta(meta);
-    } else if (USE_SHR_EXTENSIONS) {
-      immResource.setMeta(new Meta().addProfile(SHR_EXT + "shr-immunization-ImmunizationGiven"));
-      Extension performedContext = new Extension();
-      performedContext.setUrl(SHR_EXT + "shr-action-PerformedContext-extension");
-      performedContext.addExtension(
-          SHR_EXT + "shr-action-Status-extension",
-          new CodeType("completed"));
-      immResource.addExtension(performedContext);
-    }
-    immResource.setStatus(ImmunizationStatus.COMPLETED);
-    immResource.setOccurrence(convertFhirDateTime(immunization.start, true));
-    immResource.setVaccineCode(mapCodeToCodeableConcept(immunization.codes.get(0), CVX_URI));
-    
-    // We already have immResource (Immunization) and it has a vaccineCode set
-    if (immunization instanceof HealthRecord.Immunization) {
-      HealthRecord.Immunization imm = (HealthRecord.Immunization) immunization;
-      if (imm.codeStringNDC != null && imm.nameNDC != null) {
-        // Adding another coding to the existing vaccineCode CodeableConcept
-        immResource.getVaccineCode().addCoding()
-          .setSystem("http://hl7.org/fhir/sid/ndc")
-          .setCode(imm.codeStringNDC)
-          .setDisplay(imm.nameNDC);
+
+      // Create a new Immunization resource
+      Immunization immResource = new Immunization();
+
+      // Apply FHIR profile based on the configuration
+      if (USE_US_CORE_IG) {
+          // Apply the US Core Implementation Guide profile
+          Meta meta = new Meta();
+          meta.addProfile("http://hl7.org/fhir/us/core/StructureDefinition/us-core-immunization");
+          immResource.setMeta(meta);
+      } else if (USE_SHR_EXTENSIONS) {
+          // Apply the SHR extensions profile
+          immResource.setMeta(new Meta().addProfile(SHR_EXT + "shr-immunization-ImmunizationGiven"));
+
+          // Add the performed context extension
+          Extension performedContext = new Extension();
+          performedContext.setUrl(SHR_EXT + "shr-action-PerformedContext-extension");
+          performedContext.addExtension(
+                  SHR_EXT + "shr-action-Status-extension",
+                  new CodeType("completed"));
+          immResource.addExtension(performedContext);
       }
-    }
 
-    immResource.setPrimarySource(true);
-    immResource.setPatient(new Reference(personEntry.getFullUrl()));
-    immResource.setEncounter(new Reference(encounterEntry.getFullUrl()));
-    if (USE_US_CORE_IG) {
-      org.hl7.fhir.r4.model.Encounter encounterResource =
-          (org.hl7.fhir.r4.model.Encounter) encounterEntry.getResource();
-      immResource.setLocation(encounterResource.getLocationFirstRep().getLocation());
-    }
+      // Set the status of the immunization as completed
+      immResource.setStatus(ImmunizationStatus.COMPLETED);
 
-    BundleEntryComponent immunizationEntry =
-        newEntry(bundle, immResource, immunization.uuid.toString());
-    immunization.fullUrl = immunizationEntry.getFullUrl();
+      // Set the occurrence date/time of the immunization
+      immResource.setOccurrence(convertFhirDateTime(immunization.start, true));
 
-    return immunizationEntry;
+      // Map the vaccine code to a FHIR CodeableConcept using the CVX URI system
+      immResource.setVaccineCode(mapCodeToCodeableConcept(immunization.codes.get(0), CVX_URI));
+
+      // Add NDC (National Drug Code) information if available
+      if (immunization instanceof HealthRecord.Immunization) {
+          HealthRecord.Immunization imm = (HealthRecord.Immunization) immunization;
+          if (imm.codeStringNDC != null && imm.nameNDC != null) {
+              immResource.getVaccineCode().addCoding()
+                      .setSystem("http://hl7.org/fhir/sid/ndc") // Set the NDC system URL
+                      .setCode(imm.codeStringNDC) // Add the NDC code
+                      .setDisplay(imm.nameNDC);   // Add the NDC display name
+          }
+      }
+
+      // Set the primary source flag to true, indicating the data is from a primary source
+      immResource.setPrimarySource(true);
+
+      // Link the immunization to the patient
+      immResource.setPatient(new Reference(personEntry.getFullUrl()));
+
+      // Link the immunization to the encounter
+      immResource.setEncounter(new Reference(encounterEntry.getFullUrl()));
+
+      // Set the location of the immunization, if using the US Core IG profile
+      if (USE_US_CORE_IG) {
+          org.hl7.fhir.r4.model.Encounter encounterResource =
+                  (org.hl7.fhir.r4.model.Encounter) encounterEntry.getResource();
+          immResource.setLocation(encounterResource.getLocationFirstRep().getLocation());
+      }
+
+      // Create a new Bundle entry for the immunization and add it to the bundle
+      BundleEntryComponent immunizationEntry =
+              newEntry(bundle, immResource, immunization.uuid.toString());
+
+      // Update the fullUrl of the immunization record to match the created resource
+      immunization.fullUrl = immunizationEntry.getFullUrl();
+
+      // Return the newly created immunization entry
+      return immunizationEntry;
   }
+
 
   /**
    * Map the given Medication to a FHIR MedicationRequest resource, and add it to the given Bundle.
