@@ -366,8 +366,6 @@ public class App {
       generator.run();
     }
 
-//    // Close the logStream when done
-    Immunizations.closeLogStream();
   }
 
   private static boolean validateConfig(Generator.GeneratorOptions options,
