@@ -63,24 +63,24 @@ public class Immunizations {
   @SuppressWarnings({ "unchecked", "rawtypes" })
   private static final Map<String, Map> immunizationSchedule = loadImmunizationSchedule();
 
-//  // Shared PrintStream for logging
-//  private static PrintStream logStream;
-//  static {
-//    try {
-//      // Initialize the PrintStream to log into "output_log.txt"
-//      logStream = new PrintStream(new FileOutputStream("output_log.txt", true)); // Append mode
-//      System.setOut(logStream); // Redirect System.out to the file
-//    } catch (Exception e) {
-//      e.printStackTrace();
-//    }
-//  }
-//
-//  // Close the logStream when the application ends
-//  public static void closeLogStream() {
-//    if (logStream != null) {
-//      logStream.close();
-//    }
-//  }
+  // Shared PrintStream for logging
+  private static PrintStream logStream;
+  static {
+    try {
+      // Initialize the PrintStream to log into "output_log.txt"
+      logStream = new PrintStream(new FileOutputStream("output_log.txt", true)); // Append mode
+      System.setOut(logStream); // Redirect System.out to the file
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  // Close the logStream when the application ends
+  public static void closeLogStream() {
+    if (logStream != null) {
+      logStream.close();
+    }
+  }
 
   /**
    * NEW METHOD FETCHING IMMUNIZATION FORECASTER RECOMMENDATION
@@ -108,17 +108,11 @@ public class Immunizations {
         ImmunizationRecommendation immunizationRecommendation = queryForecaster(person, encounterDate, immunizationsGiven);
         if(immunizationRecommendation != null){
           // Fetch patient age
-  //        System.out.println("Fetch patient age");
           double agePatient= person.ageInDecimalYears(encounterDate); // encounterDate is the current simulation time
-  //        System.out.println("Patient age : "+ agePatient);
-//          System.out.println("---In checkForCombination---");
           HashMap<org.mitre.synthea.codebase.generated.Code, NDC> cvxMap = checkForCombination(immunizationRecommendation, encounterDate, agePatient);
-//          System.out.println("---End checkForCombination---");
           if (!cvxMap.isEmpty()){
-//            System.out.println("---Administrated vaccine : ");
+            System.out.println("---Administrated vaccine : ");
             for (Map.Entry<org.mitre.synthea.codebase.generated.Code, NDC> entryMap : cvxMap.entrySet()) {
-//            System.out.println("---for cvx = " + entryMap.toString() + "---");
-
               /**
                * getting specific history on cvx, name
                */
@@ -129,8 +123,8 @@ public class Immunizations {
               String immunizationLabel = immunizationCode.getLabel();
               String ndcCode = cvxMap.get(immunizationCode).getNdcCode();
               String ndcLabel = codeMap.getCodeForCodeset(CodesetType.VACCINATION_NDC_CODE_UNIT_OF_USE, ndcCode).getLabel();
-//              System.out.println("   -> CVX : " + immunizationKey + " " + immunizationLabel + " || NDC : " + ndcCode + " " + ndcLabel);
-//              System.out.println("Immunization Key : "+ immunizationKey);
+              System.out.println("   -> CVX : " + immunizationKey + " " + immunizationLabel + " || NDC : " + ndcCode + " " + ndcLabel);
+              System.out.println("Immunization Key : "+ immunizationKey);
 
               if (immunizationsGiven.containsKey(immunizationKey)) {
                 history = immunizationsGiven.get(immunizationKey);
@@ -138,9 +132,7 @@ public class Immunizations {
                 history = new ArrayList<Long>();
                 immunizationsGiven.put(immunizationKey, history);
               }
-//              System.out.println("Immunization history : " + history);
               history.add(encounterDate);
-//              System.out.println("Immunization history after : " + history);
               HealthRecord.Immunization entry = person.record.immunization(encounterDate, immunizationKey);
               HealthRecord.Code immCode = new HealthRecord.Code(
                       "http://hl7.org/fhir/sid/cvx",
@@ -312,19 +304,11 @@ public class Immunizations {
 //        System.out.print(" <----- to be administered\n");
         combinationVaccines.add(immunizationKey);
       }
-//      System.out.println("---Vaccines (cvx) to be administered : " + combinationVaccines);
+      System.out.println("---Vaccines (cvx) to be administered : " + combinationVaccines);
         // Check for combination of vaccines
 
-//      System.out.println("---in getCombosByCVXList---");
       List<Combo> combinations = codeMap.getCombosByCVXStringList(combinationVaccines, agePatient);
-//      System.out.println("---end getCombosByCVXList---");
 
-//      if (combinations.isEmpty()) {
-//        System.out.println("No combination found");
-//        return cvxMap;
-//      } else {
-//        System.out.println("Combination found");
-//      }
       // The first combination is the combination with the best scores
       Combo bestCombination = combinations.get(0);
 
@@ -341,7 +325,6 @@ public class Immunizations {
       }
       return cvxMap;
     }
-//    System.out.println("Immunization recommendation is empty in checkForCombination");
     return new HashMap<>();
   }
 
@@ -399,10 +382,6 @@ public class Immunizations {
   public static ImmunizationRecommendation queryForecaster(Person person, long encounterDate, Map<String, List<Long>> immunizationsGiven) throws Exception {
     // This fonction is going to ask the new CDS the Immunization Recommendation of the patient
 
-//        System.out.println("person :" + person);
-//        System.out.println("time :" + time);
-//        System.out.println("immunizationsGiven :" + immunizationsGiven);
-
     // Create FHIR context and client
     FhirContext ctx = FhirContext.forR4();
 
@@ -456,14 +435,14 @@ public class Immunizations {
                 .setResource(immunization);
       }
     }
-//    System.out.println("--------------------------------------------------------------------------------------------------------");
-//    System.out.println("--------------------------------------------------------------------------------------------------------");
-//    System.out.println("Encounter date : " + new Date(encounterDate));
+    System.out.println("--------------------------------------------------------------------------------------------------------");
+    System.out.println("--------------------------------------------------------------------------------------------------------");
+    System.out.println("Encounter date : " + new Date(encounterDate));
     // Serialize Parameters to JSON for logging
-    String parametersJson = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(parameters);
+//    String parametersJson = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(parameters);
 //    System.out.println("---Request Payload Sent to Server:");
 //    System.out.println(parametersJson);
-//    System.out.flush(); // Ensure this line is written to the file
+    System.out.flush(); // Ensure this line is written to the file
 
     // Invoke the $immds-forecast operation
     Parameters out = client
@@ -482,6 +461,7 @@ public class Immunizations {
       }
     }
 //    System.out.println("---Immunization Recommendation Received from Server:");
+//    System.out.println(ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(immunizationRecommendation));
     // Return the ImmunizationRecommendation resource
     return immunizationRecommendation;
   }
@@ -499,18 +479,6 @@ public class Immunizations {
         getImmunization = false;
       }
     } else {
-//            if (Objects.equals(immunizationKey, "88")) { // for influenza
-//              if (person.ageInYears(time) >= 65 && randomNumber >= 75) {
-//                // 75% is the target vaccination coverage by the WHO for older people (https://www.who.int/europe/news-room/fact-sheets/item/influenza-vaccination-coverage-and-effectiveness)
-//                getImmunization = false;
-//              } else if (randomNumber >= 15) {
-//                // 15% is an arbitrary number
-//                getImmunization = false;
-//              }
-//            } else if (randomNumber < 5) { // other immunization
-//              // 5% is an arbitrary number
-//              getImmunization = false;
-//            }
       if (randomNumber < noVaccineProbability) {
         getImmunization = false;
       }
