@@ -8,6 +8,44 @@ import org.mitre.synthea.codebase.mapping.*;
 import org.mitre.synthea.codebase.reference.CodesetType;
 import org.mitre.synthea.codebase.generated.*;;
 
+/**
+ * The StockMapping class is responsible for managing the mapping between vaccine groups, NDC codes,
+ * and stock availability. It provides functionality to:
+ * 
+ * 1. **Initialize the stock map** for vaccine groups, with randomly selected NDCs marked as in-stock.
+ * 2. **Map CVX codes to associated vaccine groups and NDCs**, linking each CVX to relevant NDC codes.
+ * 3. **Find NDCs not associated with any vaccine group**, and generate statistics regarding the mappings.
+ * 4. **Generate NDC combinations** that cover the required vaccine groups, considering multiple combinations
+ *    and filtering based on vaccine group coverage.
+ * 5. **Track and update stock status** for the selected vaccine group and NDC combinations.
+ * 
+ * The class supports:
+ * - Random selection of NDCs for stock initialization,
+ * - Retrieval and mapping of NDCs based on vaccine group and CVX code relationships,
+ * - Generation of NDC combinations that meet a required vaccine group coverage,
+ * - Detailed statistics about the NDC-vaccine group mappings, including those NDCs not assigned to any vaccine group.
+ *
+ * This class helps simulate vaccine stock management for different vaccine groups and their corresponding NDCs.
+ *
+ * Example Usage:
+ * 
+ * StockMapping stockMapping = new StockMapping(codeMap);
+ * Map<String, List<NDC>> vaccineGroupMap = stockMapping.mapCvxToVaccineGroupsAndNDCs();
+ * stockMapping.initializeAndSelectRandomNDCs(vaccineGroupMap, codeMap, 5);
+ * 
+ * 
+ * Methods:
+ * - initializeAndSelectRandomNDCs: Initializes the stock map by selecting random NDCs for each vaccine group.
+ * - findNDCsWithoutVaccineGroup: Finds and returns a list of NDCs not linked to any vaccine group.
+ * - mapCvxToVaccineGroupsAndNDCs: Maps CVX codes to their associated vaccine groups and NDCs.
+ * - generateNdcCombinations: Generates combinations of NDCs that cover all required vaccine groups.
+ * - initializeStockVaccineGroup: Initializes the stock status for vaccine group combinations.
+ *
+ * The main goal of this class is to simulate vaccine availability across different groups and assist in
+ * managing stock status based on combinations of NDC codes.
+ */
+
+
 
 public class StockMapping {
 
@@ -27,12 +65,22 @@ private HashMap<String, Boolean> mapStockVaccineGroupPreviousVersion;
 // New version
 
 /**
- * Initialize the mapStockVaccineGroup with all NDCs from the code map set to false,
- * and randomly select N NDCs per vaccine group to set them to true.
- *
- * @param vaccineGroupMap A map where the key is a vaccine group, and the value is a list of NDC objects.
- * @param codeMap The CodeMap instance to extract all NDCs.
- * @param n The number of random NDCs to select from each vaccine group.
+ * Initializes the stock map for vaccine groups by selecting a random set of NDCs and marking them as in-stock.
+ * 
+ * This method sets up the `mapStockVaccineGroup` with all NDCs marked as false (out of stock) initially.
+ * Then, for each vaccine group, it randomly selects up to 'n' NDCs and marks them as true (in stock).
+ * 
+ * @param vaccineGroupMap A map where the key is the vaccine group name (String) and the value is a list of NDC objects.
+ *                        Each vaccine group contains a list of NDCs that represent the available vaccine products for that group.
+ * @param codeMap The `CodeMap` instance which contains all the NDCs available in the codebase.
+ *                This is used to extract all the NDC codes and manage the stock for each.
+ * @param n The number of NDCs to randomly select from each vaccine group. If the number of NDCs in a group is less than 'n',
+ *          all NDCs in that group will be selected.
+ * 
+ * @return void This method updates the `mapStockVaccineGroup` with true for the selected NDCs and false for all others.
+ * 
+ * @see mapStockVaccineGroup
+ * @see CodeMapUtil#extractNDCsFromCodebase(CodeMap)
  */
 public void initializeAndSelectRandomNDCs(Map<String, List<NDC>> vaccineGroupMap, CodeMap codeMap, int n) {
     // Step 1: Initialize mapStockVaccineGroup with all NDCs set to false
@@ -63,11 +111,21 @@ public void initializeAndSelectRandomNDCs(Map<String, List<NDC>> vaccineGroupMap
 
 
 /**
- * Finds all NDCs that are not linked to any vaccine group and provides statistics on the mappings.
- *
- * @param vaccineGroupMap A map where the key is a vaccine group, and the value is a list of NDC objects.
- * @param codeMap The CodeMap instance to extract all NDCs.
- * @return A list of NDC codes that are not associated with any vaccine group.
+ * Finds all NDCs that are not associated with any vaccine group in the provided vaccineGroupMap.
+ * 
+ * This method performs the following steps:
+ * 1. Extracts all NDC codes from the given CodeMap.
+ * 2. Collects all NDC codes that are linked to vaccine groups in the vaccineGroupMap.
+ * 3. Identifies the NDC codes that are not present in any vaccine group and returns them.
+ * 4. Prints statistics on the total number of NDCs, the number of linked and unlinked NDCs, and the count of vaccine groups with or without NDCs.
+ * 
+ * @param vaccineGroupMap A map where the key is a vaccine group name (String) and the value is a list of NDC objects.
+ *                        Each vaccine group contains a list of NDCs representing the available vaccine products for that group.
+ * @param codeMap The `CodeMap` instance which contains all the NDCs available in the codebase. This is used to extract the NDC codes.
+ * 
+ * @return A list of strings representing NDC codes that are not associated with any vaccine group.
+ * 
+ * @see CodeMapUtil#extractNDCsFromCodebase(CodeMap)
  */
 public List<String> findNDCsWithoutVaccineGroup(Map<String, List<NDC>> vaccineGroupMap, CodeMap codeMap) {
     // Step 1: Extract all NDCs from the CodeMap
@@ -117,12 +175,21 @@ public List<String> findNDCsWithoutVaccineGroup(Map<String, List<NDC>> vaccineGr
 
 
 /**
- * Maps CVX codes to their associated Vaccine Groups and NDCs.
- *
- * This method fetches all CVX codes from the CodeMap, determines the Vaccine Groups
- * related to each CVX, and links the CVX codes to NDCs via the CodeMap relationships.
- *
- * @return A map where the key is the vaccine group (String) and the value is a list of associated NDC objects.
+ * Maps CVX codes to vaccine groups and associated NDCs.
+ * 
+ * This method performs the following steps:
+ * 1. Retrieves all CVX codes from the provided `codeMap`.
+ * 2. For each CVX code, it retrieves the associated NDC codes and vaccine groups.
+ * 3. Maps each vaccine group to a list of NDCs, and associates the relevant CVX code with each NDC.
+ * 4. Returns a map where each key is a vaccine group and the value is a list of NDCs associated with that group.
+ * 
+ * @return A map where the key is a vaccine group (String) and the value is a list of NDC objects (List<NDC>) 
+ *         associated with that vaccine group.
+ * 
+ * @see CodeMapUtil#extractCvxFromCodebase(CodeMap)
+ * @see CodeMap#getCodeForCodeset(CodesetType, String)
+ * @see CodeMap#getRelatedValues(Code, CodesetType)
+ * @see StockMapping#getVaccineGroupLabelsFromCvx(String)
  */
 public Map<String, List<NDC>> mapCvxToVaccineGroupsAndNDCs() {
     // Map that will contain each VaccineGroup as a key and a list of associated NDCs as the value
@@ -171,11 +238,20 @@ public Map<String, List<NDC>> mapCvxToVaccineGroupsAndNDCs() {
 }
 
 /**
- * Method to retrieve the vaccine groups associated with a given CVX code.
- *
- * @param cvx The CVX code for which to retrieve associated vaccine groups.
- * @return A list of vaccine group names associated with the CVX code.
+ * Retrieves the vaccine group labels associated with a given CVX code.
+ * 
+ * This method performs the following steps:
+ * 1. Uses the `RelatedCode` class to fetch vaccine group codes associated with the provided CVX code.
+ * 2. Adds the found vaccine group labels to a list.
+ * 3. Returns a list of vaccine group labels associated with the CVX.
+ * 
+ * @param cvx The CVX code for which to retrieve associated vaccine group labels.
+ * @return A list of vaccine group labels (String) associated with the given CVX code. 
+ *         Returns an empty list if no groups are found, or `null` if there are no related values.
+ * 
+ * @see RelatedCode#getVaccineGroupLabelsFromCvx(String)
  */
+
 public List<String> getVaccineGroupLabelsFromCvx(String cvx) {
     List<String> grouplabels = new ArrayList<>();
     
@@ -200,9 +276,33 @@ public List<String> getVaccineGroupLabelsFromCvx(String cvx) {
 
 
 
- // Previous version
+// Previous version: The combinatorial approach generated all possible NDC combinations, but it was too slow and inefficient for large datasets.
 
 
+
+
+ /**
+ * Generates all possible combinations of NDCs and evaluates their coverage of vaccine groups.
+ * 
+ * This method performs the following steps:
+ * 1. Initializes the list of vaccine groups and NDCs from the codebase.
+ * 2. Associates each NDC with its related vaccine groups using CVX codes.
+ * 3. Generates all possible combinations of NDCs.
+ * 4. Sorts the combinations by their effectiveness, prioritizing those that cover all vaccine groups and
+ *    use fewer NDCs.
+ * 5. Filters the combinations, returning only those that fully cover all vaccine groups if they exist.
+ * 6. Returns the filtered list of combinations or all combinations if no fully covered ones exist.
+ * 
+ * @param n The maximum number of NDCs allowed in a combination.
+ * @param m The minimum number of vaccine groups that must be covered in each combination.
+ * @return A list of `Combo` objects representing the best NDC combinations. If combinations that cover all 
+ *         vaccine groups are found, only those are returned. Otherwise, all combinations are returned.
+ * 
+ * @see RelatedCode#getCvxCodesFromNdc(String)
+ * @see RelatedCode#getVaccineGroupLabelsFromCvx(String)
+ * @see Combo#getScore()
+ * @see Combo#isAllVaccineGroupsFound()
+ */
  public List<Combo> generateNdcCombinations(int n, int m) {
     // Step 1: Initialize vaccine group and NDC lists
     List<String> vaccineGroupList = CodeMapUtil.extractVaccineGroupsFromCodebase(codeMap);
@@ -246,7 +346,21 @@ public List<String> getVaccineGroupLabelsFromCvx(String cvx) {
     return combinations;
 }
 
-// Recursive method to generate combinations
+/**
+ * Recursively generates combinations of NDCs to cover the target vaccine groups at least 'n' times.
+ * The method explores all possible combinations of NDCs, calculates the coverage of each group, 
+ * and stops early if the desired number of combinations (m) is reached or if a combination 
+ * fully covers all target groups.
+ *
+ * @param currentCombo        The current combination of NDCs being explored.
+ * @param remainingNdcList    The list of remaining NDCs to be considered for the combination.
+ * @param targetGroups        The list of target vaccine groups that need to be covered.
+ * @param n                   The minimum number of times each target group must be covered.
+ * @param m                   The maximum number of combinations to generate. If -1, there is no limit.
+ * @param resultCombos        The list to store the generated combinations that meet the criteria.
+ * @param ndcToVaccineGroups  A map that associates each NDC with its covered vaccine groups.
+ */
+
 private void generateCombinations(List<NDC> currentCombo, List<NDC> remainingNdcList,
                                   List<String> targetGroups, int n, int m, List<Combo> resultCombos,
                                   Map<String, List<String>> ndcToVaccineGroups) {
@@ -307,8 +421,16 @@ private void generateCombinations(List<NDC> currentCombo, List<NDC> remainingNdc
 }
 
 
-// Initialize the mapStockVaccineGroupPreviousVersion based on a random or fixed selection of a combo
-public void initializeStockVaccineGroup(List<Combo> combos, boolean random) {
+/**
+ * Initializes the stock vaccine group by selecting a combination of NDCs and updating the map of vaccine group statuses.
+ * Depending on the 'random' flag, a combination of NDCs is selected either randomly or as the first combination from the list.
+ * The NDCs in the selected combination are marked as true in the stock vaccine group map, while others are marked as false.
+ *
+ * @param combos    A list of Combo objects representing different combinations of NDCs.
+ * @param random    A flag that determines whether to select a random combo (true) or the first combo (false).
+ */
+
+ public void initializeStockVaccineGroup(List<Combo> combos, boolean random) {
     // Initialize mapStockVaccineGroupPreviousVersion as empty, with all NDCs set to false by default
     mapStockVaccineGroupPreviousVersion = new HashMap<>();
 

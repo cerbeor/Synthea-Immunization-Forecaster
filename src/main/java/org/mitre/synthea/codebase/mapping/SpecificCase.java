@@ -12,7 +12,7 @@ import org.cqframework.cql.elm.execution.Code;
 
 
 /**
- * The {@code SpecificCase} class is designed to handle specific scenarios 
+ * SpecificCase class is designed to handle specific scenarios 
  * where a CVX (vaccine code) is not directly associated with an NDC (National Drug Code). 
  * These scenarios typically arise when a CVX code has multiple possible mappings, 
  * resembling a tree structure, such as when a CVX is associated with categories like 
@@ -99,6 +99,20 @@ public class SpecificCase {
         list_122.add("119");
         specialCasesMap.put("122", list_122);
         reverseMap.put("119", "122");
+
+        // 108: meningococcal, unspecified formulation --> 114 (random): meningococcal MCV4P
+        List<String> list_108 = new ArrayList<>();
+        list_108.add("114"); // meningococcal MCV4P
+        list_108.add("114");
+        specialCasesMap.put("108", list_108);
+        reverseMap.put("114", "108");
+
+        // 137: HPV, unspecified formulation --> 118 (random): HPV, bivalent
+        List<String> list_137 = new ArrayList<>();
+        list_137.add("118"); // HPV, bivalent
+        list_137.add("118");
+        specialCasesMap.put("137", list_137);
+        reverseMap.put("118", "137");
     }
 
 

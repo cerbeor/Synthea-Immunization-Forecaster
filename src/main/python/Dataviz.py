@@ -4,40 +4,42 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 
-# Folder containing JSON files
+# This specifies the directory where the JSON files are stored for processing.
 json_folder_path = 'output/fhir/'
 
-# Data storage
+# Initialize an empty list to store the extracted data from JSON files.
 data = []
 
 # Iterate over each file in the folder
 for file_name in os.listdir(json_folder_path):
     if file_name.endswith('.json'):  # Check if the file is a JSON file
-        file_path = os.path.join(json_folder_path, file_name)
+        file_path = os.path.join(json_folder_path, file_name)  # Construct the full path to the file
         with open(file_path, 'r') as file:
-            json_data = json.load(file)
+            json_data = json.load(file)  # Load the content of the JSON file
             # Check for 'entry' and 'resourceType'
-            if 'entry' in json_data:
+            if 'entry' in json_data:  # Ensure the JSON contains an 'entry' field
                 for entry in json_data['entry']:
-                    if entry.get('resource', {}).get('resourceType') == 'Patient':
+                    if entry.get('resource', {}).get('resourceType') == 'Patient':  # Filter Patient resources
                         resource = entry['resource']
                         # Extract ANTIVAX_STATUS and STATE
                         antivax_status = None
                         state = None
+                        # Loop through the extensions to find specific fields
                         for extension in resource.get('extension', []):
                             if extension['url'] == "http://synthetichealth.github.io/synthea/antivax":
-                                antivax_status = extension.get('valueBoolean', None)
+                                antivax_status = extension.get('valueBoolean', None)  # Extract antivax status
                             if extension['url'] == "http://hl7.org/fhir/StructureDefinition/patient-birthPlace":
-                                state = extension.get('valueAddress', {}).get('state', None)
+                                state = extension.get('valueAddress', {}).get('state', None)  # Extract state
+                        # Only add records where both fields are not None
                         if antivax_status is not None and state is not None:
                             data.append({'STATE': state, 'ANTIVAX_STATUS': antivax_status})
 
-# Convert to DataFrame
+# Transform the extracted data into a pandas DataFrame for easier processing.
 df = pd.DataFrame(data)
 
-print(df.head())
+print(df.head())  # Display the first few rows of the DataFrame for verification.
 
-# Define state name to abbreviation mapping 
+# A dictionary mapping full state names to their respective abbreviations.
 state_name_to_abbreviation = {
     'Alabama': 'AL', 'Alaska': 'AK', 'Arizona': 'AZ', 'Arkansas': 'AR',
     'California': 'CA', 'Colorado': 'CO', 'Connecticut': 'CT', 'Delaware': 'DE',
@@ -54,29 +56,29 @@ state_name_to_abbreviation = {
     'West Virginia': 'WV', 'Wisconsin': 'WI', 'Wyoming': 'WY'
 }
 
-# Ensure ANTIVAX_STATUS is a boolean and clean column names
-df.columns = df.columns.str.strip()  # Remove any leading/trailing spaces in column names
+# Normalize column names and convert the ANTIVAX_STATUS column to boolean for consistency.
+df.columns = df.columns.str.strip()
 df['ANTIVAX_STATUS'] = df['ANTIVAX_STATUS'].astype(bool)
 
-# Map state names to abbreviations
+# Replace full state names with their abbreviations in the STATE column.
 df['STATE'] = df['STATE'].map(state_name_to_abbreviation)
-df = df.dropna(subset=['STATE'])  # Drop rows where state mapping fails
+df = df.dropna(subset=['STATE'])  # Drop rows where state mapping fails.
 
-# Calculate counts by state
+# Group by STATE and calculate the total number of people and the number of antivax individuals.
 state_counts = (
-    df.groupby('STATE', as_index=False)  # Group by STATE
+    df.groupby('STATE', as_index=False)
     .agg(
-        total_people=('ANTIVAX_STATUS', 'size'),  # Count total entries per state
-        antivax_count=('ANTIVAX_STATUS', 'sum')  # Sum of true (antivax) entries
+        total_people=('ANTIVAX_STATUS', 'size'),  # Total number of records per state
+        antivax_count=('ANTIVAX_STATUS', 'sum')  # Total number of antivax individuals per state
     )
 )
 
-# Add antivax percentage column
+# Calculate the percentage of antivax individuals for each state.
 state_counts['antivax_percentage'] = (
     state_counts['antivax_count'] / state_counts['total_people'] * 100
 ).fillna(0)
 
-# Add missing states with zero counts to ensure all states are represented
+# Ensure all U.S. states are included in the final dataset, even if they have no data.
 all_states = set(['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI', 'ID', 'IL',
                   'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD', 'MA', 'MI', 'MN', 'MS', 'MO', 'MT',
                   'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI',
@@ -86,7 +88,7 @@ missing_states = all_states - existing_states
 missing_states_df = pd.DataFrame({'STATE': list(missing_states), 'total_people': 0, 'antivax_count': 0, 'antivax_percentage': 0})
 state_counts = pd.concat([state_counts, missing_states_df], ignore_index=True)
 
-# Create choropleth map
+# Use Plotly to generate a choropleth map visualizing the percentage of antivax individuals by state.
 fig = px.choropleth(
     state_counts,
     locations='STATE',
@@ -97,8 +99,8 @@ fig = px.choropleth(
     title='Antivax Individuals by State (Generated Population)',
     labels={
         'antivax_percentage': 'Antivax Percentage',
-        'total_people' : 'Total People',
-        'antivax_count' : 'Antivax Count'
+        'total_people': 'Total People',
+        'antivax_count': 'Antivax Count'
     },
     hover_data={
         'total_people': ':,',
@@ -107,17 +109,17 @@ fig = px.choropleth(
     }
 )
 
-# Improve map details
+# Enhance the map's visuals by adding boundaries, lake colors, and subunit configurations.
 fig.update_geos(
     showcountries=False,
-    showsubunits=True,  # This enables state boundaries
-    subunitcolor="black",  # Color for state boundaries
-    subunitwidth=1,  # Thickness of state boundaries
+    showsubunits=True,
+    subunitcolor="black",
+    subunitwidth=1,
     showlakes=True,
-    lakecolor="lightblue"  # Color for lakes
+    lakecolor="lightblue"
 )
 
-# Use state centroids for accurate placement
+# Add state-specific labels to the map using geographic centroids for precise placement.
 state_centroids = {
     'AL': {'lat': 32.806671, 'lon': -86.791130},
     'AK': {'lat': 61.370716, 'lon': -152.404419},
@@ -183,23 +185,23 @@ for idx, row in state_counts.iterrows():
         fig.add_trace(go.Scattergeo(
             lat=[state_centroids[state]['lat']],
             lon=[state_centroids[state]['lon']],
-            text=f"{row['antivax_count']}/{row['total_people']}",  # Text displayed on the map
-            hovertext=hover_text,  # Use hovertext for detailed hover information
+            text=f"{row['antivax_count']}/{row['total_people']}",  # Display text on the map
+            hovertext=hover_text,
             mode='text',
             textfont=dict(
                 size=10,
                 color='black' if row['antivax_count'] > 0 else 'gray'
             ),
-            hoverinfo='text',  # Use the text and hovertext for hover display
+            hoverinfo='text',
             showlegend=False
         ))
 
-# Calculate totals
+# Summarize the total population and antivax statistics for display in the map's title.
 total_people = state_counts['total_people'].sum()
 total_antivax = state_counts['antivax_count'].sum()
 antivax_percentage = (total_antivax / total_people) * 100 if total_people > 0 else 0
 
-# Add better color bar and layout customization
+# Customize the layout and add a color bar to enhance the user experience.
 fig.update_layout(
     title=(
         f"<b>Antivax Individuals by State (Generated Population)</b><br>"
@@ -218,5 +220,6 @@ fig.update_layout(
     )
 )
 
-# Show the map
+# Render the generated map in an interactive viewer.
 fig.show()
+

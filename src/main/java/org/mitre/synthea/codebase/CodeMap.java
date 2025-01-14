@@ -19,6 +19,33 @@ import org.mitre.synthea.codebase.reference.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/* 
+This class is the core of a code management system designed to store and organize various healthcare-related codes, such as CVX, NDC, and CPT codes for vaccines and medications. 
+It utilizes a Map to manage relationships between different code sets efficiently.
+
+Main functionalities:
+
+1 - Retrieve a Code object for a specific code set and value:
+
+getCodeForCodeset:
+This method fetches a Code object from a given CodesetType and a specific code value. 
+For example, it can return a CVX code corresponding to the provided input.
+
+2 - Get the corresponding value for a target code set type:
+
+getRelatedValue:
+This functionality retrieves the code value associated with a target CodesetType for the provided Code object.
+ It is often used for mapping between different healthcare code systems, such as deriving an NDC code from a CVX code.
+
+3 - Retrieve all related codes for a given source code and type:
+
+getRelatedCodesForCodeIn:
+This method provides a list of target codes associated with a given source code within a specified CodesetType. 
+For instance, it can retrieve all vaccine group codes linked to a particular CVX code.
+This class plays a pivotal role in ensuring interoperability and consistency across healthcare systems by enabling efficient mapping and navigation between diverse code sets.
+*/
+
+
 public class CodeMap {
 
   

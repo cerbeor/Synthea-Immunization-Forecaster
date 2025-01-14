@@ -7,6 +7,33 @@ import org.mitre.synthea.codebase.CodeMap;
 import org.mitre.synthea.codebase.generated.*;
 import org.mitre.synthea.codebase.reference.CodesetType;
 
+/**
+ * The NDC class represents a National Drug Code (NDC) and its associated information.
+ * This class contains the NDC code itself, the related CVX (Vaccination) codes, and vaccine groups 
+ * that are associated with the NDC. It also keeps track of previous codes related to the NDC, 
+ * which may be important for historical mapping or specific cases.
+ * 
+ * Key fields include:
+ * - ndcCode: The actual National Drug Code (NDC) string.
+ * - cvxCodes: A list of CVX codes (related to vaccination) associated with this NDC.
+ * - vaccineGroups: A list of vaccine group codes associated with the NDC.
+ * - previousCodes: A list of previous codes associated with this NDC, often used for historical mapping or reverse code lookups.
+ * 
+ * Key methods include:
+ * - getCvxCodes() / setCvxCodes(): Getters and setters for the CVX codes related to this NDC.
+ * - getNdcCode() / setNdcCode(): Getter and setter for the NDC code.
+ * - getVaccineGroups() / setVaccineGroups(): Getters and setters for the vaccine group codes associated with this NDC.
+ * - toString(): Provides a string representation of the NDC, including its CVX codes.
+ * - hashCode() / equals(): Methods to ensure that NDC objects can be used properly in collections like sets or maps.
+ * - getPreviousCodes(): Getter for the list of previous codes associated with the NDC.
+ * - addPreviousCode(): Method to add a previous code (e.g., reversing CVX codes) to the NDC's previousCodes list.
+ * - reverseCode(): Method that takes a CVX code and reverses it based on a specific mapping.
+ * 
+ * The NDC class is an important part of the mapping system in the Synthea codebase, enabling 
+ * efficient tracking and management of NDC codes, CVX codes, vaccine groups, and historical code relationships.
+ */
+
+
 
 public class NDC {
     private String ndcCode;

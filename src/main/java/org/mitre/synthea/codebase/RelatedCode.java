@@ -7,6 +7,35 @@ import org.mitre.synthea.codebase.reference.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
+/**
+ * RelatedCode is a class designed to facilitate the retrieval of related code values 
+ * from a given CodeMap instance. It provides methods to find relationships between 
+ * different types of medical codes, such as CVX (Vaccination Codes), NDC (National 
+ * Drug Codes), and CPT (Current Procedural Terminology) codes.
+ * 
+ * Key methods include:
+ * - getVaccineGroupLabelsFromCvx(String cvx): Retrieves a list of vaccine group labels 
+ *   associated with a given CVX code.
+ * - getCvxValueFromNdcString(String ndcStringIn): Retrieves the CVX code related to 
+ *   a given NDC code.
+ * - getCvxFromCptString(String cptIn): Retrieves the CVX code related to a given CPT 
+ *   code.
+ * - getNdcFromMultipleCvx(List<String> cvxCodes): Retrieves a list of NDC codes related 
+ *   to multiple CVX codes.
+ * - getNdcCodesFromCvx(String cvx): Retrieves a list of NDC codes associated with a 
+ *   given CVX code.
+ * - getCvxCodesFromNdc(String ndc): Retrieves a list of CVX codes associated with a 
+ *   given NDC code.
+ * 
+ * These methods allow users to easily navigate the relationships between different 
+ * types of codes, particularly in the context of vaccines and related drug/medical codes. 
+ * The class leverages the `CodeMap` instance to perform lookups and return relevant code 
+ * values.
+ */
+
+
+
 public class RelatedCode {
 
   private static final Logger logger = LoggerFactory.getLogger(RelatedCode.class);
