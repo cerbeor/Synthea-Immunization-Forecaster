@@ -72,8 +72,6 @@ public class Immunizations {
    *               Contains demographic data, medical history, and attributes.
    * @param encounterDate The simulation time (in milliseconds since epoch) when the encounter occurs.
    *                      Used to determine the patient's age and assess immunization due dates.
-   *
-   * @throws Exception if there are any errors during the CDS query or processing.
    */
   @SuppressWarnings({ "unchecked", "rawtypes" })
   public static void performEncounterWithNistCDS(Person person, long encounterDate) {
