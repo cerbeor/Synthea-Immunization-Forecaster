@@ -420,6 +420,19 @@ public class App {
     }
   }
 
+  /**
+   * Parses a string input containing key-value pairs and populates a map with the parsed values.
+   *
+   * @param input A string containing the key-value pairs to be parsed.
+   *              The input string is expected to be in the format: key1:percentage1-key2:percentage2-...
+   *              where each key-value pair is separated by a hyphen (`-`), and each key and percentage value
+   *              within a pair is separated by a colon (`:`). The percentage values must be numeric and
+   *              within the range 0 to 100.
+   *              If a key-value pair is invalid (e.g., missing a colon or containing a non-numeric percentage),
+   *              the method logs an error message and skips that pair.
+   * @param map A Map to store the parsed keys and their corresponding percentages.
+   *            Keys are strings, and percentages are stored as Double.
+   */
   private static void parseAntivaxMap(String input, Map<String, Double> map) {
     for (String pair : input.split("-")) {
       String[] keyValue = pair.split(":");
