@@ -65,13 +65,20 @@ public class Immunizations {
   private static final Map<String, Map> immunizationSchedule = loadImmunizationSchedule();
 
   /**
-   * NEW METHOD FETCHING IMMUNIZATION FORECASTER RECOMMENDATION
+   * Simulates an encounter with the NIST (National Institute of Standards and Technology)
+   * Clinical Decision Support (CDS) system for immunization recommendations.
+   *
+   * @param person Person object representing the patient undergoing the encounter.
+   *               Contains demographic data, medical history, and attributes.
+   * @param encounterDate The simulation time (in milliseconds since epoch) when the encounter occurs.
+   *                      Used to determine the patient's age and assess immunization due dates.
+   *
+   * @throws Exception if there are any errors during the CDS query or processing.
    */
   @SuppressWarnings({ "unchecked", "rawtypes" })
   public static void performEncounterWithNistCDS(Person person, long encounterDate) {
-    /**
-     * Reading patient history
-     */
+
+     // Reading patient history
     Map<String, List<Long>> immunizationsGiven;
     if (person.attributes.containsKey(IMMUNIZATIONS)) {
       immunizationsGiven = (Map<String, List<Long>>) person.attributes.get(IMMUNIZATIONS);
@@ -81,30 +88,30 @@ public class Immunizations {
     }
 
     try {
-
+      // Check if the patient should receive an immunization
       boolean getImmunization = gettingImmunization(person);
       if (getImmunization) {
-        /**
-         * Querying new CDS
-         */
+        // Querying the NIST CDS system for immunization recommendations
         ImmunizationRecommendation immunizationRecommendation = queryForecaster(person, encounterDate, immunizationsGiven);
         if(immunizationRecommendation != null){
           // Fetch patient age
-          double agePatient= person.ageInDecimalYears(encounterDate); // encounterDate is the current simulation time
+          double agePatient = person.ageInDecimalYears(encounterDate);
+          // Check for combination of vaccines
           HashMap<org.mitre.synthea.codebase.generated.Code, NDC> cvxMap = checkForCombination(immunizationRecommendation, encounterDate, agePatient);
+          // Check if the patient should receive vaccines
           if (!cvxMap.isEmpty()){
+            // For all vaccines that have to be administered
             for (Map.Entry<org.mitre.synthea.codebase.generated.Code, NDC> entryMap : cvxMap.entrySet()) {
-              /**
-               * getting specific history on cvx, name
-               */
-              List<Long> history = null;
 
+              // Get the immunization details
+              List<Long> history = null;
               org.mitre.synthea.codebase.generated.Code immunizationCode = entryMap.getKey();
               String immunizationKey = codeMap.getStringForCode(immunizationCode, CodesetType.VACCINATION_CVX_CODE);
               String immunizationLabel = immunizationCode.getLabel();
               String ndcCode = cvxMap.get(immunizationCode).getNdcCode();
               String ndcLabel = codeMap.getCodeForCodeset(CodesetType.VACCINATION_NDC_CODE_UNIT_OF_USE, ndcCode).getLabel();
 
+                // Add the immunization to the patient's history
               if (immunizationsGiven.containsKey(immunizationKey)) {
                 history = immunizationsGiven.get(immunizationKey);
               } else {
@@ -261,9 +268,21 @@ public class Immunizations {
   }
 
   /**
-   * Return a map of CVX codes to NDC codes for the vaccines combination recommended by the CDS that can be administered
+   * Determines the best combination of vaccines to administer based on the recommendations
+   * provided by the Clinical Decision Support (CDS) system and the patient's current encounter.
+   *
+   * @param immunizationRecommendation The ImmunizationRecommendation object containing
+   *                                   vaccine recommendations for the patient.
+   * @param encounterDate The simulation time (in milliseconds since epoch) of the current encounter.
+   *                      Used to filter vaccines that are due for administration.
+   * @param agePatient The age of the patient (in decimal years) at the time of the encounter.
+   *                   Used to determine eligible vaccine combinations.
+   *
+   * @return A HashMap mapping CVX codes to NDC codes for vaccines that can be administered.
+   *         Returns an empty map if no valid recommendations or combinations are found.
    */
   private static HashMap<org.mitre.synthea.codebase.generated.Code, NDC> checkForCombination(ImmunizationRecommendation immunizationRecommendation, long encounterDate, double agePatient) {
+    // Check if the immunization recommendation is not empty
     if(!immunizationRecommendation.isEmpty()){
       List<String> combinationVaccines = new ArrayList<>();
       HashMap<org.mitre.synthea.codebase.generated.Code, NDC> cvxMap = new HashMap<>(); // Immunization CVX code to NDC map
@@ -273,6 +292,7 @@ public class Immunizations {
         String immunizationKey = recommendation.getVaccineCode().get(0).getCodingFirstRep().getCode(); // CVX code
         Date dueDate = recommendation.getDateCriterionFirstRep().getValue();  // Recommended due date
 
+        // Skip vaccines that are not due for administration
         if (dueDate == null || dueDate.after(new Date(encounterDate))) {
           continue;
         }
@@ -442,11 +462,22 @@ public class Immunizations {
     return immunizationRecommendation;
   }
 
+  /**
+   * Determines whether a vaccine should be administered to the patient during the current encounter,
+   * considering factors such as patient preferences, clinician preferences, and random probability.
+   *
+   * @param person The Person object representing the patient. The method uses attributes
+   *               from the person object to determine antivax status and retrieve encounter details.
+   *
+   * @return true if the vaccine should be administered; false otherwise.
+   */
 
   private static boolean gettingImmunization(Person person) {
-    // Decide whether to administer the vaccine
+
+    // Generate a random number to determine whether the patient should receive the vaccine
     Random random = new Random();
     int randomNumber = random.nextInt(100);
+    // Default value for the immunization
     boolean getImmunization = true;
 
     // If antivax person
@@ -462,7 +493,9 @@ public class Immunizations {
 
     // If antivax clinician
     HealthRecord.Encounter currentEncounter = (HealthRecord.Encounter) person.attributes.get(Person.CURRENT_ENCOUNTER);
+    // Generate a random number to determine whether the clinician should administer the vaccine
     randomNumber = random.nextInt(100);
+    // If the clinician is antivax
     if ((boolean) currentEncounter.clinician.attributes.get(Person.ANTIVAX)) {
       if (randomNumber < noVaccineProbabilityAntivaxClinician) {
         getImmunization = false;
