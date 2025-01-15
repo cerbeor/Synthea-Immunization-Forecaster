@@ -40,16 +40,19 @@ public class App {
     System.out.println("         [-t updateTimePeriodInDays]");
     System.out.println("         [-f fixedRecordPath]");
     System.out.println("         [-k keepMatchingPatientsPath]");
-    System.out.println("         [-antivaxPercentage antivaxPercentage]");
-    System.out.println("         [-antivaxLastNames firstLetter]");
-    System.out.println("         [-antivaxZipCodePrefixes zipPrefixes]");
-    System.out.println("         [-cliniciansAntivaxPercentage cliniciansAntivaxPercentage]");
-    System.out.println("         [-cliniciansAntivaxLastName cliniciansAntivaxFirstLetter]");
-    System.out.println("         [-cliniciansAntivaxZipCodePrefixes cliniciansAntivaxZipPrefixes]");
-    System.out.println("         [-noVaccineProbability noVaccineProbability]");
-    System.out.println("         [-noVaccineProbabilityAntivax noVaccineProbabilityAntivax]");
-    System.out.println("         [-noVaccineProbabilityClinician noVaccineProbabilityClinician]");
-    System.out.println("         [-noVaccineProbabilityAntivaxClinician noVaccineProbabilityAntivaxClinician]");
+    System.out.println("         [-NistImmunizationModule]");
+    System.out.println("         [-NistImmunizationModule -antivaxPercentage antivaxPercentage]");
+    System.out.println("         [-NistImmunizationModule -antivaxLastNames firstLetter]");
+    System.out.println("         [-NistImmunizationModule -antivaxZipCodePrefixes zipPrefixes]");
+    System.out.println("         [-NistImmunizationModule -cliniciansAntivaxPercentage cliniciansAntivaxPercentage]");
+    System.out.println("         [-NistImmunizationModule -cliniciansAntivaxLastName cliniciansAntivaxFirstLetter]");
+    System.out.println("         [-NistImmunizationModule -cliniciansAntivaxZipCodePrefixes cliniciansAntivaxZipPrefixes]");
+    System.out.println("         [-NistImmunizationModule -noVaccineProbability noVaccineProbability]");
+    System.out.println("         [-NistImmunizationModule -noVaccineProbabilityAntivax noVaccineProbabilityAntivax]");
+    System.out.println("         [-NistImmunizationModule -noVaccineProbabilityClinician noVaccineProbabilityClinician]");
+    System.out.println("         [-NistImmunizationModule -noVaccineProbabilityAntivaxClinician noVaccineProbabilityAntivaxClinician]");
+    System.out.println("         [-testServer]");
+    System.out.println("         [-NistImmunizationModule]");
     System.out.println("         [--config*=value]");
     System.out.println("          * any setting from src/main/resources/synthea.properties");
     System.out.println("Examples:");
@@ -62,15 +65,18 @@ public class App {
     System.out.println("run_synthea -g M -a 60-65");
     System.out.println("run_synthea -p 10 --exporter.fhir.export=true");
     System.out.println("run_synthea --exporter.baseDirectory=\"./output_tx/\" Texas");
-    System.out.println("run_synthea -antivaxPercentage 90");
-    System.out.println("run_synthea -p 50 -antivaxLastNames A:20-B:50-C:30 -antivaxZipCodePrefixes 010:80-023:90");
-    System.out.println("run_synthea -p 50 -cliniciansAntivaxLastName A:20-B:50-C:30 -cliniciansAntivaxZipPrefixes 010:80-023:90");
-    System.out.println("run_synthea -cliniciansAntivaxPercentage 100");
-    System.out.println("run_synthea -noVaccineProbability 100"); // probability of a person not getting a vaccine
-    System.out.println("run_synthea -noVaccineProbabilityAntivax 100"); // probability of an antivax person not getting a vaccine
-    System.out.println("run_synthea -noVaccineProbabilityClinician 100"); // probability of a clinician not administrating a vaccine
-    System.out.println("run_synthea -noVaccineProbabilityAntivaxClinician 100"); // probability of a clinician person not administrating a vaccine
-    System.out.println("run_synthea testServer"); //change the immunization forecaster server to the test server
+    System.out.println("");
+    System.out.println("Options to use with -NistImmunizationModule :");
+    System.out.println("run_synthea -NistImmunizationModule"); //Use the NIST immunization forecaster server
+    System.out.println("run_synthea -NistImmunizationModule -antivaxPercentage 90"); // Percentage of antivax people
+    System.out.println("run_synthea -NistImmunizationModule -p 50 -antivaxLastNames A:20-B:50-C:30 -antivaxZipCodePrefixes 010:80-023:90"); // Percentage of antivax people by first letter of last name and zip code prefix
+    System.out.println("run_synthea -NistImmunizationModule -p 50 -cliniciansAntivaxLastName A:20-B:50-C:30 -cliniciansAntivaxZipPrefixes 010:80-023:90"); // Percentage of antivax clinicians by first letter of last name and zip code prefix
+    System.out.println("run_synthea -NistImmunizationModule -cliniciansAntivaxPercentage 100"); // Percentage of antivax clinicians
+    System.out.println("run_synthea -NistImmunizationModule -noVaccineProbability 100"); // Probability of a person not getting a vaccine
+    System.out.println("run_synthea -NistImmunizationModule -noVaccineProbabilityAntivax 100"); // Probability of an antivax person not getting a vaccine
+    System.out.println("run_synthea -NistImmunizationModule -noVaccineProbabilityClinician 100"); // Probability of a clinician not administrating a vaccine
+    System.out.println("run_synthea -NistImmunizationModule -noVaccineProbabilityAntivaxClinician 100"); // Probability of a clinician person not administrating a vaccine
+    System.out.println("run_synthea -NistImmunizationModule -testServer"); // Change the immunization forecaster server to the test server
   }
 
   /**
@@ -329,9 +335,14 @@ public class App {
               Immunizations.setNoVaccineProbabilityAntivaxClinician(Double.parseDouble(value));
               System.out.println("Not taking a vaccine probability for antivax clinician: " + options.cliniciansAntivaxZipCodePrefixes);
             }
-          } else if (currArg.equals("testServer")) {
+          } else if (currArg.equals("-testServer")) {
             Immunizations.setImmunizationServer(Immunizations.TEST);
-          } else if (currArg.startsWith("--")) {
+            System.out.println("Using test immunization server");
+          } else if (currArg.equals("-NistImmunizationModule")) {
+            Immunizations.setUsingNistImmunizationModule(true);
+            System.out.println("Using NIST immunization module");
+          }
+          else if (currArg.startsWith("--")) {
             String configSetting;
             String value;
             // accept either:

@@ -2,8 +2,6 @@ package org.mitre.synthea.modules;
 
 import com.google.gson.Gson;
 
-import java.io.FileOutputStream;
-import java.io.PrintStream;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -57,7 +55,10 @@ public class Immunizations {
   private static double noVaccineProbabilityClinician = 0; // default value
   /** Probability of an antivax clinician not administrating a vaccine */
   private static double noVaccineProbabilityAntivaxClinician = 100; // default value
+  /** Flag to use NIST immunization module */
+  private static boolean usingNistImmunizationModule = false; // default value : use Synthea's immunization module
 
+  /** CodeMap object for vaccines combination check */
   private static CodeMap codeMap = CodeMapBuilder.INSTANCE.getDefaultCodeMap();
 
   @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -67,7 +68,7 @@ public class Immunizations {
    * NEW METHOD FETCHING IMMUNIZATION FORECASTER RECOMMENDATION
    */
   @SuppressWarnings({ "unchecked", "rawtypes" })
-  public static void performEncounterWithNewCDS(Person person, long encounterDate) {
+  public static void performEncounterWithNistCDS(Person person, long encounterDate) {
     /**
      * Reading patient history
      */
@@ -544,17 +545,23 @@ public class Immunizations {
     {
       Gson g = new Gson();
     }
-    /**
-     * New code connecting to forecaster
-     */
-    performEncounterWithNewCDS(person,encounterDate);
-    /**
-     * old code
-     */
-//    performEncounterDeprecated(person,time);
+
+    // Check if the NIST immunization module is used
+    if (usingNistImmunizationModule){
+      performEncounterWithNistCDS(person,encounterDate);
+    } else {
+      performEncounterSyntheaVersion(person,encounterDate);
+    }
   }
 
-  public static void performEncounterDeprecated(Person person, long time){
+  /**
+   * Administer vaccines to the person at the state time according to the
+   * required immunization schedule.
+   * @param person - the person to vaccinate.
+   * @param time - the current simulation time.
+   */
+  @SuppressWarnings({ "unchecked", "rawtypes" })
+  public static void performEncounterSyntheaVersion(Person person, long time){
     Map<String, List<Long>> immunizationsGiven;
     if (person.attributes.containsKey(IMMUNIZATIONS)) {
       immunizationsGiven = (Map<String, List<Long>>) person.attributes.get(IMMUNIZATIONS);
@@ -735,5 +742,9 @@ public class Immunizations {
 
   public static void setNoVaccineProbabilityAntivaxClinician(double noVaccineProbabilityAntivaxClinician) {
     Immunizations.noVaccineProbabilityAntivaxClinician = noVaccineProbabilityAntivaxClinician;
+  }
+
+  public static void setUsingNistImmunizationModule(boolean usingNistImmunizationModule) {
+    Immunizations.usingNistImmunizationModule = usingNistImmunizationModule;
   }
 }
