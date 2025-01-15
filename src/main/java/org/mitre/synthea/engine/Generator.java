@@ -84,6 +84,7 @@ public class Generator {
   private Exporter.ExporterRuntimeOptions exporterRuntimeOptions;
   public static EntityManager entityManager;
   public final int threadPoolSize;
+  // Number of antivax patients generated
   public AtomicInteger antivaxCount = new AtomicInteger(0);
 
   // List of US states without abbreviations
@@ -299,7 +300,7 @@ public class Generator {
       this.metrics = new TransitionMetrics();
     }
 
-    // initialize hospitalsgit
+    // Initialize hospitals
     Provider.setCliniciansAntivaxPercentage(options.cliniciansAntivaxPercentage);
     Provider.setCliniciansAntivaxFirstLetters(options.cliniciansAntivaxFirstLetters);
     Provider.setCliniciansAntivaxZipCodePrefixes(options.cliniciansAntivaxZipCodePrefixes);
@@ -866,7 +867,7 @@ public class Generator {
     // consecutively
     String deceased = isAlive ? "" : "DECEASED";
     System.out.format("%d -- %s (%s) (%d y/o %s) %s, %s, %s %s (%d)\n", index + 1,
-        person.attributes.get(Person.NAME), person.attributes.get(Person.MAIDEN_NAME),
+        person.attributes.get(Person.NAME), person.attributes.getOrDefault(Person.MAIDEN_NAME, Person.NAME),
         person.ageInYears(time),
         person.attributes.get(Person.GENDER),
         person.attributes.get(Person.CITY), person.attributes.get(Person.STATE), person.attributes.get(Person.ZIP),

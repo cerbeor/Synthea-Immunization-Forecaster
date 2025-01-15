@@ -115,7 +115,8 @@ public class Provider implements QuadTreeElement, Serializable {
   public Map<String, ArrayList<Clinician>> clinicianMap;
   // row: year, column: type, value: count
   private transient Table<Integer, String, AtomicInteger> utilization;
-  private static double cliniciansAntivaxPercentage = 0;
+  /** Percentage of chance for a clinician to be antivax */
+  private static double cliniciansAntivaxPercentage = 0; // Default value
   /** Map storing the percentage for each clinician with last name's first letter to be antivax */
   private static Map<String, Double> cliniciansAntivaxFirstLetters = new HashMap<>();
   /** Map storing the percentage for each clinician in zip code prefixes to be antivax */
@@ -541,6 +542,7 @@ public class Provider implements QuadTreeElement, Serializable {
 
   /**
    * Generates a list of clinicians, given the number to generate and the specialty.
+   * Clinicians can be antivax with a certain percentage of chance derteimined by the arguments.
    * @param numClinicians - the number of clinicians to generate
    * @param specialty - which specialty clinicians to generate
    * @return
@@ -639,7 +641,6 @@ public class Provider implements QuadTreeElement, Serializable {
       }
 
       // Clinicians have a percentage of chance of being antivax
-//      System.out.println("Clinician antivax percentage: " + cliniciansAntivaxPercentage);
       if (cliniciansAntivaxFirstLetters.isEmpty() && cliniciansAntivaxZipCodePrefixes.isEmpty()){
         if (random.rand()*100 < cliniciansAntivaxPercentage) {
           isAntivax = true;
