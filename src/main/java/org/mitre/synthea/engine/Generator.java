@@ -867,7 +867,7 @@ public class Generator {
     // consecutively
     String deceased = isAlive ? "" : "DECEASED";
     System.out.format("%d -- %s (%s) (%d y/o %s) %s, %s, %s %s (%d)\n", index + 1,
-        person.attributes.get(Person.NAME), person.attributes.getOrDefault(Person.MAIDEN_NAME, Person.NAME),
+        person.attributes.get(Person.NAME), person.attributes.getOrDefault(Person.MAIDEN_NAME, person.attributes.get(Person.LAST_NAME)),
         person.ageInYears(time),
         person.attributes.get(Person.GENDER),
         person.attributes.get(Person.CITY), person.attributes.get(Person.STATE), person.attributes.get(Person.ZIP),
