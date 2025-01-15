@@ -30,7 +30,7 @@ import org.mitre.synthea.codebase.generated.*;;
  * Example Usage:
  * 
  * StockMapping stockMapping = new StockMapping(codeMap);
- * Map<String, List<NDC>> vaccineGroupMap = stockMapping.mapCvxToVaccineGroupsAndNDCs();
+ * Map&lt;String, List&lt;NDC&gt;&gt; vaccineGroupMap = stockMapping.mapCvxToVaccineGroupsAndNDCs();
  * stockMapping.initializeAndSelectRandomNDCs(vaccineGroupMap, codeMap, 5);
  * 
  * 
@@ -77,7 +77,7 @@ private HashMap<String, Boolean> mapStockVaccineGroupPreviousVersion;
  * @param n The number of NDCs to randomly select from each vaccine group. If the number of NDCs in a group is less than 'n',
  *          all NDCs in that group will be selected.
  * 
- * @return void This method updates the `mapStockVaccineGroup` with true for the selected NDCs and false for all others.
+ * This method updates the `mapStockVaccineGroup` with true for the selected NDCs and false for all others.
  * 
  * @see mapStockVaccineGroup
  * @see CodeMapUtil#extractNDCsFromCodebase(CodeMap)
@@ -183,7 +183,7 @@ public List<String> findNDCsWithoutVaccineGroup(Map<String, List<NDC>> vaccineGr
  * 3. Maps each vaccine group to a list of NDCs, and associates the relevant CVX code with each NDC.
  * 4. Returns a map where each key is a vaccine group and the value is a list of NDCs associated with that group.
  * 
- * @return A map where the key is a vaccine group (String) and the value is a list of NDC objects (List<NDC>) 
+ * @return A map where the key is a vaccine group (String) and the value is a list of NDC objects (List&lt;NDC&gt;)
  *         associated with that vaccine group.
  * 
  * @see CodeMapUtil#extractCvxFromCodebase(CodeMap)

@@ -148,7 +148,6 @@ public List<String> replaceSpecialCases(List<String> inputList, boolean isAdult)
  *
  * @param cvxList the list of CVX codes to process
  * @param failedCVXList the list where CVX codes without corresponding NDCs will be added
- * @param mapping the mapping instance to use for creating NDCs from CVX codes
  */
 public void filterCVXList(List<String> cvxList, List<String> failedCVXList) {
     // Create an iterator to modify the list while iterating

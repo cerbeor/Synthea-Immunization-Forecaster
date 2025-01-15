@@ -28,7 +28,7 @@ import java.util.Random;
  * ```
  * Stock stock = new Stock();
  * stock.initializeMapStock(ndcList);
- * HashMap<String, Boolean> stockMap = stock.getMapStock();
+ * HashMap&lt;String, Boolean&gt; stockMap = stock.getMapStock();
  * ```
  */
 

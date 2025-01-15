@@ -20,16 +20,16 @@ import org.mitre.synthea.codebase.reference.CodesetType;
  * methods to generate valid combinations of NDC codes that cover a list of target CVX codes.
  * 
  * Key methods include:
- * - createNDCsFromCVX(List<Code> cvxCodes): Creates NDC objects related to the given list 
+ * - createNDCsFromCVX(List&lt;Code&gt; cvxCodes): Creates NDC objects related to the given list 
  *   of CVX codes, with each NDC containing its associated CVX codes.
- * - createNDCsFromCVXString(List<String> cvxCodes): Similar to the above method but accepts 
+ * - createNDCsFromCVXString(List&lt;String&gt; cvxCodes): Similar to the above method but accepts 
  *   a list of CVX codes as strings and converts them into Code objects before creating NDCs.
- * - createCombosFromNDCs(List<NDC> ndcList, List<Code> targetCvxList): Generates valid 
+ * - createCombosFromNDCs(List&lt;NDC&gt; ndcList, List&lt;Code&gt; targetCvxList): Generates valid 
  *   combinations of NDCs to match the target CVX codes.
- * - createCombosFromNDCs(List<NDC> ndcList, List<Code> targetCvxList, int maxDepth, int minCombos): 
+ * - createCombosFromNDCs(List&lt;NDC&gt; ndcList, List&lt;Code&gt; targetCvxList, int maxDepth, int minCombos): 
  *   Similar to the above method but allows for customization of maximum recursion depth 
  *   and minimum number of combinations to find.
- * 
+ *
  * This class implements a backtracking algorithm to find optimal combinations of NDCs that 
  * cover all target CVX codes, with optimization to handle deeper recursions and ensure 
  * uniqueness of combinations.

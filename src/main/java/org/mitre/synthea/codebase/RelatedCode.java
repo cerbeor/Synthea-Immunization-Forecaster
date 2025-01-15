@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
  *   a given NDC code.
  * - getCvxFromCptString(String cptIn): Retrieves the CVX code related to a given CPT 
  *   code.
- * - getNdcFromMultipleCvx(List<String> cvxCodes): Retrieves a list of NDC codes related 
+ * - getNdcFromMultipleCvx(List&lt;String&gt; cvxCodes): Retrieves a list of NDC codes related
  *   to multiple CVX codes.
  * - getNdcCodesFromCvx(String cvx): Retrieves a list of NDC codes associated with a 
  *   given CVX code.
