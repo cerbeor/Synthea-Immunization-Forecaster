@@ -86,6 +86,7 @@ public class Generator {
   public final int threadPoolSize;
   // Number of antivax patients generated
   public AtomicInteger antivaxCount = new AtomicInteger(0);
+  public static String DEFAULT_STATE = "Massachusetts";
 
   // List of US states without abbreviations
   private static final List<String> US_STATES = Arrays.asList(
