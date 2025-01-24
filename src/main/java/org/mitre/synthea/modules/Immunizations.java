@@ -8,9 +8,6 @@ import java.util.stream.Collectors;
 
 import org.hl7.fhir.r4.model.*;
 import org.hl7.fhir.r4.model.DateType;
-import org.immregistries.vfa.connect.ConnectFactory;
-import org.immregistries.vfa.connect.ConnectorInterface;
-import org.immregistries.vfa.connect.model.*;
 import org.mitre.synthea.codebase.CodeMap;
 import org.mitre.synthea.codebase.CodeMapBuilder;
 import org.mitre.synthea.codebase.mapping.Combo;
@@ -141,130 +138,6 @@ public class Immunizations {
     }
   }
 
-  @SuppressWarnings({ "unchecked", "rawtypes" })
-  /**
-   * NEW METHOD FETCHING IMMUNIZATION FORECASTER RECOMMENDATION
-   */
-  public static void performEncounterWithForecasterDepreciated(Person person, long time) {
-    /**
-     * Reading patient history
-     */
-    Map<String, List<Long>> immunizationsGiven;
-    if (person.attributes.containsKey(IMMUNIZATIONS)) {
-      immunizationsGiven = (Map<String, List<Long>>) person.attributes.get(IMMUNIZATIONS);
-    } else {
-      immunizationsGiven = new HashMap<String, List<Long>>();
-      person.attributes.put(IMMUNIZATIONS, immunizationsGiven);
-    }
-
-    try {
-      /**
-       * Allows logs to be accessible here
-       */
-      SoftwareResult softwareResult = new SoftwareResult();
-      /**
-       * Querying forecaster
-       */
-      List<ForecastActual> forecastActuals = queryForecasterDepreciated(person,time,immunizationsGiven,softwareResult);
-//      System.out.println("Forecast length: " + forecastActuals.size()); TODO remove useless logs
-//      System.out.println(softwareResult.getLogText());
-//      String log = softwareResult.getLogText().split("VACCINATIONS RECOMMENDED ")[1].split("\nVACCCINATIONS RECOMMENDED AFTER ")[0];
-//      log = log.strip();
-//      System.out.println(log);
-//      System.out.println("log length = " + (log.split("\n").length - 1));
-      /**
-       * Filtering the result of the forecaster (some vaccines are duplicated)
-       */
-      List<Integer> vaccineGroupIdList = new ArrayList<>();
-      List<String> vaccineCvxList = new ArrayList<>();
-      Iterator<ForecastActual> iterator = forecastActuals.iterator();
-      while (iterator.hasNext()) {
-        ForecastActual forecastActual = iterator.next();
-        if (vaccineGroupIdList.contains(forecastActual.getVaccineGroup().getVaccineGroupId())
-                || vaccineCvxList.contains(forecastActual.getVaccineGroup().getVaccineCvx())
-                || forecastActual.getVaccineGroup().getLabel().equals("DTaP, Tdap or Td")) {
-          iterator.remove();
-        } else {
-          vaccineGroupIdList.add(forecastActual.getVaccineGroup().getVaccineGroupId());
-          vaccineCvxList.add(forecastActual.getVaccineGroup().getVaccineCvx());
-        }
-      };
-      vaccineGroupIdList = null;
-      vaccineCvxList = null;
-
-      forecastActuals = checkForCombinationDepreciated(forecastActuals);
-
-      Random random;
-      int randomNumber;
-
-      for (ForecastActual forecastActual : forecastActuals) {
-        /**
-         * Filtering Finished forecast, and only when due date is not passed
-         * TODO add probability if for early administration : Change date on the immunization ressource or plan an encounter ?
-         */
-        random = new Random();
-        randomNumber = random.nextInt(100);
-        if ( forecastActual.getAdminStatus().equals(Admin.FINISHED.getAdminStatus())
-                || forecastActual.getAdminStatus().equals(Admin.NOT_RECOMMENDED.getAdminStatus())
-                || forecastActual.getAdminStatus().equals(Admin.COMPLETE_FOR_SEASON.getAdminStatus())
-                || forecastActual.getDueDate().after(new Date(time + 24*3600))
-                || randomNumber < 2) {          // 2% is an arbitrary number for skipping all the immunizations at once.
-          break;
-        }
-//        System.out.println(forecastActual);
-//        System.out.println(forecastActual.getVaccineGroup().getLabel() + " cvx code "+ forecastActual.getVaccineGroup().getVaccineCvx() +  " Adminlabel " + forecastActual.getAdmin().getLabel() + " | " + forecastActual.getAdminStatus());
-//        System.out.println(forecastActual.getAdmin().toString());
-//        System.out.println(i + " EXPLANATION: " + forecastActual.getExplanationHtml());
-
-        /**
-         * named immunization in original code
-         */
-        String immunizationKey = forecastActual.getVaccineGroup().getVaccineCvx();
-
-        random = new Random();
-        randomNumber = random.nextInt(100);
-        boolean get_immunization = true;
-
-        if (Objects.equals(immunizationKey, "88")) { // for influenza
-          if (person.ageInYears(time) >= 65 && randomNumber >= 75) {
-            // 75% is the target vaccination coverage by the WHO for older people (https://www.who.int/europe/news-room/fact-sheets/item/influenza-vaccination-coverage-and-effectiveness)
-            get_immunization = false;
-          } else if (randomNumber >= 15) {
-            // 15% is an arbitrary number
-            get_immunization = false;
-          }
-        } else if (randomNumber < 5) { // other immunization
-          // 5% is an arbitrary number
-          get_immunization = false;
-        }
-
-        if (get_immunization) {
-          /**
-           * getting specific history on cvx, name
-           */
-          List<Long> history = null;
-          if (immunizationsGiven.containsKey(immunizationKey)) {
-            history = immunizationsGiven.get(immunizationKey);
-          } else {
-            history = new ArrayList<Long>();
-            immunizationsGiven.put(immunizationKey, history);
-          }
-          history.add(time);
-          HealthRecord.Immunization entry = person.record.immunization(time, immunizationKey);
-          HealthRecord.Code immCode = new HealthRecord.Code(
-                  "http://hl7.org/fhir/sid/cvx",
-                  forecastActual.getVaccineGroup().getVaccineCvx(),
-                  forecastActual.getVaccineGroup().getLabel());
-          entry.codes.add(immCode);
-          entry.series = history.size() + 1;
-        }
-      }
-    } catch (Exception exception) {
-      exception.printStackTrace();
-      System.err.println(exception.getMessage());
-    }
-  }
-
   /**
    * Determines the best combination of vaccines to administer based on the recommendations
    * provided by the Clinical Decision Support (CDS) system and the patient's current encounter.
@@ -317,53 +190,6 @@ public class Immunizations {
     return new HashMap<>();
   }
 
-  private static List<ForecastActual> checkForCombinationDepreciated(List<ForecastActual> forecastActualList) {
-    List<List<String>> listOfCombinations = new ArrayList<>();
-    listOfCombinations.add(List.of("120", "DTaP-IPV-Hib", "20", "10", "48"));
-    listOfCombinations.add(List.of("03", "MMR", "05", "07", "06"));
-    listOfCombinations.add(List.of("94", "MMRV", "03", "21"));
-
-    List<String> immunizationList = new ArrayList<>();
-    for (ForecastActual forecastActual : forecastActualList) {
-      immunizationList.add(forecastActual.getVaccineGroup().getVaccineCvx());
-    }
-
-    List<Integer> index = new ArrayList<>();
-    for (List<String> combinationVaccine : listOfCombinations) {
-      index.clear();
-      for (String cvxCode : combinationVaccine.subList(2, combinationVaccine.size())) {
-        if (immunizationList.contains(cvxCode)) {
-          for (String immunization : immunizationList) {
-            if (immunization.equals(cvxCode)) {
-              index.add(immunizationList.indexOf(immunization));
-              break;
-            }
-          }
-        }
-        else { break;}
-      }
-
-      index.sort((a, b) -> Integer.compare(b, a));
-
-      if (index.size() == combinationVaccine.size() - 2) {
-        if (!immunizationList.contains(combinationVaccine.get(0))) {
-          ForecastActual newVaccine = new ForecastActual();
-          newVaccine.setAdminStatus("N");
-          newVaccine.setVaccineGroup(new VaccineGroup(Integer.parseInt(combinationVaccine.get(0)),combinationVaccine.get(1), combinationVaccine.get(0)));
-          forecastActualList.add(newVaccine);
-        }
-
-        Iterator<Integer> iterator = index.iterator();
-        while (iterator.hasNext()) {
-          int ind = iterator.next();
-          immunizationList.remove(ind);
-          forecastActualList.remove(ind);
-          iterator.remove();
-        }
-      }
-    }
-    return forecastActualList;
-  }
 
   /**
    * This method queries the new Clinical Decision Support (CDS) system to retrieve 
@@ -518,51 +344,6 @@ public class Immunizations {
       e.printStackTrace();
       throw new ExceptionInInitializerError(e);
     }
-  }
-
-  private static List<ForecastActual> queryForecasterDepreciated(Person person, long time, Map<String, List<Long>> immunizationsGiven, SoftwareResult softwareResult) throws Exception {
-    TestCase testCase = new TestCase();
-    testCase.setDateSet(DateSet.FIXED);
-    testCase.setEvalDate(new Date(time));
-    testCase.setPatientDob(new Date((Long) person.attributes.get("birthdate")));
-    testCase.setPatientSex((String) person.attributes.get("gender"));
-
-    /**
-     * Giving immunization history to forecaster
-     */
-    List<TestEvent> testEvents = new ArrayList<>(immunizationsGiven.size());
-    testCase.setTestEventList(testEvents);
-
-    int eventId = 0;
-    for (Map.Entry<String, List<Long>> immunizationEntry: immunizationsGiven.entrySet()) {
-      if (immunizationEntry.getKey().equals("covid19")) {
-        break;
-      }
-      for (Long eventTime: immunizationEntry.getValue()) {
-        TestEvent testEvent = new TestEvent();
-        Event event = new Event();
-        event.setEventId(eventId++);
-        event.setVaccineCvx(immunizationEntry.getKey());
-        event.setEventType(EventType.VACCINATION);
-        testEvent.setEvent(event);
-        testEvent.setEventDate(new Date(eventTime));
-        testEvents.add(testEvent);
-      }
-    }
-
-    softwareResult.setTestCase(testCase);
-
-    /**
-     * querying forecaster
-     */
-    Software software = new Software();
-    software.setServiceUrl("https://sabbia.westus2.cloudapp.azure.com/lonestar/forecast");
-    software.setService(Service.LSVF);
-    ConnectorInterface connectorInterface = ConnectFactory.createConnecter(software);
-    connectorInterface.setLogText(true);
-
-    return connectorInterface.queryForForecast(testCase,softwareResult);
-
   }
 
   /**
