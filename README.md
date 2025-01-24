@@ -80,7 +80,7 @@ Options: [-s seed]
          [--config*=value]
          * any setting from src/main/resources/synthea.properties
 
-
+Options added for Nist Immunization project:
          [-NistImmunizationModule]
          [-NistImmunizationModule -antivaxPercentage percentage]                       // default value = 0
          [-NistImmunizationModule -antivaxLastNames firstLetter]
@@ -92,7 +92,7 @@ Options: [-s seed]
          [-NistImmunizationModule -noVaccineProbabilityAntivax percentage]             // default value = 100
          [-NistImmunizationModule -noVaccineProbabilityClinician percentage]           // default value = 0
          [-NistImmunizationModule -noVaccineProbabilityAntivaxClinician percentage]    // default value = 100
-         [-NistImmunizationModule -testServer]                                         // use the test server of NIST for immunization recommandations
+         [-NistImmunizationModule -testServer]                                         // use the test server of NIST for immunization recommendations
          
 
 Examples:
