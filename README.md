@@ -78,19 +78,22 @@ Options: [-s seed]
          [-f fixedRecordPath]
          [-k keepMatchingPatientsPath]
          [--config*=value]
+         * any setting from src/main/resources/synthea.properties
+
+
          [-NistImmunizationModule]
-         [-NistImmunizationModule -antivaxPercentage percentage]
+         [-NistImmunizationModule -antivaxPercentage percentage]                       // default value = 0
          [-NistImmunizationModule -antivaxLastNames firstLetter]
          [-NistImmunizationModule -antivaxZipCodePrefixes zipPrefixes]
-         [-NistImmunizationModule -cliniciansAntivaxPercentage percentage]
+         [-NistImmunizationModule -cliniciansAntivaxPercentage percentage]             // default value = 0
          [-NistImmunizationModule -cliniciansAntivaxLastName cliniciansAntivaxFirstLetter]
          [-NistImmunizationModule -cliniciansAntivaxZipCodePrefixes cliniciansAntivaxZipPrefixes]
-         [-NistImmunizationModule -noVaccineProbability percentage]
-         [-NistImmunizationModule -noVaccineProbabilityAntivax percentage]
-         [-NistImmunizationModule -noVaccineProbabilityClinician percentage]
-         [-NistImmunizationModule -noVaccineProbabilityAntivaxClinician percentage]
-         [-NistImmunizationModule -testServer]
-          * any setting from src/main/resources/synthea.properties
+         [-NistImmunizationModule -noVaccineProbability percentage]                    // default value = 0
+         [-NistImmunizationModule -noVaccineProbabilityAntivax percentage]             // default value = 100
+         [-NistImmunizationModule -noVaccineProbabilityClinician percentage]           // default value = 0
+         [-NistImmunizationModule -noVaccineProbabilityAntivaxClinician percentage]    // default value = 100
+         [-NistImmunizationModule -testServer]                                         // use the test server of NIST for immunization recommandations
+         
 
 Examples:
 run_synthea Massachusetts
@@ -113,6 +116,11 @@ run_synthea -NistImmunizationModule -noVaccineProbabilityAntivax 100
 run_synthea -NistImmunizationModule -noVaccineProbabilityClinician 100 
 run_synthea -NistImmunizationModule -noVaccineProbabilityAntivaxClinician 100
 run_synthea -NistImmunizationModule -testServer
+run_synthea -NistImmunizationModule -a 2-7 -p 650 -antivaxPercentage 20 -noVaccineProbability 10 -noVaccineProbabilityAntivax 70
+run_synthea -NistImmunizationModule -a 2-7 -p 100 -antivaxPercentage 100 -noVaccineProbabilityAntivax 90
+run_synthea -NistImmunizationModule -a 2-7 -p 50 -antivaxPercentage 100 -noVaccineProbabilityAntivax 100
+run_synthea -NistImmunizationModule -a 2-7 -p 100 -antivaxPercentage 0 -noVaccineProbability 0
+run_synthea -NistImmunizationModule -a 2-7 -p 100 -antivaxPercentage 50 -noVaccineProbability 50
 ```
 
 Some settings can be changed in `./src/main/resources/synthea.properties`.
