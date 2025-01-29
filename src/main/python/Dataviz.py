@@ -28,8 +28,11 @@ for file_name in os.listdir(json_folder_path):
                         for extension in resource.get('extension', []):
                             if extension['url'] == "http://synthetichealth.github.io/synthea/hesitantPatient":
                                 hesitantPatient_status = extension.get('valueBoolean', None)  # Extract hesitantPatient status
-                            if extension['url'] == "http://hl7.org/fhir/StructureDefinition/patient-birthPlace":
-                                state = extension.get('valueAddress', {}).get('state', None)  # Extract state
+                        # Extract the current state from the first address, if available
+                        address_list = resource.get('address', [])
+                        if len(address_list) > 0:
+                            state = address_list[0].get('state')
+
                         # Only add records where both fields are not None
                         if hesitantPatient_status is not None and state is not None:
                             data.append({'STATE': state, 'ANTIVAX_STATUS': hesitantPatient_status})
@@ -39,30 +42,9 @@ df = pd.DataFrame(data)
 
 print(df.head())  # Display the first few rows of the DataFrame for verification.
 
-# A dictionary mapping full state names to their respective abbreviations.
-state_name_to_abbreviation = {
-    'Alabama': 'AL', 'Alaska': 'AK', 'Arizona': 'AZ', 'Arkansas': 'AR',
-    'California': 'CA', 'Colorado': 'CO', 'Connecticut': 'CT', 'Delaware': 'DE',
-    'Florida': 'FL', 'Georgia': 'GA', 'Hawaii': 'HI', 'Idaho': 'ID',
-    'Illinois': 'IL', 'Indiana': 'IN', 'Iowa': 'IA', 'Kansas': 'KS',
-    'Kentucky': 'KY', 'Louisiana': 'LA', 'Maine': 'ME', 'Maryland': 'MD',
-    'Massachusetts': 'MA', 'Michigan': 'MI', 'Minnesota': 'MN', 'Mississippi': 'MS',
-    'Missouri': 'MO', 'Montana': 'MT', 'Nebraska': 'NE', 'Nevada': 'NV',
-    'New Hampshire': 'NH', 'New Jersey': 'NJ', 'New Mexico': 'NM', 'New York': 'NY',
-    'North Carolina': 'NC', 'North Dakota': 'ND', 'Ohio': 'OH', 'Oklahoma': 'OK',
-    'Oregon': 'OR', 'Pennsylvania': 'PA', 'Rhode Island': 'RI',
-    'South Carolina': 'SC', 'South Dakota': 'SD', 'Tennessee': 'TN', 'Texas': 'TX',
-    'Utah': 'UT', 'Vermont': 'VT', 'Virginia': 'VA', 'Washington': 'WA',
-    'West Virginia': 'WV', 'Wisconsin': 'WI', 'Wyoming': 'WY'
-}
-
 # Normalize column names and convert the ANTIVAX_STATUS column to boolean for consistency.
 df.columns = df.columns.str.strip()
 df['ANTIVAX_STATUS'] = df['ANTIVAX_STATUS'].astype(bool)
-
-# Replace full state names with their abbreviations in the STATE column.
-df['STATE'] = df['STATE'].map(state_name_to_abbreviation)
-df = df.dropna(subset=['STATE'])  # Drop rows where state mapping fails.
 
 # Group by STATE and calculate the total number of people and the number of hesitant individuals.
 state_counts = (
