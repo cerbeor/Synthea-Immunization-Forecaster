@@ -2049,8 +2049,8 @@ Encounter date : Sat Apr 13 22:22:58 CEST 2024
    -> 03 MMR | Tue Jan 14 08:00:00 CET 2025 ;
    -> 88 Influenza | Tue Jan 14 08:00:00 CET 2025 ;
 ---Vaccines (cvx) to be administered : []
-1 -- EmiliaNIST SantillánNIST (null) (6 y/o F) Fort Dodge, Iowa, 50501  (9394)
+1 -- EmiliaNIST Santillï¿½nNIST (null) (6 y/o F) Fort Dodge, Iowa, 50501  (9394)
 Records: total=1, alive=1, dead=0
 RNG=1
 Clinician RNG=6894
-Antivax patients: 0 out of 1 (0,00%)
+Hesitant patients: 0 out of 1 (0,00%)

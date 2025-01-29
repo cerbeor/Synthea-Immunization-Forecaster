@@ -82,16 +82,16 @@ Options: [-s seed]
 
 Options added for Nist Immunization project:
          [-NistImmunizationModule]
-         [-NistImmunizationModule -antivaxPercentage percentage]                       // default value = 0
-         [-NistImmunizationModule -antivaxLastNames firstLetter]
-         [-NistImmunizationModule -antivaxZipCodePrefixes zipPrefixes]
-         [-NistImmunizationModule -cliniciansAntivaxPercentage percentage]             // default value = 0
-         [-NistImmunizationModule -cliniciansAntivaxLastName cliniciansAntivaxFirstLetter]
-         [-NistImmunizationModule -cliniciansAntivaxZipCodePrefixes cliniciansAntivaxZipPrefixes]
+         [-NistImmunizationModule -hesitantPatientPercentage percentage]                       // default value = 0
+         [-NistImmunizationModule -hesitantPatientLastNames firstLetter]
+         [-NistImmunizationModule -hesitantPatientZipCodePrefixes zipPrefixes]
+         [-NistImmunizationModule -underVaxxedCliniciansPercentage percentage]             // default value = 0
+         [-NistImmunizationModule -underVaxxedCliniciansLastName underVaxxedCliniciansFirstLetter]
+         [-NistImmunizationModule -underVaxxedCliniciansZipCodePrefixes underVaxxedCliniciansZipPrefixes]
          [-NistImmunizationModule -noVaccineProbability percentage]                    // default value = 0
-         [-NistImmunizationModule -noVaccineProbabilityAntivax percentage]             // default value = 100
+         [-NistImmunizationModule -noVaccineProbabilityHesitantPatient percentage]             // default value = 100
          [-NistImmunizationModule -noVaccineProbabilityClinician percentage]           // default value = 0
-         [-NistImmunizationModule -noVaccineProbabilityAntivaxClinician percentage]    // default value = 100
+         [-NistImmunizationModule -noVaccineProbabilityUnderVaxxedClinician percentage]    // default value = 100
          [-NistImmunizationModule -testServer]                                         // use the test server of NIST for immunization recommendations
          
 
@@ -106,21 +106,26 @@ run_synthea -g M -a 60-65
 run_synthea -p 10 --exporter.fhir.export=true
 run_synthea --exporter.baseDirectory="./output_tx/" Texas
 run_synthea -NistImmunizationModule
-run_synthea -NistImmunizationModule -antivaxPercentage 90
-run_synthea -p 50 -NistImmunizationModule -antivaxZipCodePrefixes 010:80-023:90 --> people from zip codes starting with 010 will have 80% chance of being antivax, people from zip codes starting with 023 will have 90% chance of being antivax
-run_synthea -p 50 -NistImmunizationModule -antivaxLastNames A:20-B:50-C:30 --> people with last names (maiden names) starting with A will have 20% chance of being antivax, people with last names starting with B will have 50% chance of being antivax, people with last names starting with C will have 30% chance of being antivax
-run_synthea -NistImmunizationModule -cliniciansAntivaxPercentage 100
-run_synthea -p 50 -NistImmunizationModule -cliniciansAntivaxLastName A:20-B:50-C:30 -cliniciansAntivaxZipCodePrefixes 010:80-023:90
+run_synthea -NistImmunizationModule -hesitantPatientPercentage 90
+run_synthea -p 50 -NistImmunizationModule -hesitantPatientZipCodePrefixes 010:80-023:90 
+    --> patients from zip codes starting with 010 will have 80% chance of being hesitant, 
+        patients from zip codes starting with 023 will have 90% chance of being hesitant
+run_synthea -p 50 -NistImmunizationModule -hesitantPatientLastNames A:20-B:50-C:30 
+    --> patients with last names (maiden names) starting with A will have 20% chance of being hesitant, 
+        patients with last names starting with B will have 50% chance of being hesitant, 
+        patients with last names starting with C will have 30% chance of being hesitant
+run_synthea -NistImmunizationModule -underVaxxedCliniciansPercentage 100
+run_synthea -p 50 -NistImmunizationModule -underVaxxedCliniciansLastName A:20-B:50-C:30 -underVaxxedCliniciansZipCodePrefixes 010:80-023:90
 run_synthea -NistImmunizationModule -noVaccineProbability 100 
-run_synthea -NistImmunizationModule -noVaccineProbabilityAntivax 100
+run_synthea -NistImmunizationModule -noVaccineProbabilityHesitantPatient 100
 run_synthea -NistImmunizationModule -noVaccineProbabilityClinician 100 
-run_synthea -NistImmunizationModule -noVaccineProbabilityAntivaxClinician 100
+run_synthea -NistImmunizationModule -noVaccineProbabilityUnderVaxxedClinician 100
 run_synthea -NistImmunizationModule -testServer
-run_synthea -NistImmunizationModule -a 2-7 -p 650 -antivaxPercentage 20 -noVaccineProbability 10 -noVaccineProbabilityAntivax 70
-run_synthea -NistImmunizationModule -a 2-7 -p 100 -antivaxPercentage 100 -noVaccineProbabilityAntivax 90
-run_synthea -NistImmunizationModule -a 2-7 -p 50 -antivaxPercentage 100 -noVaccineProbabilityAntivax 100
-run_synthea -NistImmunizationModule -a 2-7 -p 100 -antivaxPercentage 0 -noVaccineProbability 0
-run_synthea -NistImmunizationModule -a 2-7 -p 100 -antivaxPercentage 50 -noVaccineProbability 50
+run_synthea -NistImmunizationModule -a 2-7 -p 650 -hesitantPatientPercentage 20 -noVaccineProbability 10 -noVaccineProbabilityHesitantPatient 70
+run_synthea -NistImmunizationModule -a 2-7 -p 100 -hesitantPatientPercentage 100 -noVaccineProbabilityHesitantPatient 90
+run_synthea -NistImmunizationModule -a 2-7 -p 50 -hesitantPatientPercentage 100 -noVaccineProbabilityHesitantPatient 100
+run_synthea -NistImmunizationModule -a 2-7 -p 100 -hesitantPatientPercentage 0 -noVaccineProbability 0
+run_synthea -NistImmunizationModule -a 2-7 -p 100 -hesitantPatientPercentage 50 -noVaccineProbability 50
 ```
 
 Some settings can be changed in `./src/main/resources/synthea.properties`.

@@ -22,17 +22,17 @@ for file_name in os.listdir(json_folder_path):
                     if entry.get('resource', {}).get('resourceType') == 'Patient':  # Filter Patient resources
                         resource = entry['resource']
                         # Extract ANTIVAX_STATUS and STATE
-                        antivax_status = None
+                        hesitantPatient_status = None
                         state = None
                         # Loop through the extensions to find specific fields
                         for extension in resource.get('extension', []):
-                            if extension['url'] == "http://synthetichealth.github.io/synthea/antivax":
-                                antivax_status = extension.get('valueBoolean', None)  # Extract antivax status
+                            if extension['url'] == "http://synthetichealth.github.io/synthea/hesitantPatient":
+                                hesitantPatient_status = extension.get('valueBoolean', None)  # Extract hesitantPatient status
                             if extension['url'] == "http://hl7.org/fhir/StructureDefinition/patient-birthPlace":
                                 state = extension.get('valueAddress', {}).get('state', None)  # Extract state
                         # Only add records where both fields are not None
-                        if antivax_status is not None and state is not None:
-                            data.append({'STATE': state, 'ANTIVAX_STATUS': antivax_status})
+                        if hesitantPatient_status is not None and state is not None:
+                            data.append({'STATE': state, 'ANTIVAX_STATUS': hesitantPatient_status})
 
 # Transform the extracted data into a pandas DataFrame for easier processing.
 df = pd.DataFrame(data)
@@ -64,18 +64,18 @@ df['ANTIVAX_STATUS'] = df['ANTIVAX_STATUS'].astype(bool)
 df['STATE'] = df['STATE'].map(state_name_to_abbreviation)
 df = df.dropna(subset=['STATE'])  # Drop rows where state mapping fails.
 
-# Group by STATE and calculate the total number of people and the number of antivax individuals.
+# Group by STATE and calculate the total number of people and the number of hesitant individuals.
 state_counts = (
     df.groupby('STATE', as_index=False)
     .agg(
         total_people=('ANTIVAX_STATUS', 'size'),  # Total number of records per state
-        antivax_count=('ANTIVAX_STATUS', 'sum')  # Total number of antivax individuals per state
+        hesitantPatient_count=('ANTIVAX_STATUS', 'sum')  # Total number of hesitant individuals per state
     )
 )
 
-# Calculate the percentage of antivax individuals for each state.
-state_counts['antivax_percentage'] = (
-    state_counts['antivax_count'] / state_counts['total_people'] * 100
+# Calculate the percentage of hesitant individuals for each state.
+state_counts['hesitantPatient_percentage'] = (
+    state_counts['hesitantPatient_count'] / state_counts['total_people'] * 100
 ).fillna(0)
 
 # Ensure all U.S. states are included in the final dataset, even if they have no data.
@@ -85,27 +85,27 @@ all_states = set(['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'H
                   'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'])
 existing_states = set(state_counts['STATE'])
 missing_states = all_states - existing_states
-missing_states_df = pd.DataFrame({'STATE': list(missing_states), 'total_people': 0, 'antivax_count': 0, 'antivax_percentage': 0})
+missing_states_df = pd.DataFrame({'STATE': list(missing_states), 'total_people': 0, 'hesitantPatient_count': 0, 'hesitantPatient_percentage': 0})
 state_counts = pd.concat([state_counts, missing_states_df], ignore_index=True)
 
-# Use Plotly to generate a choropleth map visualizing the percentage of antivax individuals by state.
+# Use Plotly to generate a choropleth map visualizing the percentage of hesitant individuals by state.
 fig = px.choropleth(
     state_counts,
     locations='STATE',
     locationmode='USA-states',
-    color='antivax_percentage',
+    color='hesitantPatient_percentage',
     color_continuous_scale='Blues',
     scope='usa',
-    title='Antivax Individuals by State (Generated Population)',
+    title='HesitantPatient Individuals by State (Generated Population)',
     labels={
-        'antivax_percentage': 'Antivax Percentage',
+        'hesitantPatient_percentage': 'HesitantPatient Percentage',
         'total_people': 'Total People',
-        'antivax_count': 'Antivax Count'
+        'hesitantPatient_count': 'HesitantPatient Count'
     },
     hover_data={
         'total_people': ':,',
-        'antivax_count': ':,',
-        'antivax_percentage': ':.2f'
+        'hesitantPatient_count': ':,',
+        'hesitantPatient_percentage': ':.2f'
     }
 )
 
@@ -178,35 +178,35 @@ for idx, row in state_counts.iterrows():
     if state in state_centroids:
         hover_text = (
             f"State: {state}<br>"
-            f"Antivax Count: {row['antivax_count']:,}<br>"
+            f"HesitantPatient Count: {row['hesitantPatient_count']:,}<br>"
             f"Total People: {row['total_people']:,}<br>"
-            f"Antivax Percentage: {row['antivax_percentage']:.2f}%"
+            f"HesitantPatient Percentage: {row['hesitantPatient_percentage']:.2f}%"
         )
         fig.add_trace(go.Scattergeo(
             lat=[state_centroids[state]['lat']],
             lon=[state_centroids[state]['lon']],
-            text=f"{row['antivax_count']}/{row['total_people']}",  # Display text on the map
+            text=f"{row['hesitantPatient_count']}/{row['total_people']}",  # Display text on the map
             hovertext=hover_text,
             mode='text',
             textfont=dict(
                 size=10,
-                color='black' if row['antivax_count'] > 0 else 'gray'
+                color='black' if row['hesitantPatient_count'] > 0 else 'gray'
             ),
             hoverinfo='text',
             showlegend=False
         ))
 
-# Summarize the total population and antivax statistics for display in the map's title.
+# Summarize the total population and hesitant statistics for display in the map's title.
 total_people = state_counts['total_people'].sum()
-total_antivax = state_counts['antivax_count'].sum()
-antivax_percentage = (total_antivax / total_people) * 100 if total_people > 0 else 0
+total_hesitantPatient = state_counts['hesitant_count'].sum()
+hesitant_percentage = (total_hesitant / total_people) * 100 if total_people > 0 else 0
 
 # Customize the layout and add a color bar to enhance the user experience.
 fig.update_layout(
     title=(
-        f"<b>Antivax Individuals by State (Generated Population)</b><br>"
-        f"<br>Total People: {total_people:,} | Total Antivax: {total_antivax:,} "
-        f"({antivax_percentage:.2f}%)"
+        f"<b>HesitantPatient Individuals by State (Generated Population)</b><br>"
+        f"<br>Total People: {total_people:,} | Total HesitantPatient: {total_hesitant:,} "
+        f"({hesitant_percentage:.2f}%)"
     ),
     geo=dict(
         showocean=True,
@@ -214,7 +214,7 @@ fig.update_layout(
     ),
     margin=dict(l=50, r=50, t=50, b=50),
     coloraxis_colorbar=dict(
-        title='% Antivax Individuals',
+        title='% HesitantPatient Individuals',
         tickvals=[0, 25, 50, 75, 100],
         ticktext=['0%', '25%', '50%', '75%', '100%']
     )

@@ -460,15 +460,15 @@ public class FhirStu3 {
 
     patientResource.addExtension(ethnicityExtension);
 
-    // Add patient antivax extension
+    // Add patient hesitant extension
     if (person.attributes.containsKey(Person.ANTIVAX)) {
-      Boolean isAntivax = (Boolean) person.attributes.get(Person.ANTIVAX);
+      Boolean isHesitantPatient = (Boolean) person.attributes.get(Person.ANTIVAX);
 
-      Extension antivaxExtension = new Extension();
-      antivaxExtension.setUrl("http://synthetichealth.github.io/synthea/antivax");
-      antivaxExtension.setValue(new BooleanType(isAntivax));
+      Extension hesitantExtension = new Extension();
+      hesitantExtension.setUrl("http://synthetichealth.github.io/synthea/hesitant");
+      hesitantExtension.setValue(new BooleanType(isHesitantPatient));
 
-      patientResource.addExtension(antivaxExtension);
+      patientResource.addExtension(hesitantExtension);
     }
 
     String firstLanguage = (String) person.attributes.get(Person.FIRST_LANGUAGE);

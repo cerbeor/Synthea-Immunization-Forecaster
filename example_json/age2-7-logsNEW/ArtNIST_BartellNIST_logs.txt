@@ -4429,4 +4429,4 @@ Encounter date : Wed Nov 13 06:36:30 CET 2024
 Records: total=1, alive=1, dead=0
 RNG=1
 Clinician RNG=8554
-Antivax patients: 0 out of 1 (0,00%)
+Hesitant patients: 0 out of 1 (0,00%)

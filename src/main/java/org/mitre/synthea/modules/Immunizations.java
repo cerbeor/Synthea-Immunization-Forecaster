@@ -46,12 +46,12 @@ public class Immunizations {
 
   /** Probability of a normal person not taking a vaccine */
   private static double noVaccineProbability = 0; // default value
-  /** Probability of an antivax person not taking a vaccine */
-  private static double noVaccineProbabilityAntivax = 100; // default value
+  /** Probability of an hesitant person not taking a vaccine */
+  private static double noVaccineProbabilityHesitantPatient = 100; // default value
   /** Probability of a normal clinician not administrating a vaccine */
   private static double noVaccineProbabilityClinician = 0; // default value
-  /** Probability of an antivax clinician not administrating a vaccine */
-  private static double noVaccineProbabilityAntivaxClinician = 100; // default value
+  /** Probability of an under vaxxed clinician not administrating a vaccine */
+  private static double noVaccineProbabilityUnderVaxxedClinician = 100; // default value
   /** Flag to use NIST immunization module */
   private static boolean usingNistImmunizationModule = false; // default value : use Synthea's immunization module
 
@@ -291,7 +291,7 @@ public class Immunizations {
    * considering factors such as patient preferences, clinician preferences, and random probability.
    *
    * @param person The Person object representing the patient. The method uses attributes
-   *               from the person object to determine antivax status and retrieve encounter details.
+   *               from the person object to determine hesitant status and retrieve encounter details.
    *
    * @return true if the vaccine should be administered; false otherwise.
    */
@@ -304,9 +304,9 @@ public class Immunizations {
     // Default value for the immunization
     boolean getImmunization = true;
 
-    // If antivax person
+    // If hesitant person
     if ((boolean) person.attributes.get(Person.ANTIVAX)){
-      if (randomNumber < noVaccineProbabilityAntivax) {
+      if (randomNumber < noVaccineProbabilityHesitantPatient) {
         getImmunization = false;
       }
     } else {
@@ -315,13 +315,13 @@ public class Immunizations {
       }
     }
 
-    // If antivax clinician
+    // If under vaxxed clinician
     HealthRecord.Encounter currentEncounter = (HealthRecord.Encounter) person.attributes.get(Person.CURRENT_ENCOUNTER);
     // Generate a random number to determine whether the clinician should administer the vaccine
     randomNumber = random.nextInt(100);
-    // If the clinician is antivax
+    // If the clinician is hesitant
     if ((boolean) currentEncounter.clinician.attributes.get(Person.ANTIVAX)) {
-      if (randomNumber < noVaccineProbabilityAntivaxClinician) {
+      if (randomNumber < noVaccineProbabilityUnderVaxxedClinician) {
         getImmunization = false;
       }
     } else {
@@ -540,20 +540,20 @@ public class Immunizations {
     return Immunizations.noVaccineProbability;
   }
 
-  public static double getNoVaccineProbabilityAntivax() {
-    return Immunizations.noVaccineProbabilityAntivax;
+  public static double getNoVaccineProbabilityHesitantPatient() {
+    return Immunizations.noVaccineProbabilityHesitantPatient;
   }
 
-  public static void setNoVaccineProbabilityAntivax(double noVaccineProbabilityAntivax) {
-    Immunizations.noVaccineProbabilityAntivax = noVaccineProbabilityAntivax;
+  public static void setNoVaccineProbabilityHesitantPatient(double noVaccineProbabilityHesitantPatient) {
+    Immunizations.noVaccineProbabilityHesitantPatient = noVaccineProbabilityHesitantPatient;
   }
 
   public static void setNoVaccineProbabilityClinician(double noVaccineProbabilityClinician) {
     Immunizations.noVaccineProbabilityClinician = noVaccineProbabilityClinician;
   }
 
-  public static void setNoVaccineProbabilityAntivaxClinician(double noVaccineProbabilityAntivaxClinician) {
-    Immunizations.noVaccineProbabilityAntivaxClinician = noVaccineProbabilityAntivaxClinician;
+  public static void setNoVaccineProbabilityUnderVaxxedClinician(double noVaccineProbabilityUnderVaxxedClinician) {
+    Immunizations.noVaccineProbabilityUnderVaxxedClinician = noVaccineProbabilityUnderVaxxedClinician;
   }
 
   public static void setUsingNistImmunizationModule(boolean usingNistImmunizationModule) {

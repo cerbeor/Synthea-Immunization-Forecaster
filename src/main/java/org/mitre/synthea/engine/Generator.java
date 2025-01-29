@@ -84,8 +84,8 @@ public class Generator {
   private Exporter.ExporterRuntimeOptions exporterRuntimeOptions;
   public static EntityManager entityManager;
   public final int threadPoolSize;
-  // Number of antivax patients generated
-  public AtomicInteger antivaxCount = new AtomicInteger(0);
+  // Number of hesitant patients generated
+  public AtomicInteger hesitantPatientCount = new AtomicInteger(0);
   public static String DEFAULT_STATE = "Massachusetts";
 
   // List of US states without abbreviations
@@ -166,18 +166,18 @@ public class Generator {
     public int daysToTravelForward = -1;
     /** Path to a module defining which patients should be kept and exported. */
     public Path keepPatientsModulePath;
-    /** Percentage of individuals to assign as antivax (default 0), for immunization module */
-    public double antivaxPercentage = 0;
-    /** Map storing the percentage for each person with last name's first letter to be antivax */
-    public Map<String, Double> antivaxFirstLetters = new HashMap<>();
-    /** Map storing the percentage for each person in zip code prefixes to be antivax */
-    public Map<String, Double> antivaxZipCodePrefixes = new HashMap<>();
-    /** Percentage of clinicians to assign as antivax (default 0), for immunization module */
-    public double cliniciansAntivaxPercentage = 0;
-    /** Map storing the percentage for each clinician with last name's first letter to be antivax */
-    public Map<String, Double> cliniciansAntivaxFirstLetters = new HashMap<>();
-    /** Map storing the percentage for each clinician in zip code prefixes to be antivax */
-    public Map<String, Double> cliniciansAntivaxZipCodePrefixes = new HashMap<>();
+    /** Percentage of individuals to assign as hesitant (default 0), for immunization module */
+    public double hesitantPatientPercentage = 0;
+    /** Map storing the percentage for each person with last name's first letter to be hesitant */
+    public Map<String, Double> hesitantPatientFirstLetters = new HashMap<>();
+    /** Map storing the percentage for each person in zip code prefixes to be hesitant */
+    public Map<String, Double> hesitantPatientZipCodePrefixes = new HashMap<>();
+    /** Percentage of clinicians to assign as hesitant (default 0), for immunization module */
+    public double underVaxxedCliniciansPercentage = 0;
+    /** Map storing the percentage for each clinician with last name's first letter to be hesitant */
+    public Map<String, Double> underVaxxedCliniciansFirstLetters = new HashMap<>();
+    /** Map storing the percentage for each clinician in zip code prefixes to be hesitant */
+    public Map<String, Double> underVaxxedCliniciansZipCodePrefixes = new HashMap<>();
   }
 
   /**
@@ -302,9 +302,9 @@ public class Generator {
     }
 
     // Initialize hospitals
-    Provider.setCliniciansAntivaxPercentage(options.cliniciansAntivaxPercentage);
-    Provider.setCliniciansAntivaxFirstLetters(options.cliniciansAntivaxFirstLetters);
-    Provider.setCliniciansAntivaxZipCodePrefixes(options.cliniciansAntivaxZipCodePrefixes);
+    Provider.setUnderVaxxedCliniciansPercentage(options.underVaxxedCliniciansPercentage);
+    Provider.setUnderVaxxedCliniciansFirstLetters(options.underVaxxedCliniciansFirstLetters);
+    Provider.setUnderVaxxedCliniciansZipCodePrefixes(options.underVaxxedCliniciansZipCodePrefixes);
     Provider.loadProviders(location, this.clinicianRandom);
     // Initialize Payers
     PayerManager.loadPayers(location);
@@ -455,9 +455,9 @@ public class Generator {
             stats.get("alive").get(), stats.get("dead").get());
     System.out.printf("RNG=%d\n", this.populationRandom.getCount());
     System.out.printf("Clinician RNG=%d\n", this.clinicianRandom.getCount());
-    System.out.printf("Antivax patients: %d out of %d (%.2f%%)\n",
-            antivaxCount.get(), totalGeneratedPopulation.get(),
-            ((double) antivaxCount.get() / totalGeneratedPopulation.get()) * 100);
+    System.out.printf("Hesitant patients: %d out of %d (%.2f%%)\n",
+            hesitantPatientCount.get(), totalGeneratedPopulation.get(),
+            ((double) hesitantPatientCount.get() / totalGeneratedPopulation.get()) * 100);
 
 
     if (this.metrics != null) {
@@ -696,7 +696,7 @@ public class Generator {
   public Person createPerson(long personSeed, Map<String, Object> demoAttributes) {
 
     // Initialize person.
-    boolean isAntivax = false;
+    boolean isHesitantPatient = false;
     Person person = new Person(personSeed);
     person.populationSeed = this.options.seed;
     person.attributes.putAll(demoAttributes);
@@ -707,28 +707,28 @@ public class Generator {
     LifecycleModule.birth(person, person.lastUpdated);
 
 
-    if (options.antivaxFirstLetters != null){
+    if (options.hesitantPatientFirstLetters != null){
       // Check if last name matches any of the specified letters with percentages
       String lastName = (String) person.attributes.get(Person.LAST_NAME);
-      if (lastName != null && options.antivaxFirstLetters.containsKey(lastName.substring(0, 1).toLowerCase())) {
-        // If true, person have a certain percentage of chance to be antivax
-        double percentage = options.antivaxFirstLetters.get(lastName.substring(0, 1).toLowerCase());
+      if (lastName != null && options.hesitantPatientFirstLetters.containsKey(lastName.substring(0, 1).toLowerCase())) {
+        // If true, person have a certain percentage of chance to be hesitant
+        double percentage = options.hesitantPatientFirstLetters.get(lastName.substring(0, 1).toLowerCase());
         if (person.randInt(100) < percentage) {
-          isAntivax = true;
+          isHesitantPatient = true;
         }
       }
     }
 
-    if (!isAntivax && options.antivaxZipCodePrefixes != null){
+    if (!isHesitantPatient && options.hesitantPatientZipCodePrefixes != null){
       // Check if zip code matches any of the specified prefixes with percentages
       String zipCode = (String) person.attributes.get(Person.ZIP);
       if (zipCode != null) {
-        for (String prefix : options.antivaxZipCodePrefixes.keySet()) {
+        for (String prefix : options.hesitantPatientZipCodePrefixes.keySet()) {
           if (zipCode.startsWith(prefix)) {
-            // If true, person have a certain percentage of chance to be antivax
-            double percentage = options.antivaxZipCodePrefixes.get(prefix);
+            // If true, person have a certain percentage of chance to be hesitant
+            double percentage = options.hesitantPatientZipCodePrefixes.get(prefix);
             if (person.randInt(100) < percentage) {
-              isAntivax = true;
+              isHesitantPatient = true;
               break;
             }
           }
@@ -736,19 +736,19 @@ public class Generator {
       }
     }
 
-    if (options.antivaxZipCodePrefixes.isEmpty() && options.antivaxFirstLetters.isEmpty()){
-      // Randomly assign antivax based on the antivaxPercentage if options.antivaxFirstLetters and options.antivaxZipCodePrefixes are null
-      if (person.randInt(100) < this.options.antivaxPercentage) {
-        isAntivax = true;
+    if (options.hesitantPatientZipCodePrefixes.isEmpty() && options.hesitantPatientFirstLetters.isEmpty()){
+      // Randomly assign hesitant based on the hesitantPatientPercentage if options.hesitantPatientFirstLetters and options.hesitantPatientZipCodePrefixes are null
+      if (person.randInt(100) < this.options.hesitantPatientPercentage) {
+        isHesitantPatient = true;
       }
     }
 
 
-    if(!isAntivax){
+    if(!isHesitantPatient){
       person.attributes.put(Person.ANTIVAX, false);
     } else {
       person.attributes.put(Person.ANTIVAX, true);
-      antivaxCount.incrementAndGet();
+      hesitantPatientCount.incrementAndGet();
     }
 
 

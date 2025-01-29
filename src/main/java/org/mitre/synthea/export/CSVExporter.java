@@ -655,9 +655,9 @@ public class CSVExporter {
     // s.append(person.attributes.get("most-recent-qaly")).append(',');
     // DALYS
     // s.append(person.attributes.get("most-recent-daly"));
-    // Antivax Status
-    boolean isAntivax = (Boolean) person.attributes.getOrDefault(Person.ANTIVAX, false);
-    s.append(',').append(isAntivax);
+    // HesitantPatient Status
+    boolean isHesitantPatient = (Boolean) person.attributes.getOrDefault(Person.ANTIVAX, false);
+    s.append(',').append(isHesitantPatient);
 
     s.append(NEWLINE);
     write(s.toString(), patients);

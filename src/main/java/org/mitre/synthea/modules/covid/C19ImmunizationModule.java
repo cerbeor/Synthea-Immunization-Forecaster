@@ -266,9 +266,9 @@ public class C19ImmunizationModule extends Module {
     // Determine if the person will never get the Covid19 shot based on the probability of not getting vaccine
     Random rand = new Random();
     int random_number = rand.nextInt(100);
-    // Check if the person is antivax
+    // Check if the person is hesitant
     if ((boolean) person.attributes.getOrDefault(Person.ANTIVAX, false)){
-      if (random_number < Immunizations.getNoVaccineProbabilityAntivax()){
+      if (random_number < Immunizations.getNoVaccineProbabilityHesitantPatient()){
         status = VaccinationStatus.NEVER_GOING_TO_GET_SHOT;
       }
     } else {

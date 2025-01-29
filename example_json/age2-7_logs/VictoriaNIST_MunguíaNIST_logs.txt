@@ -3099,8 +3099,8 @@ Encounter date : Sun Nov 24 23:38:54 CET 2024
    -> 03 MMR | Tue Jan 14 08:00:00 CET 2025 ;
    -> 88 Influenza | Tue Jan 14 08:00:00 CET 2025 ;
 ---Vaccines (cvx) to be administered : []
-1 -- VictoriaNIST MunguíaNIST (null) (6 y/o F) Windsor, Wisconsin, 53598  (9023)
+1 -- VictoriaNIST Munguï¿½aNIST (null) (6 y/o F) Windsor, Wisconsin, 53598  (9023)
 Records: total=1, alive=1, dead=0
 RNG=1
 Clinician RNG=6322
-Antivax patients: 0 out of 1 (0,00%)
+Hesitant patients: 0 out of 1 (0,00%)

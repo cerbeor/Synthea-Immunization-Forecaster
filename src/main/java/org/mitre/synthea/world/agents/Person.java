@@ -122,7 +122,7 @@ public class Person implements Serializable, RandomNumberGenerator, QuadTreeElem
 
   public static final String NO_VEHICLE_ACCESS = "no_vehicle_access";
   public static final String UNINSURED = "uninsured";
-  public static final String ANTIVAX = "antivax";
+  public static final String ANTIVAX = "hesitantPatient";
   public static final String CURRENT_ENCOUNTER = "current_encounter";
 
   private final DefaultRandomNumberGenerator random;

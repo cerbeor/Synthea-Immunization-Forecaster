@@ -41,16 +41,16 @@ public class App {
     System.out.println("         [-f fixedRecordPath]");
     System.out.println("         [-k keepMatchingPatientsPath]");
     System.out.println("         [-NistImmunizationModule]");
-    System.out.println("         [-NistImmunizationModule -antivaxPercentage antivaxPercentage]");
-    System.out.println("         [-NistImmunizationModule -antivaxLastNames firstLetter]");
-    System.out.println("         [-NistImmunizationModule -antivaxZipCodePrefixes zipPrefixes]");
-    System.out.println("         [-NistImmunizationModule -cliniciansAntivaxPercentage cliniciansAntivaxPercentage]");
-    System.out.println("         [-NistImmunizationModule -cliniciansAntivaxLastName cliniciansAntivaxFirstLetter]");
-    System.out.println("         [-NistImmunizationModule -cliniciansAntivaxZipCodePrefixes cliniciansAntivaxZipPrefixes]");
+    System.out.println("         [-NistImmunizationModule -hesitantPatientPercentage hesitantPatientPercentage]");
+    System.out.println("         [-NistImmunizationModule -hesitantPatientLastNames firstLetter]");
+    System.out.println("         [-NistImmunizationModule -hesitantPatientZipCodePrefixes zipPrefixes]");
+    System.out.println("         [-NistImmunizationModule -underVaxxedCliniciansPercentage underVaxxedCliniciansPercentage]");
+    System.out.println("         [-NistImmunizationModule -underVaxxedCliniciansLastName underVaxxedCliniciansFirstLetter]");
+    System.out.println("         [-NistImmunizationModule -underVaxxedCliniciansZipCodePrefixes underVaxxedCliniciansZipPrefixes]");
     System.out.println("         [-NistImmunizationModule -noVaccineProbability noVaccineProbability]");
-    System.out.println("         [-NistImmunizationModule -noVaccineProbabilityAntivax noVaccineProbabilityAntivax]");
+    System.out.println("         [-NistImmunizationModule -noVaccineProbabilityHesitantPatient noVaccineProbabilityHesitantPatient]");
     System.out.println("         [-NistImmunizationModule -noVaccineProbabilityClinician noVaccineProbabilityClinician]");
-    System.out.println("         [-NistImmunizationModule -noVaccineProbabilityAntivaxClinician noVaccineProbabilityAntivaxClinician]");
+    System.out.println("         [-NistImmunizationModule -noVaccineProbabilityUnderVaxxedClinician noVaccineProbabilityUnderVaxxedClinician]");
     System.out.println("         [-testServer]");
     System.out.println("         [-NistImmunizationModule]");
     System.out.println("         [--config*=value]");
@@ -68,14 +68,14 @@ public class App {
     System.out.println("");
     System.out.println("Options to use with -NistImmunizationModule :");
     System.out.println("run_synthea -NistImmunizationModule"); //Use the NIST immunization forecaster server
-    System.out.println("run_synthea -NistImmunizationModule -antivaxPercentage 90"); // Percentage of antivax people
-    System.out.println("run_synthea -NistImmunizationModule -p 50 -antivaxLastNames A:20-B:50-C:30 -antivaxZipCodePrefixes 010:80-023:90"); // Percentage of antivax people by first letter of last name and zip code prefix
-    System.out.println("run_synthea -NistImmunizationModule -p 50 -cliniciansAntivaxLastName A:20-B:50-C:30 -cliniciansAntivaxZipPrefixes 010:80-023:90"); // Percentage of antivax clinicians by first letter of last name and zip code prefix
-    System.out.println("run_synthea -NistImmunizationModule -cliniciansAntivaxPercentage 100"); // Percentage of antivax clinicians
+    System.out.println("run_synthea -NistImmunizationModule -hesitantPatientPercentage 90"); // Percentage of hesitant patients
+    System.out.println("run_synthea -NistImmunizationModule -p 50 -hesitantPatientLastNames A:20-B:50-C:30 -hesitantPatientZipCodePrefixes 010:80-023:90"); // Percentage of hesitant patients by first letter of last name and zip code prefix
+    System.out.println("run_synthea -NistImmunizationModule -p 50 -underVaxxedCliniciansLastName A:20-B:50-C:30 -underVaxxedCliniciansZipPrefixes 010:80-023:90"); // Percentage of under vaxxed clinicians by first letter of last name and zip code prefix
+    System.out.println("run_synthea -NistImmunizationModule -underVaxxedCliniciansPercentage 100"); // Percentage of under vaxxed clinicians
     System.out.println("run_synthea -NistImmunizationModule -noVaccineProbability 100"); // Probability of a person not getting a vaccine
-    System.out.println("run_synthea -NistImmunizationModule -noVaccineProbabilityAntivax 100"); // Probability of an antivax person not getting a vaccine
+    System.out.println("run_synthea -NistImmunizationModule -noVaccineProbabilityHesitantPatient 100"); // Probability of an hesitant person not getting a vaccine
     System.out.println("run_synthea -NistImmunizationModule -noVaccineProbabilityClinician 100"); // Probability of a clinician not administrating a vaccine
-    System.out.println("run_synthea -NistImmunizationModule -noVaccineProbabilityAntivaxClinician 100"); // Probability of a clinician person not administrating a vaccine
+    System.out.println("run_synthea -NistImmunizationModule -noVaccineProbabilityUnderVaxxedClinician 100"); // Probability of a clinician person not administrating a vaccine
     System.out.println("run_synthea -NistImmunizationModule -testServer"); // Change the immunization forecaster server to the test server
   }
 
@@ -257,51 +257,51 @@ public class App {
               throw new FileNotFoundException(String.format(
                   "Specified IG directory (%s) does not exist", value));
             }
-          } else if (currArg.equals("-antivaxPercentage")) {
+          } else if (currArg.equals("-hesitantPatientPercentage")) {
             String value = argsQ.poll();
-            options.antivaxPercentage = Double.parseDouble(value);
-            if (options.antivaxPercentage < 0 || options.antivaxPercentage > 100) {
-              throw new IllegalArgumentException("Antivax percentage must be between 0 and 100.");
+            options.hesitantPatientPercentage = Double.parseDouble(value);
+            if (options.hesitantPatientPercentage < 0 || options.hesitantPatientPercentage > 100) {
+              throw new IllegalArgumentException("Hesitant patientspercentage must be between 0 and 100.");
             }
-            System.out.println("Antivax percentage: " + options.antivaxPercentage);
-          } else if (currArg.equals("-antivaxLastNames")) {
+            System.out.println("Hesitant patientspercentage: " + options.hesitantPatientPercentage);
+          } else if (currArg.equals("-hesitantPatientLastNames")) {
             String value = argsQ.poll();
             if (value == null) {
-              System.err.println("Error: No value provided for -antivaxLastNames.");
+              System.err.println("Error: No value provided for -hesitantPatientLastNames.");
             } else {
-              parseAntivaxMap(value.toLowerCase(), options.antivaxFirstLetters);
-              System.out.println("Antivax first letters and percentages: " + options.antivaxFirstLetters);
+              parseHesitantPatientMap(value.toLowerCase(), options.hesitantPatientFirstLetters);
+              System.out.println("Hesitant patientsfirst letters and percentages: " + options.hesitantPatientFirstLetters);
             }
-          } else if (currArg.equals("-antivaxZipCodePrefixes")) {
+          } else if (currArg.equals("-hesitantPatientZipCodePrefixes")) {
             String value = argsQ.poll();
             if (value == null) {
-              System.err.println("Error: No value provided for -antivaxZipCodePrefixes.");
+              System.err.println("Error: No value provided for -hesitantPatientZipCodePrefixes.");
             } else {
-              parseAntivaxMap(value, options.antivaxZipCodePrefixes);
-              System.out.println("Antivax zip code prefixes and percentages: " + options.antivaxZipCodePrefixes);
+              parseHesitantPatientMap(value, options.hesitantPatientZipCodePrefixes);
+              System.out.println("Hesitant patientszip code prefixes and percentages: " + options.hesitantPatientZipCodePrefixes);
             }
-          } else if (currArg.equals("-cliniciansAntivaxPercentage")) {
+          } else if (currArg.equals("-underVaxxedCliniciansPercentage")) {
             String value = argsQ.poll();
-            options.cliniciansAntivaxPercentage = Double.parseDouble(value);
-            if (options.cliniciansAntivaxPercentage < 0 || options.cliniciansAntivaxPercentage > 100) {
-              throw new IllegalArgumentException("Clinicians antivax percentage must be between 0 and 100.");
+            options.underVaxxedCliniciansPercentage = Double.parseDouble(value);
+            if (options.underVaxxedCliniciansPercentage < 0 || options.underVaxxedCliniciansPercentage > 100) {
+              throw new IllegalArgumentException("Under vaxxed clinicians percentage must be between 0 and 100.");
             }
-            System.out.println("Clinicians Antivax percentage: " + options.cliniciansAntivaxPercentage);
-          } else if (currArg.equals("-cliniciansAntivaxLastName")) {
-            String value = argsQ.poll();
-            if (value == null) {
-              System.err.println("Error: No value provided for -cliniciansAntivaxLastName.");
-            } else {
-              parseAntivaxMap(value.toLowerCase(), options.cliniciansAntivaxFirstLetters);
-              System.out.println("Clinicians antivax first letters and percentages: " + options.cliniciansAntivaxFirstLetters);
-            }
-          } else if (currArg.equals("-cliniciansAntivaxZipCodePrefixes")) {
+            System.out.println("Under vaxxed clinicians percentage: " + options.underVaxxedCliniciansPercentage);
+          } else if (currArg.equals("-underVaxxedCliniciansLastName")) {
             String value = argsQ.poll();
             if (value == null) {
-              System.err.println("Error: No value provided for -cliniciansAntivaxZipCodePrefixes.");
+              System.err.println("Error: No value provided for -underVaxxedCliniciansLastName.");
             } else {
-              parseAntivaxMap(value, options.cliniciansAntivaxZipCodePrefixes);
-              System.out.println("Clinicians antivax zip code prefixes and percentages: " + options.cliniciansAntivaxZipCodePrefixes);
+              parseHesitantPatientMap(value.toLowerCase(), options.underVaxxedCliniciansFirstLetters);
+              System.out.println("Under vaxxed clinicians first letters and percentages: " + options.underVaxxedCliniciansFirstLetters);
+            }
+          } else if (currArg.equals("-underVaxxedCliniciansZipCodePrefixes")) {
+            String value = argsQ.poll();
+            if (value == null) {
+              System.err.println("Error: No value provided for -underVaxxedCliniciansZipCodePrefixes.");
+            } else {
+              parseHesitantPatientMap(value, options.underVaxxedCliniciansZipCodePrefixes);
+              System.out.println("Under vaxxed clinicians zip code prefixes and percentages: " + options.underVaxxedCliniciansZipCodePrefixes);
             }
           } else if (currArg.equals("-noVaccineProbability")) {
             String value = argsQ.poll();
@@ -311,13 +311,13 @@ public class App {
               Immunizations.setNoVaccineProbability(Double.parseDouble(value));
               System.out.println("Not taking a vaccine probability for normal people: " + Immunizations.getNoVaccineProbability());
             }
-          } else if (currArg.equals("-noVaccineProbabilityAntivax")) {
+          } else if (currArg.equals("-noVaccineProbabilityHesitantPatient")) {
             String value = argsQ.poll();
             if (value == null) {
-              System.err.println("Error: No value provided for -noVaccineProbabilityAntivax.");
+              System.err.println("Error: No value provided for -noVaccineProbabilityHesitantPatient.");
             } else {
-              Immunizations.setNoVaccineProbabilityAntivax(Double.parseDouble(value));
-              System.out.println("Not taking a vaccine probability for antivax people: " + Immunizations.getNoVaccineProbabilityAntivax());
+              Immunizations.setNoVaccineProbabilityHesitantPatient(Double.parseDouble(value));
+              System.out.println("Not taking a vaccine probability for hesitant patients: " + Immunizations.getNoVaccineProbabilityHesitantPatient());
             }
           } else if (currArg.equals("-noVaccineProbabilityClinician")) {
             String value = argsQ.poll();
@@ -325,15 +325,15 @@ public class App {
               System.err.println("Error: No value provided for -noVaccineProbabilityClinician.");
             } else {
               Immunizations.setNoVaccineProbabilityClinician(Double.parseDouble(value));
-              System.out.println("Not taking a vaccine probability for normal clinician: " + options.cliniciansAntivaxZipCodePrefixes);
+              System.out.println("Not taking a vaccine probability for normal clinician: " + options.underVaxxedCliniciansZipCodePrefixes);
             }
-          } else if (currArg.equals("-noVaccineProbabilityAntivaxClinician")) {
+          } else if (currArg.equals("-noVaccineProbabilityUnderVaxxedClinician")) {
             String value = argsQ.poll();
             if (value == null) {
-              System.err.println("Error: No value provided for -noVaccineProbabilityAntivaxClinician.");
+              System.err.println("Error: No value provided for -noVaccineProbabilityUnderVaxxedClinician.");
             } else {
-              Immunizations.setNoVaccineProbabilityAntivaxClinician(Double.parseDouble(value));
-              System.out.println("Not taking a vaccine probability for antivax clinician: " + options.cliniciansAntivaxZipCodePrefixes);
+              Immunizations.setNoVaccineProbabilityUnderVaxxedClinician(Double.parseDouble(value));
+              System.out.println("Not taking a vaccine probability for under vaxxed clinician: " + options.underVaxxedCliniciansZipCodePrefixes);
             }
           } else if (currArg.equals("-testServer")) {
             Immunizations.setImmunizationServer(Immunizations.TEST);
@@ -433,7 +433,7 @@ public class App {
    * @param map A Map to store the parsed keys and their corresponding percentages.
    *            Keys are strings, and percentages are stored as Double.
    */
-  private static void parseAntivaxMap(String input, Map<String, Double> map) {
+  private static void parseHesitantPatientMap(String input, Map<String, Double> map) {
     for (String pair : input.split("-")) {
       String[] keyValue = pair.split(":");
       if (keyValue.length == 2) {

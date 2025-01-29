@@ -63,10 +63,10 @@ public abstract class FhirPractitionerExporterR4 {
                     .setUrl(PROC_EXTENSION_URI)
                     .setValue(new IntegerType(doc.getProcedureCount()));
                 }
-                // Add antivax_status as a direct property
+                // Add hesitant_status as a direct property
                 if (doc.attributes.containsKey(Person.ANTIVAX)) {
-                  boolean antivaxStatus = (boolean) doc.attributes.get(Person.ANTIVAX);
-                  practitioner.addExtension("antivax_status", new org.hl7.fhir.r4.model.BooleanType(antivaxStatus));
+                  boolean hesitantStatus = (boolean) doc.attributes.get(Person.ANTIVAX);
+                  practitioner.addExtension("hesitant_status", new org.hl7.fhir.r4.model.BooleanType(hesitantStatus));
                 }
               }
             }
