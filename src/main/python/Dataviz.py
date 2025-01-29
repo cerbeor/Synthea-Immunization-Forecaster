@@ -198,14 +198,14 @@ for idx, row in state_counts.iterrows():
 
 # Summarize the total population and hesitant statistics for display in the map's title.
 total_people = state_counts['total_people'].sum()
-total_hesitantPatient = state_counts['hesitant_count'].sum()
-hesitant_percentage = (total_hesitant / total_people) * 100 if total_people > 0 else 0
+total_hesitantPatient = state_counts['hesitantPatient_count'].sum()
+hesitant_percentage = (total_hesitantPatient / total_people) * 100 if total_people > 0 else 0
 
 # Customize the layout and add a color bar to enhance the user experience.
 fig.update_layout(
     title=(
         f"<b>HesitantPatient Individuals by State (Generated Population)</b><br>"
-        f"<br>Total People: {total_people:,} | Total HesitantPatient: {total_hesitant:,} "
+        f"<br>Total People: {total_people:,} | Total HesitantPatient: {total_hesitantPatient:,} "
         f"({hesitant_percentage:.2f}%)"
     ),
     geo=dict(
