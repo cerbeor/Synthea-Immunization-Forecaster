@@ -1,0 +1,82 @@
+2014-11-14 Birth 
+           - Well child visit (procedure)
+           * Hep B, adolescent or pediatric (08)
+2014-12-19 - Well child visit (procedure)
+           * Hep B, adolescent or pediatric (08)
+2014-12-26 - Encounter for symptom
+2015-02-20 - Well child visit (procedure)
+           * Hib (PRP-T) (48)
+           * DTaP (20)
+           * pneumococcal conjugate PCV 7 (100)
+           * IPV (10)
+           * rotavirus, monovalent (119)
+2015-04-24 - Well child visit (procedure)
+           * Hib (PRP-T) (48)
+           * DTaP (20)
+           * pneumococcal conjugate PCV 7 (100)
+           * IPV (10)
+           * rotavirus, monovalent (119)
+2015-07-16 - Encounter for symptom
+2015-07-24 - Well child visit (procedure)
+           * Hib (PRP-T) (48)
+           * DTaP (20)
+           * pneumococcal conjugate PCV 7 (100)
+           * Influenza, MDCK, trivalent, preservative (320)
+           * Hep B, adolescent or pediatric (08)
+           * IPV (10)
+2015-10-23 - Well child visit (procedure)
+           * IPV (10)
+2016-01-22 - Well child visit (procedure)
+           * Hib (PRP-T) (48)
+           * pneumococcal conjugate PCV 7 (100)
+           * Hep A, ped/adol, 2 dose (83)
+           * varicella (21)
+           * MMR (03)
+2016-04-22 - Well child visit (procedure)
+           * DTaP (20)
+           * varicella (21)
+           * MMR (03)
+2016-10-21 - Well child visit (procedure)
+           * Hep A, ped/adol, 2 dose (83)
+2017-04-21 - Well child visit (procedure)
+2017-10-20 - Well child visit (procedure)
+2018-04-20 - Well child visit (procedure)
+2018-10-19 - Well child visit (procedure)
+2019-09-05 - Emergency room admission (procedure)
+2019-10-25 - Well child visit (procedure)
+           * DTaP (20)
+2020-09-21 - Encounter for symptom
+2020-10-30 - Well child visit (procedure)
+2021-01-28 - Encounter for symptom
+2021-11-05 - Well child visit (procedure)
+2022-11-11 - Well child visit (procedure)
+2023-11-17 - Well child visit (procedure)
+           * HPV, bivalent (118)
+2024-06-29 - Encounter for symptom
+2024-08-11 - Encounter for symptom
+2024-09-01 - Encounter for symptom
+2024-09-22 - Encounter for symptom
+2024-10-06 - Encounter for symptom
+2024-11-22 - Well child visit (procedure)
+
+------------------------------------------------------------------------------------------------------------------------------
+| Vaccine        |   Birth   |  2 months |  4 months |  6 months | 12 months | 18 months |  4 years  |  11 years |  16 years |
+------------------------------------------------------------------------------------------------------------------------------
+| HepB           |     2     |    [ ]    |           |     1     |           |           |           |           |           |
+| RV             |           |     1     |     1     |    [ ]    |           |           |           |           |           |
+| DTaP           |           |     1     |     1     |     1     |    [ ]    |     1     |           |     1     |           |
+| Hib            |           |     1     |     1     |     1     |     1     |           |           |           |           |
+| Pneu           |           |     1     |     1     |     1     |     1     |           |           |           |           |
+| IPV            |           |     1     |     1     |     2     |           |           |           |           |           |
+| MMR            |           |           |           |           |     1     |     1     |           |           |           |
+| Var            |           |           |           |           |     1     |     1     |           |           |           |
+| HepA           |           |           |           |           |     1     |           |     1     |           |           |
+| HPV            |           |           |           |           |           |           |           |           |           |
+| COVID          |           |           |           |           |           |           |           |           |           |
+| Mening         |           |           |           |           |           |           |           |           |           |
+------------------------------------------------------------------------------------------------------------------------------
+| Flu            |           |           |           |     1     |           |           |           |           |           |
+| 118 HPV, bivale|           |           |           |           |           |           |           |     1     |           |
+------------------------------------------------------------------------------------------------------------------------------
+| Encounters     |     3     |     1     |     1     |     3     |     1     |     1     |     5     |     14    |           |
+------------------------------------------------------------------------------------------------------------------------------

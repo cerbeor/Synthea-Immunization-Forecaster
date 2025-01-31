@@ -1,0 +1,74 @@
+2017-09-24 Birth 
+           - Well child visit (procedure)
+           * Hep B, adolescent or pediatric (08)
+2017-10-29 - Well child visit (procedure)
+           * Hep B, adolescent or pediatric (08)
+2017-12-31 - Well child visit (procedure)
+           * Hib (PRP-T) (48)
+           * DTaP (20)
+           * pneumococcal conjugate PCV 7 (100)
+           * IPV (10)
+           * rotavirus, monovalent (119)
+2018-03-04 - Well child visit (procedure)
+           * Hib (PRP-T) (48)
+           * DTaP (20)
+           * pneumococcal conjugate PCV 7 (100)
+           * IPV (10)
+           * rotavirus, monovalent (119)
+2018-06-03 - Well child visit (procedure)
+           * Hib (PRP-T) (48)
+           * DTaP (20)
+           * pneumococcal conjugate PCV 7 (100)
+           * Influenza, MDCK, trivalent, preservative (320)
+           * Hep B, adolescent or pediatric (08)
+           * IPV (10)
+2018-09-02 - Well child visit (procedure)
+           * IPV (10)
+2018-11-07 - Encounter for problem
+2018-11-21 - Encounter for problem
+2018-12-02 - Well child visit (procedure)
+           * Hib (PRP-T) (48)
+           * pneumococcal conjugate PCV 7 (100)
+           * Hep A, ped/adol, 2 dose (83)
+           * varicella (21)
+           * MMR (03)
+2019-03-03 - Well child visit (procedure)
+           * DTaP (20)
+           * varicella (21)
+           * MMR (03)
+2019-09-01 - Well child visit (procedure)
+           * Hep A, ped/adol, 2 dose (83)
+2020-03-01 - Well child visit (procedure)
+2020-08-30 - Well child visit (procedure)
+2021-02-28 - Well child visit (procedure)
+2021-08-29 - Well child visit (procedure)
+2022-05-08 - Emergency room admission (procedure)
+2022-05-09 - Encounter for problem
+2022-09-04 - Well child visit (procedure)
+           * DTaP (20)
+2022-09-11 - Encounter for symptom
+2023-08-18 - Emergency room admission (procedure)
+           - Encounter for problem
+2023-09-10 - Well child visit (procedure)
+2024-09-15 - Well child visit (procedure)
+
+------------------------------------------------------------------------------------------------------------------------------
+| Vaccine        |   Birth   |  2 months |  4 months |  6 months | 12 months | 18 months |  4 years  |  11 years |  16 years |
+------------------------------------------------------------------------------------------------------------------------------
+| HepB           |     2     |    [ ]    |           |     1     |           |           |           |           |           |
+| RV             |           |     1     |     1     |    [ ]    |           |           |           |           |           |
+| DTaP           |           |     1     |     1     |     1     |    [ ]    |     1     |           |     1     |           |
+| Hib            |           |     1     |     1     |     1     |     1     |           |           |           |           |
+| Pneu           |           |     1     |     1     |     1     |     1     |           |           |           |           |
+| IPV            |           |     1     |     1     |     2     |           |           |           |           |           |
+| MMR            |           |           |           |           |     1     |     1     |           |           |           |
+| Var            |           |           |           |           |     1     |     1     |           |           |           |
+| HepA           |           |           |           |           |     1     |           |     1     |           |           |
+| HPV            |           |           |           |           |           |           |           |           |           |
+| COVID          |           |           |           |           |           |           |           |           |           |
+| Mening         |           |           |           |           |           |           |           |           |           |
+------------------------------------------------------------------------------------------------------------------------------
+| Flu            |           |           |           |     1     |           |           |           |           |           |
+------------------------------------------------------------------------------------------------------------------------------
+| Encounters     |     2     |     1     |     1     |     2     |     3     |     1     |     5     |     8     |           |
+------------------------------------------------------------------------------------------------------------------------------
