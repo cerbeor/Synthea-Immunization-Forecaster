@@ -82,7 +82,7 @@ def test_process_patient_data(setup_test_folder):
 
     # Check individual columns
     assert 'STATE' in df.columns, "DataFrame should have a 'STATE' column."
-    assert 'ANTIVAX_STATUS' in df.columns, "DataFrame should have an 'ANTIVAX_STATUS' column."
+    assert 'HESITANT_PATIENT_STATUS' in df.columns, "DataFrame should have an 'HESITANT_PATIENT_STATUS' column."
 
     # Check that both states are in the grouped DataFrame
     expected_states_in_data = {'CA', 'TX'}

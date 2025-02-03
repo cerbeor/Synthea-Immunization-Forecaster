@@ -25,7 +25,7 @@ def process_patient_data(json_folder_path):
                         if entry.get('resource', {}).get('resourceType') == 'Patient':
                             resource = entry['resource']
 
-                            # Extract 'ANTIVAX_STATUS' and 'STATE'
+                            # Extract 'HESITANT_PATIENT_STATUS' and 'STATE'
                             hesitantPatient_status = None
                             state = None
                             for extension in resource.get('extension', []):
@@ -38,7 +38,7 @@ def process_patient_data(json_folder_path):
 
                             # Only append if both are valid
                             if hesitantPatient_status is not None and state is not None:
-                                data.append({'STATE': state, 'ANTIVAX_STATUS': hesitantPatient_status})
+                                data.append({'STATE': state, 'HESITANT_PATIENT_STATUS': hesitantPatient_status})
 
     # 2. Create DataFrame
     df = pd.DataFrame(data)
@@ -50,14 +50,14 @@ def process_patient_data(json_folder_path):
     df.columns = df.columns.str.strip()
 
     # Convert to boolean
-    df['ANTIVAX_STATUS'] = df['ANTIVAX_STATUS'].astype(bool)
+    df['HESITANT_PATIENT_STATUS'] = df['HESITANT_PATIENT_STATUS'].astype(bool)
 
     # 3. Group by state
     state_counts = (
         df.groupby('STATE', as_index=False)
         .agg(
-            total_people=('ANTIVAX_STATUS', 'size'),
-            hesitantPatient_count=('ANTIVAX_STATUS', 'sum')
+            total_people=('HESITANT_PATIENT_STATUS', 'size'),
+            hesitantPatient_count=('HESITANT_PATIENT_STATUS', 'sum')
         )
     )
 
