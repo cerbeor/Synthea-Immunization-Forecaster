@@ -1,0 +1,111 @@
+2010-09-29 Birth 
+           - Well child visit (procedure)
+           * Hep B, adolescent or pediatric (08)
+2010-11-03 - Well child visit (procedure)
+           * Hep B, adolescent or pediatric (08)
+2011-01-05 - Well child visit (procedure)
+           * Hib (PRP-T) (48)
+           * DTaP (20)
+           * pneumococcal conjugate PCV 7 (100)
+           * IPV (10)
+           * rotavirus, monovalent (119)
+2011-03-09 - Well child visit (procedure)
+           * Hib (PRP-T) (48)
+           * DTaP (20)
+           * pneumococcal conjugate PCV 7 (100)
+           * IPV (10)
+           * rotavirus, monovalent (119)
+2011-06-08 - Well child visit (procedure)
+           * Hib (PRP-T) (48)
+           * DTaP (20)
+           * pneumococcal conjugate PCV 7 (100)
+           * Influenza, MDCK, trivalent, preservative (320)
+           * Hep B, adolescent or pediatric (08)
+           * IPV (10)
+2011-09-07 - Well child visit (procedure)
+           * IPV (10)
+2011-12-07 - Well child visit (procedure)
+           * Hib (PRP-T) (48)
+           * pneumococcal conjugate PCV 7 (100)
+           * Hep A, ped/adol, 2 dose (83)
+           * varicella (21)
+           * MMR (03)
+2012-03-07 - Well child visit (procedure)
+           * DTaP (20)
+           * varicella (21)
+           * MMR (03)
+2012-09-05 - Well child visit (procedure)
+           * Hep A, ped/adol, 2 dose (83)
+2013-03-06 - Well child visit (procedure)
+2013-05-20 - Encounter for problem
+2013-05-24 - Encounter for problem
+2013-06-08 - Encounter for problem
+2013-09-04 - Well child visit (procedure)
+2014-01-07 - Encounter for symptom
+2014-03-05 - Well child visit (procedure)
+2014-07-06 - Emergency hospital admission for asthma
+2014-07-08 - Asthma follow-up
+2014-09-03 - Well child visit (procedure)
+2014-10-25 - Encounter for symptom
+2015-03-07 - Encounter for symptom
+2015-09-09 - Well child visit (procedure)
+           * DTaP (20)
+2015-12-30 - Asthma follow-up
+2016-02-03 - Encounter for symptom
+2016-02-10 - Emergency room admission (procedure)
+2016-02-17 - Emergency room admission (procedure)
+2016-04-05 - Encounter for symptom
+2016-09-14 - Well child visit (procedure)
+2016-12-24 - Asthma follow-up
+2017-09-20 - Well child visit (procedure)
+2017-09-27 - Emergency room admission (procedure)
+2017-11-08 - Encounter for check up
+2017-12-19 - Emergency hospital admission for asthma
+2017-12-20 - Asthma follow-up
+2018-09-26 - Well child visit (procedure)
+2019-10-02 - Well child visit (procedure)
+           * HPV, bivalent (118)
+2020-06-02 - Encounter for problem
+2020-10-07 - Well child visit (procedure)
+2021-01-27 - Urgent care clinic (environment)
+2021-02-03 - Encounter for check up (procedure)
+2021-02-10 - Encounter for symptom
+2021-07-20 - Emergency room admission (procedure)
+2021-10-13 - Well child visit (procedure)
+           * meningococcal MCV4P (114)
+2021-11-29 - Asthma follow-up
+2022-01-16 - Encounter for symptom
+2022-01-26 - Encounter for check up (procedure)
+2022-05-06 - Encounter for problem
+2022-10-04 - Emergency room admission (procedure)
+2022-10-12 - Administration of vaccine to produce active immunity (procedure)
+           * SARS-COV-2 (COVID-19) vaccine, mRNA, spike protein, LNP, preservative free, 30 mcg/0.3mL dose (208)
+2022-10-19 - Well child visit (procedure)
+2022-11-02 - Administration of vaccine to produce active immunity (procedure)
+           * SARS-COV-2 (COVID-19) vaccine, mRNA, spike protein, LNP, preservative free, 30 mcg/0.3mL dose (208)
+2023-10-04 - Allergic disorder initial assessment
+2023-10-25 - Well child visit (procedure)
+2024-09-28 - Consultation for treatment
+2024-10-30 - Well child visit (procedure)
+
+------------------------------------------------------------------------------------------------------------------------------
+| Vaccine        |   Birth   |  2 months |  4 months |  6 months | 12 months | 18 months |  4 years  |  11 years |  16 years |
+------------------------------------------------------------------------------------------------------------------------------
+| HepB           |     2     |    [ ]    |           |     1     |           |           |           |           |           |
+| RV             |           |     1     |     1     |    [ ]    |           |           |           |           |           |
+| DTaP           |           |     1     |     1     |     1     |    [ ]    |     1     |           |     1     |           |
+| Hib            |           |     1     |     1     |     1     |     1     |           |           |           |           |
+| Pneu           |           |     1     |     1     |     1     |     1     |           |           |           |           |
+| IPV            |           |     1     |     1     |     2     |           |           |           |           |           |
+| MMR            |           |           |           |           |     1     |     1     |           |           |           |
+| Var            |           |           |           |           |     1     |     1     |           |           |           |
+| HepA           |           |           |           |           |     1     |           |     1     |           |           |
+| HPV            |           |           |           |           |           |           |           |           |           |
+| COVID          |           |           |           |           |           |           |           |           |     2     |
+| Mening         |           |           |           |           |           |           |           |           |     1     |
+------------------------------------------------------------------------------------------------------------------------------
+| Flu            |           |           |           |     1     |           |           |           |           |           |
+| 118 HPV, bivale|           |           |           |           |           |           |           |     1     |           |
+------------------------------------------------------------------------------------------------------------------------------
+| Encounters     |     2     |     1     |     1     |     2     |     1     |     1     |     11    |     23    |     13    |
+------------------------------------------------------------------------------------------------------------------------------

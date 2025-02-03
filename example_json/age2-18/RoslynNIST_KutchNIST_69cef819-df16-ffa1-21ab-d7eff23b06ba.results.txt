@@ -1,0 +1,78 @@
+2017-11-20 Birth 
+2017-11-19 - Well child visit (procedure)
+2017-12-24 - Well child visit (procedure)
+           * Hep B, adolescent or pediatric (08)
+2018-02-25 - Well child visit (procedure)
+           * Hib (PRP-T) (48)
+           * DTaP (20)
+           * pneumococcal conjugate PCV 7 (100)
+           * Hep B, adolescent or pediatric (08)
+           * IPV (10)
+           * rotavirus, monovalent (119)
+2018-04-20 - Encounter for symptom
+2018-04-29 - Well child visit (procedure)
+           * Hib (PRP-T) (48)
+           * DTaP (20)
+           * pneumococcal conjugate PCV 7 (100)
+           * IPV (10)
+           * rotavirus, monovalent (119)
+2018-05-06 - Encounter for check up (procedure)
+           * Hib (PRP-T) (48)
+           * DTaP (20)
+           * pneumococcal conjugate PCV 7 (100)
+           * IPV (10)
+           * rotavirus, monovalent (119)
+2018-07-29 - Well child visit (procedure)
+           * Influenza, MDCK, trivalent, preservative (320)
+           * Hep B, adolescent or pediatric (08)
+           * IPV (10)
+2018-10-28 - Well child visit (procedure)
+2018-11-07 - Emergency room admission (procedure)
+2019-01-27 - Well child visit (procedure)
+           * Hib (PRP-T) (48)
+           * pneumococcal conjugate PCV 7 (100)
+           * Hep A, ped/adol, 2 dose (83)
+           * varicella (21)
+           * MMR (03)
+2019-04-28 - Well child visit (procedure)
+           * DTaP (20)
+           * varicella (21)
+           * MMR (03)
+2019-06-28 - Emergency room admission (procedure)
+2019-10-27 - Well child visit (procedure)
+           * Hep A, ped/adol, 2 dose (83)
+2020-04-26 - Well child visit (procedure)
+2020-07-25 - Emergency room admission (procedure)
+2020-07-31 - Encounter for symptom
+2020-10-25 - Well child visit (procedure)
+2021-02-04 - Encounter for symptom
+2021-02-14 - Urgent care clinic (environment)
+2021-04-25 - Well child visit (procedure)
+2021-09-02 - Encounter for symptom
+2021-09-08 - Encounter for problem
+2021-10-24 - Well child visit (procedure)
+2022-10-30 - Well child visit (procedure)
+           * DTaP (20)
+2023-11-05 - Well child visit (procedure)
+2024-11-10 - Well child visit (procedure)
+
+------------------------------------------------------------------------------------------------------------------------------
+| Vaccine        |   Birth   |  2 months |  4 months |  6 months | 12 months | 18 months |  4 years  |  11 years |  16 years |
+------------------------------------------------------------------------------------------------------------------------------
+| HepB           |     1     |     1     |           |     1     |           |           |           |           |           |
+| RV             |           |     1     |     1     |     1     |           |           |           |           |           |
+| DTaP           |           |     1     |     1     |     1     |    [ ]    |     1     |           |     1     |           |
+| Hib            |           |     1     |     1     |     1     |     1     |           |           |           |           |
+| Pneu           |           |     1     |     1     |     1     |     1     |           |           |           |           |
+| IPV            |           |     1     |     1     |     2     |           |           |           |           |           |
+| MMR            |           |           |           |           |     1     |     1     |           |           |           |
+| Var            |           |           |           |           |     1     |     1     |           |           |           |
+| HepA           |           |           |           |           |     1     |           |     1     |           |           |
+| HPV            |           |           |           |           |           |           |           |           |           |
+| COVID          |           |           |           |           |           |           |           |           |           |
+| Mening         |           |           |           |           |           |           |           |           |           |
+------------------------------------------------------------------------------------------------------------------------------
+| Flu            |           |           |           |     1     |           |           |           |           |           |
+------------------------------------------------------------------------------------------------------------------------------
+| Encounters     |     2     |     1     |     2     |     3     |     2     |     1     |     12    |     3     |           |
+------------------------------------------------------------------------------------------------------------------------------

@@ -1,0 +1,173 @@
+2007-10-02 Birth 
+           - Well child visit (procedure)
+           * Hep B, adolescent or pediatric (08)
+2007-11-06 - Well child visit (procedure)
+           * Hep B, adolescent or pediatric (08)
+2007-12-31 - Encounter for symptom
+2008-01-08 - Well child visit (procedure)
+           * Hib (PRP-T) (48)
+           * DTaP (20)
+           * pneumococcal conjugate PCV 7 (100)
+           * IPV (10)
+           * rotavirus, monovalent (119)
+2008-03-11 - Well child visit (procedure)
+           * Hib (PRP-T) (48)
+           * DTaP (20)
+           * pneumococcal conjugate PCV 7 (100)
+           * IPV (10)
+           * rotavirus, monovalent (119)
+2008-06-10 - Well child visit (procedure)
+           * Hib (PRP-T) (48)
+           * DTaP (20)
+           * pneumococcal conjugate PCV 7 (100)
+           * Influenza, MDCK, trivalent, preservative (320)
+           * Hep B, adolescent or pediatric (08)
+           * IPV (10)
+2008-08-25 - Encounter for problem
+2008-09-09 - Well child visit (procedure)
+           * IPV (10)
+2008-09-16 - Encounter for problem
+2008-10-29 - Encounter for symptom
+2008-12-09 - Well child visit (procedure)
+           * Hib (PRP-T) (48)
+           * pneumococcal conjugate PCV 7 (100)
+           * Hep A, ped/adol, 2 dose (83)
+           * varicella (21)
+           * MMR (03)
+2009-03-10 - Well child visit (procedure)
+           * DTaP (20)
+           * varicella (21)
+           * MMR (03)
+2009-09-08 - Well child visit (procedure)
+           * Hep A, ped/adol, 2 dose (83)
+2010-03-09 - Well child visit (procedure)
+2010-09-07 - Well child visit (procedure)
+2011-01-25 - Encounter for symptom
+2011-03-08 - Well child visit (procedure)
+2011-04-07 - Encounter for symptom
+2011-07-28 - Encounter for symptom
+2011-08-08 - Emergency room admission (procedure)
+2011-09-06 - Well child visit (procedure)
+2012-04-03 - Urgent care clinic (environment)
+           * DTaP (20)
+2012-04-10 - Encounter for check up (procedure)
+2012-04-17 - Encounter for symptom
+2012-07-22 - Asthma follow-up
+2012-09-11 - Well child visit (procedure)
+2013-05-11 - Emergency room admission (procedure)
+           - Encounter for problem
+2013-06-11 - Encounter for check up (procedure)
+2013-06-18 - Encounter for symptom
+2013-09-17 - Well child visit (procedure)
+2014-02-08 - Encounter for symptom
+2014-07-12 - Asthma follow-up
+2014-09-23 - Well child visit (procedure)
+2015-01-08 - Asthma follow-up
+2015-07-07 - Asthma follow-up
+2015-09-29 - Well child visit (procedure)
+2016-01-03 - Asthma follow-up
+2016-10-04 - Well child visit (procedure)
+           * HPV, bivalent (118)
+2017-09-01 - Emergency room admission (procedure)
+           - Admission to skilled nursing facility (procedure)
+2017-10-10 - Well child visit (procedure)
+2018-04-02 - Encounter for symptom
+2018-04-10 - Encounter for check up (procedure)
+2018-10-16 - Well child visit (procedure)
+           * meningococcal MCV4P (114)
+2019-10-22 - Well child visit (procedure)
+2019-12-13 - Asthma follow-up
+2020-06-10 - Asthma follow-up
+2020-10-06 - Allergic disorder initial assessment
+2020-10-27 - Well child visit (procedure)
+2020-10-28 - Outpatient procedure
+2020-11-22 - Outpatient procedure
+2020-12-07 - Emergency hospital admission for asthma
+2020-12-08 - Asthma follow-up
+2020-12-17 - Outpatient procedure
+2021-01-07 - Outpatient procedure
+2021-01-30 - Outpatient procedure
+2021-02-20 - Outpatient procedure
+2021-03-14 - Outpatient procedure
+2021-04-07 - Outpatient procedure
+2021-04-29 - Outpatient procedure
+2021-05-26 - Outpatient procedure
+2021-06-19 - Outpatient procedure
+2021-07-10 - Outpatient procedure
+2021-08-04 - Outpatient procedure
+2021-08-28 - Outpatient procedure
+2021-09-22 - Outpatient procedure
+2021-10-12 - Administration of vaccine to produce active immunity (procedure)
+           * SARS-COV-2 (COVID-19) vaccine, vector non-replicating, recombinant spike protein-Ad26, preservative free, 0.5 mL (212)
+2021-10-17 - Outpatient procedure
+2021-11-02 - Well child visit (procedure)
+2021-11-11 - Outpatient procedure
+2021-12-08 - Outpatient procedure
+2022-01-04 - Outpatient procedure
+2022-01-26 - Outpatient procedure
+2022-02-17 - Outpatient procedure
+2022-03-15 - Outpatient procedure
+2022-04-10 - Outpatient procedure
+2022-05-05 - Outpatient procedure
+2022-05-29 - Outpatient procedure
+2022-06-25 - Outpatient procedure
+2022-07-18 - Outpatient procedure
+2022-08-09 - Outpatient procedure
+2022-09-03 - Outpatient procedure
+2022-09-25 - Outpatient procedure
+2022-10-20 - Outpatient procedure
+2022-11-08 - Well child visit (procedure)
+2022-11-12 - Outpatient procedure
+2022-12-03 - Outpatient procedure
+2022-12-30 - Outpatient procedure
+2023-01-22 - Outpatient procedure
+2023-02-13 - Outpatient procedure
+2023-03-07 - Outpatient procedure
+2023-04-02 - Outpatient procedure
+2023-04-26 - Outpatient procedure
+2023-05-21 - Outpatient procedure
+2023-06-16 - Outpatient procedure
+2023-07-11 - Outpatient procedure
+2023-08-03 - Outpatient procedure
+2023-08-26 - Outpatient procedure
+2023-09-16 - Outpatient procedure
+2023-10-10 - Outpatient procedure
+2023-10-31 - Outpatient procedure
+2023-11-14 - Well child visit (procedure)
+2023-11-24 - Outpatient procedure
+2023-12-21 - Outpatient procedure
+2024-01-14 - Outpatient procedure
+2024-02-08 - Outpatient procedure
+2024-03-05 - Outpatient procedure
+2024-03-29 - Outpatient procedure
+2024-04-23 - Outpatient procedure
+2024-05-18 - Outpatient procedure
+2024-06-08 - Outpatient procedure
+2024-06-29 - Outpatient procedure
+2024-07-20 - Outpatient procedure
+2024-08-10 - Outpatient procedure
+2024-09-02 - Outpatient procedure
+2024-09-27 - Allergic disorder follow-up assessment
+2024-11-19 - Well child visit (procedure)
+
+------------------------------------------------------------------------------------------------------------------------------
+| Vaccine        |   Birth   |  2 months |  4 months |  6 months | 12 months | 18 months |  4 years  |  11 years |  16 years |
+------------------------------------------------------------------------------------------------------------------------------
+| HepB           |     2     |    [ ]    |           |     1     |           |           |           |           |           |
+| RV             |           |     1     |     1     |    [ ]    |           |           |           |           |           |
+| DTaP           |           |     1     |     1     |     1     |    [ ]    |     1     |           |     1     |           |
+| Hib            |           |     1     |     1     |     1     |     1     |           |           |           |           |
+| Pneu           |           |     1     |     1     |     1     |     1     |           |           |           |           |
+| IPV            |           |     1     |     1     |     2     |           |           |           |           |           |
+| MMR            |           |           |           |           |     1     |     1     |           |           |           |
+| Var            |           |           |           |           |     1     |     1     |           |           |           |
+| HepA           |           |           |           |           |     1     |           |     1     |           |           |
+| HPV            |           |           |           |           |           |           |           |           |           |
+| COVID          |           |           |           |           |           |           |           |           |     1     |
+| Mening         |           |           |           |           |           |           |           |           |     1     |
+------------------------------------------------------------------------------------------------------------------------------
+| Flu            |           |           |           |     1     |           |           |           |           |           |
+| 118 HPV, bivale|           |           |           |           |           |           |           |     1     |           |
+------------------------------------------------------------------------------------------------------------------------------
+| Encounters     |     2     |     2     |     1     |     4     |     2     |     1     |     9     |     23    |     56    |
+------------------------------------------------------------------------------------------------------------------------------
