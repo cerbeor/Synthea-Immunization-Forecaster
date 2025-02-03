@@ -305,7 +305,7 @@ public class Immunizations {
     boolean getImmunization = true;
 
     // If hesitant person
-    if ((boolean) person.attributes.get(Person.ANTIVAX)){
+    if ((boolean) person.attributes.get(Person.HESITANT_PATIENT)){
       if (randomNumber < noVaccineProbabilityHesitantPatient) {
         getImmunization = false;
       }
@@ -320,7 +320,7 @@ public class Immunizations {
     // Generate a random number to determine whether the clinician should administer the vaccine
     randomNumber = random.nextInt(100);
     // If the clinician is hesitant
-    if ((boolean) currentEncounter.clinician.attributes.get(Person.ANTIVAX)) {
+    if ((boolean) currentEncounter.clinician.attributes.get(Person.HESITANT_PATIENT)) {
       if (randomNumber < noVaccineProbabilityUnderVaxxedClinician) {
         getImmunization = false;
       }

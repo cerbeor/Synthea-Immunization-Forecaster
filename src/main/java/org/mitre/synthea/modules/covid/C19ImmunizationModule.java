@@ -267,7 +267,7 @@ public class C19ImmunizationModule extends Module {
     Random rand = new Random();
     int random_number = rand.nextInt(100);
     // Check if the person is hesitant
-    if ((boolean) person.attributes.getOrDefault(Person.ANTIVAX, false)){
+    if ((boolean) person.attributes.getOrDefault(Person.HESITANT_PATIENT, false)){
       if (random_number < Immunizations.getNoVaccineProbabilityHesitantPatient()){
         status = VaccinationStatus.NEVER_GOING_TO_GET_SHOT;
       }

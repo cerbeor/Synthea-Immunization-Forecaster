@@ -647,7 +647,7 @@ public class Provider implements QuadTreeElement, Serializable {
         }
       }
 
-      clinician.attributes.put(Person.ANTIVAX, isHesitantPatient);
+      clinician.attributes.put(Person.HESITANT_PATIENT, isHesitantPatient);
 
     } catch (Throwable e) {
       e.printStackTrace();

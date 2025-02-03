@@ -361,8 +361,8 @@ public class FhirDstu2 {
     patientResource.addUndeclaredExtension(ethnicityExtension);
 
     // Add patient hesitant extension
-    if (person.attributes.containsKey(Person.ANTIVAX)) {
-      Boolean isHesitantPatient = (Boolean) person.attributes.get(Person.ANTIVAX);
+    if (person.attributes.containsKey(Person.HESITANT_PATIENT)) {
+      Boolean isHesitantPatient = (Boolean) person.attributes.get(Person.HESITANT_PATIENT);
 
       ExtensionDt hesitantExtension = new ExtensionDt();
       hesitantExtension.setUrl("http://synthetichealth.github.io/synthea/hesitant");

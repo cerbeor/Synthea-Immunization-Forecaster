@@ -21,7 +21,7 @@ for file_name in os.listdir(json_folder_path):
                 for entry in json_data['entry']:
                     if entry.get('resource', {}).get('resourceType') == 'Patient':  # Filter Patient resources
                         resource = entry['resource']
-                        # Extract ANTIVAX_STATUS and STATE
+                        # Extract HESITANT_PATIENT_STATUS and STATE
                         hesitantPatient_status = None
                         state = None
                         # Loop through the extensions to find specific fields
@@ -32,7 +32,7 @@ for file_name in os.listdir(json_folder_path):
                                 state = extension.get('valueAddress', {}).get('state', None)  # Extract state
                         # Only add records where both fields are not None
                         if hesitantPatient_status is not None and state is not None:
-                            data.append({'STATE': state, 'ANTIVAX_STATUS': hesitantPatient_status})
+                            data.append({'STATE': state, 'HESITANT_PATIENT_STATUS': hesitantPatient_status})
 
 # Transform the extracted data into a pandas DataFrame for easier processing.
 df = pd.DataFrame(data)
@@ -56,9 +56,9 @@ state_name_to_abbreviation = {
     'West Virginia': 'WV', 'Wisconsin': 'WI', 'Wyoming': 'WY'
 }
 
-# Normalize column names and convert the ANTIVAX_STATUS column to boolean for consistency.
+# Normalize column names and convert the HESITANT_PATIENT_STATUS column to boolean for consistency.
 df.columns = df.columns.str.strip()
-df['ANTIVAX_STATUS'] = df['ANTIVAX_STATUS'].astype(bool)
+df['HESITANT_PATIENT_STATUS'] = df['HESITANT_PATIENT_STATUS'].astype(bool)
 
 # Replace full state names with their abbreviations in the STATE column.
 df['STATE'] = df['STATE'].map(state_name_to_abbreviation)
@@ -68,8 +68,8 @@ df = df.dropna(subset=['STATE'])  # Drop rows where state mapping fails.
 state_counts = (
     df.groupby('STATE', as_index=False)
     .agg(
-        total_people=('ANTIVAX_STATUS', 'size'),  # Total number of records per state
-        hesitantPatient_count=('ANTIVAX_STATUS', 'sum')  # Total number of hesitant individuals per state
+        total_people=('HESITANT_PATIENT_STATUS', 'size'),  # Total number of records per state
+        hesitantPatient_count=('HESITANT_PATIENT_STATUS', 'sum')  # Total number of hesitant individuals per state
     )
 )
 

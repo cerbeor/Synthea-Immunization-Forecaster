@@ -745,9 +745,9 @@ public class Generator {
 
 
     if(!isHesitantPatient){
-      person.attributes.put(Person.ANTIVAX, false);
+      person.attributes.put(Person.HESITANT_PATIENT, false);
     } else {
-      person.attributes.put(Person.ANTIVAX, true);
+      person.attributes.put(Person.HESITANT_PATIENT, true);
       hesitantPatientCount.incrementAndGet();
     }
 
