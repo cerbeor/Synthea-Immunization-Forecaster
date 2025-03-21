@@ -72,7 +72,7 @@ public enum CodeMapBuilder {
   }
 
   CodeMap findAndReadCodeMapIntoMemory(String path) {
-    CodeMap cm;
+    CodeMap cm = null;
     String file = path;
     InputStream is;
     try {
@@ -106,7 +106,11 @@ public enum CodeMapBuilder {
 
   public CodeMap getCompiledCodeMap() {
     if (preBuilt == null) {
-      this.preBuilt = findAndReadCodeMapIntoMemory("./src/test/resources/Compiled.xml");
+      try {
+        this.preBuilt = findAndReadCodeMapIntoMemory("./src/test/resources/Compiled.xml");
+      } catch (Exception e) {
+        this.preBuilt = findAndReadCodeMapIntoMemory("Compiled.xml");
+      }
     }
     return preBuilt;
   }
@@ -132,6 +136,9 @@ public enum CodeMapBuilder {
     InputStream is = Object.class.getResourceAsStream(resourcePath);
     if (is == null) {
       is = getClass().getClassLoader().getResourceAsStream(resourcePath);
+    }
+    if (is == null) {
+      is = getClass().getResourceAsStream(resourcePath);
     }
     return is;
   }
