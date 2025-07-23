@@ -2,7 +2,16 @@
 
 This project was a collaboration between NIST, AIRA and Students of TELECOM Nancy.
 Aiming at generating pseudo realistic synthetic immunization histories, with variability in the population.
-Doing so by exporting part of the logic to Immunization Forecaster through a FHIR operation.
+Doing so by 
+- Exporting part of the logic to Immunization Forecasters through a FHIR operation 
+  - As of now using an AIRA Prototype forecaster
+- Simulating doses being skipped through different parameters 
+  - Patients likely to skip doses
+  - Clinician likely to skip giving a dose
+- For demonstration purpose, the behaviors can be assigned through different arbitrary configuration
+  - Person's ZipCode
+  - Person firstname's first letter
+  - ...
 
 This project's specificity is activated with the
 ``-NistImmunizationModule`` option when running, and also introduces more control in population variability.
