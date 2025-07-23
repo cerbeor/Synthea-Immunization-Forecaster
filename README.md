@@ -1,3 +1,66 @@
+# Synthea Using Immunization Forecaster
+
+This project was a collaboration between NIST, AIRA and Students of TELECOM Nancy.
+Aiming at generating pseudo realistic Immunization History Synthetic, with variability in the population.
+Doing so by exporting part of the logic to Immunization Forecaster.
+
+This project's specificity is activated with the
+``-NistImmunizationModule`` option when running, and also introduces more control in population variability [introduces options](#foo)
+
+### Options added for Nist Immunization project:
+```
+Usage: run_synthea [options] [state [city]]
+Options: [-s seed]
+         [-NistImmunizationModule]
+         [-NistImmunizationModule -hesitantPatientPercentage percentage]                       // default value = 0
+         [-NistImmunizationModule -hesitantPatientLastNames firstLetter]
+         [-NistImmunizationModule -hesitantPatientZipCodePrefixes zipPrefixes]
+         [-NistImmunizationModule -underVaxxedCliniciansPercentage percentage]             // default value = 0
+         [-NistImmunizationModule -underVaxxedCliniciansLastName underVaxxedCliniciansFirstLetter]
+         [-NistImmunizationModule -underVaxxedCliniciansZipCodePrefixes underVaxxedCliniciansZipPrefixes]
+         [-NistImmunizationModule -noVaccineProbability percentage]                    // default value = 0
+         [-NistImmunizationModule -noVaccineProbabilityHesitantPatient percentage]             // default value = 100
+         [-NistImmunizationModule -noVaccineProbabilityClinician percentage]           // default value = 0
+         [-NistImmunizationModule -noVaccineProbabilityUnderVaxxedClinician percentage]    // default value = 100
+         [-NistImmunizationModule -testServer]                                         // use the test server of NIST for immunization recommendations
+         
+```
+
+### Examples of complete commands
+```
+Examples:
+run_synthea Massachusetts
+run_synthea Alaska Juneau
+run_synthea -s 12345
+run_synthea -p 1000
+run_synthea -s 987 Washington Seattle
+run_synthea -s 21 -p 100 Utah "Salt Lake City"
+run_synthea -g M -a 60-65
+run_synthea -p 10 --exporter.fhir.export=true
+run_synthea --exporter.baseDirectory="./output_tx/" Texas
+run_synthea -NistImmunizationModule
+run_synthea -NistImmunizationModule -hesitantPatientPercentage 90
+run_synthea -p 50 -NistImmunizationModule -hesitantPatientZipCodePrefixes 010:80-023:90 
+    --> patients from zip codes starting with 010 will have 80% chance of being hesitant, 
+        patients from zip codes starting with 023 will have 90% chance of being hesitant
+run_synthea -p 50 -NistImmunizationModule -hesitantPatientLastNames A:20-B:50-C:30 
+    --> patients with last names (maiden names) starting with A will have 20% chance of being hesitant, 
+        patients with last names starting with B will have 50% chance of being hesitant, 
+        patients with last names starting with C will have 30% chance of being hesitant
+run_synthea -NistImmunizationModule -underVaxxedCliniciansPercentage 100
+run_synthea -p 50 -NistImmunizationModule -underVaxxedCliniciansLastName A:20-B:50-C:30 -underVaxxedCliniciansZipCodePrefixes 010:80-023:90
+run_synthea -NistImmunizationModule -noVaccineProbability 100 
+run_synthea -NistImmunizationModule -noVaccineProbabilityHesitantPatient 100
+run_synthea -NistImmunizationModule -noVaccineProbabilityClinician 100 
+run_synthea -NistImmunizationModule -noVaccineProbabilityUnderVaxxedClinician 100
+run_synthea -NistImmunizationModule -testServer
+run_synthea -NistImmunizationModule -a 2-7 -p 650 -hesitantPatientPercentage 20 -noVaccineProbability 10 -noVaccineProbabilityHesitantPatient 70
+run_synthea -NistImmunizationModule -a 2-7 -p 100 -hesitantPatientPercentage 100 -noVaccineProbabilityHesitantPatient 90
+run_synthea -NistImmunizationModule -a 2-7 -p 50 -hesitantPatientPercentage 100 -noVaccineProbabilityHesitantPatient 100
+run_synthea -NistImmunizationModule -a 2-7 -p 100 -hesitantPatientPercentage 0 -noVaccineProbability 0
+run_synthea -NistImmunizationModule -a 2-7 -p 100 -hesitantPatientPercentage 50 -noVaccineProbability 50
+```
+
 # Synthea<sup>TM</sup> Patient Generator ![Build Status](https://github.com/synthetichealth/synthea/workflows/.github/workflows/ci-build-test.yml/badge.svg?branch=master) [![codecov](https://codecov.io/gh/synthetichealth/synthea/branch/master/graph/badge.svg)](https://codecov.io/gh/synthetichealth/synthea)
 
 Synthea<sup>TM</sup> is a Synthetic Patient Population Simulator. The goal is to output synthetic, realistic (but not real), patient data and associated health records in a variety of formats.
@@ -47,14 +110,14 @@ for more details, or use our [guided customizer tool](https://synthetichealth.gi
 
 
 ### Generate Synthetic Patients
-Generating the population one at a time...
+Generating the population one at a time
 ```
 ./run_synthea
 ```
 
 Command-line arguments may be provided to specify a state, city, population size, or seed for randomization.
 ```
-run_synthea [-s seed] [-p populationSize] [state [city]]
+./run_synthea [-s seed] [-p populationSize] [state [city]]
 ```
 
 Full usage info can be printed by passing the `-h` option.
@@ -79,53 +142,6 @@ Options: [-s seed]
          [-k keepMatchingPatientsPath]
          [--config*=value]
          * any setting from src/main/resources/synthea.properties
-
-Options added for Nist Immunization project:
-         [-NistImmunizationModule]
-         [-NistImmunizationModule -hesitantPatientPercentage percentage]                       // default value = 0
-         [-NistImmunizationModule -hesitantPatientLastNames firstLetter]
-         [-NistImmunizationModule -hesitantPatientZipCodePrefixes zipPrefixes]
-         [-NistImmunizationModule -underVaxxedCliniciansPercentage percentage]             // default value = 0
-         [-NistImmunizationModule -underVaxxedCliniciansLastName underVaxxedCliniciansFirstLetter]
-         [-NistImmunizationModule -underVaxxedCliniciansZipCodePrefixes underVaxxedCliniciansZipPrefixes]
-         [-NistImmunizationModule -noVaccineProbability percentage]                    // default value = 0
-         [-NistImmunizationModule -noVaccineProbabilityHesitantPatient percentage]             // default value = 100
-         [-NistImmunizationModule -noVaccineProbabilityClinician percentage]           // default value = 0
-         [-NistImmunizationModule -noVaccineProbabilityUnderVaxxedClinician percentage]    // default value = 100
-         [-NistImmunizationModule -testServer]                                         // use the test server of NIST for immunization recommendations
-         
-
-Examples:
-run_synthea Massachusetts
-run_synthea Alaska Juneau
-run_synthea -s 12345
-run_synthea -p 1000
-run_synthea -s 987 Washington Seattle
-run_synthea -s 21 -p 100 Utah "Salt Lake City"
-run_synthea -g M -a 60-65
-run_synthea -p 10 --exporter.fhir.export=true
-run_synthea --exporter.baseDirectory="./output_tx/" Texas
-run_synthea -NistImmunizationModule
-run_synthea -NistImmunizationModule -hesitantPatientPercentage 90
-run_synthea -p 50 -NistImmunizationModule -hesitantPatientZipCodePrefixes 010:80-023:90 
-    --> patients from zip codes starting with 010 will have 80% chance of being hesitant, 
-        patients from zip codes starting with 023 will have 90% chance of being hesitant
-run_synthea -p 50 -NistImmunizationModule -hesitantPatientLastNames A:20-B:50-C:30 
-    --> patients with last names (maiden names) starting with A will have 20% chance of being hesitant, 
-        patients with last names starting with B will have 50% chance of being hesitant, 
-        patients with last names starting with C will have 30% chance of being hesitant
-run_synthea -NistImmunizationModule -underVaxxedCliniciansPercentage 100
-run_synthea -p 50 -NistImmunizationModule -underVaxxedCliniciansLastName A:20-B:50-C:30 -underVaxxedCliniciansZipCodePrefixes 010:80-023:90
-run_synthea -NistImmunizationModule -noVaccineProbability 100 
-run_synthea -NistImmunizationModule -noVaccineProbabilityHesitantPatient 100
-run_synthea -NistImmunizationModule -noVaccineProbabilityClinician 100 
-run_synthea -NistImmunizationModule -noVaccineProbabilityUnderVaxxedClinician 100
-run_synthea -NistImmunizationModule -testServer
-run_synthea -NistImmunizationModule -a 2-7 -p 650 -hesitantPatientPercentage 20 -noVaccineProbability 10 -noVaccineProbabilityHesitantPatient 70
-run_synthea -NistImmunizationModule -a 2-7 -p 100 -hesitantPatientPercentage 100 -noVaccineProbabilityHesitantPatient 90
-run_synthea -NistImmunizationModule -a 2-7 -p 50 -hesitantPatientPercentage 100 -noVaccineProbabilityHesitantPatient 100
-run_synthea -NistImmunizationModule -a 2-7 -p 100 -hesitantPatientPercentage 0 -noVaccineProbability 0
-run_synthea -NistImmunizationModule -a 2-7 -p 100 -hesitantPatientPercentage 50 -noVaccineProbability 50
 ```
 
 Some settings can be changed in `./src/main/resources/synthea.properties`.
