@@ -1,11 +1,11 @@
 # Synthea Using Immunization Forecaster
 
 This project was a collaboration between NIST, AIRA and Students of TELECOM Nancy.
-Aiming at generating pseudo realistic Immunization History Synthetic, with variability in the population.
-Doing so by exporting part of the logic to Immunization Forecaster.
+Aiming at generating pseudo realistic synthetic immunization histories, with variability in the population.
+Doing so by exporting part of the logic to Immunization Forecaster through a FHIR operation.
 
 This project's specificity is activated with the
-``-NistImmunizationModule`` option when running, and also introduces more control in population variability [introduces options](#foo)
+``-NistImmunizationModule`` option when running, and also introduces more control in population variability.
 
 ### Options added for Nist Immunization project:
 ```
