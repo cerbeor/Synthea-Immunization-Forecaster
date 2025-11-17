@@ -145,6 +145,15 @@ Generate a list of concepts (used in the records) or attributes (variables on ea
 ./gradlew attributes
 ```
 
+## Documentation
+
+### CVX to NDC Mapping Guide
+For developers working with vaccine codes, see the [CVX to NDC Mapping Guide](CVX_NDC_MAPPING_GUIDE.md) for detailed information about:
+- How CVX (Clinical Vaccine Code) to NDC (National Drug Code) mapping works
+- Location of mapping code and data files
+- API methods and usage examples
+- Testing and validation
+
 # License
 
 Copyright 2017-2023 The MITRE Corporation
