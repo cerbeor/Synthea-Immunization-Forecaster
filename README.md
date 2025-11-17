@@ -147,12 +147,15 @@ Generate a list of concepts (used in the records) or attributes (variables on ea
 
 ## Documentation
 
-### CVX to NDC Mapping Guide
-For developers working with vaccine codes, see the [CVX to NDC Mapping Guide](CVX_NDC_MAPPING_GUIDE.md) for detailed information about:
-- How CVX (Clinical Vaccine Code) to NDC (National Drug Code) mapping works
-- Location of mapping code and data files
-- API methods and usage examples
-- Testing and validation
+### CVX to NDC Mapping
+For developers working with vaccine codes:
+- **Quick Start**: See [CVX_NDC_QUICK_START.md](CVX_NDC_QUICK_START.md) for immediate answers and common code examples
+- **Complete Guide**: See [CVX_NDC_MAPPING_GUIDE.md](CVX_NDC_MAPPING_GUIDE.md) for detailed documentation covering:
+  - How CVX (Clinical Vaccine Code) to NDC (National Drug Code) mapping works
+  - Location of all mapping code and data files
+  - Complete API methods and usage examples
+  - Architecture and data structure
+  - Testing and validation
 
 # License
 
