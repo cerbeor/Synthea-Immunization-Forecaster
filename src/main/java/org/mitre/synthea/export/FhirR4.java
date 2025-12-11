@@ -171,8 +171,9 @@ public class FhirR4 {
   private static final String LOINC_URI = "http://loinc.org";
   private static final String RXNORM_URI = "http://www.nlm.nih.gov/research/umls/rxnorm";
   private static final String CVX_URI = "http://hl7.org/fhir/sid/cvx";
-  // Add NDC URI
+  // Add NDC URI 
   private static final String NDC_URI = "http://hl7.org/fhir/sid/ndc";
+  private static final String NUVA_URI = "https://euvabeco.net/vcds-ig/CodeSystem/NUVA";
   private static final String DISCHARGE_URI = "http://www.nubc.org/patient-discharge";
   private static final String SHR_EXT = "http://standardhealthrecord.org/fhir/StructureDefinition/";
   private static final String SYNTHEA_EXT = "http://synthetichealth.github.io/synthea/";
