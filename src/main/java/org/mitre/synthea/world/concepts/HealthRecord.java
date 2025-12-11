@@ -386,6 +386,10 @@ public class HealthRecord implements Serializable {
 
     public String nameNDC;
     public String codeStringNDC;
+    
+    /* Fetch NUVA for CVXs */
+    public String nuvaCode;
+    public String nuvaLabel;
   
     /**
      * Constructor for Immunization HealthRecord Entry.

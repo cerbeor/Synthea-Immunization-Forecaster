@@ -2357,6 +2357,12 @@ public class FhirR4 {
                       .setCode(imm.codeStringNDC) // Add the NDC code
                       .setDisplay(imm.nameNDC);   // Add the NDC display name
           }
+          if (imm.nuvaCode != null) {
+              immResource.getVaccineCode().addCoding()
+                      .setSystem(NUVA_URI)
+                      .setCode(imm.nuvaCode)      // Add the NUVA code
+                      .setDisplay(imm.nuvaLabel != null ? imm.nuvaLabel : imm.nuvaCode);    // Add the NUVA display name
+          }
       }
 
       // Set the primary source flag to true, indicating the data is from a primary source

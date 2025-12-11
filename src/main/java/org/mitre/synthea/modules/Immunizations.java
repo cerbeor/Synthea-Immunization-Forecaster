@@ -7,7 +7,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.hl7.fhir.r4.model.*;
-import org.hl7.fhir.r4.model.DateType;
 import org.mitre.synthea.codebase.CodeMap;
 import org.mitre.synthea.codebase.CodeMapBuilder;
 import org.mitre.synthea.codebase.mapping.Combo;
@@ -126,9 +125,18 @@ public class Immunizations {
               // Assign the NDC details to the immunization entry
               entry.nameNDC = ndcLabel;
               entry.codeStringNDC = ndcCode;
+              CvxNuvaMap.Mapping nuvaMapping = CvxNuvaMap.findByCvx(immunizationKey);
+              System.err.println("immunization key: ");
+              System.err.println(immunizationKey);
+              if (nuvaMapping != null) {
+                entry.nuvaCode = nuvaMapping.getNuvaCode();
+                entry.nuvaLabel = nuvaMapping.getLabel();
+              }
+              else {
+                System.err.println("no nuva mapping");
+              }
             }
           }
-
         }
       }
 
