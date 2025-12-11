@@ -93,6 +93,7 @@ public class Immunizations {
           // Check for combination of vaccines
           HashMap<org.mitre.synthea.codebase.generated.Code, NDC> cvxMap = checkForCombination(immunizationRecommendation, encounterDate, agePatient);
           // Check if the patient should receive vaccines
+          System.err.println("immunization key: ");
           if (!cvxMap.isEmpty()){
             // For all vaccines that have to be administered
             for (Map.Entry<org.mitre.synthea.codebase.generated.Code, NDC> entryMap : cvxMap.entrySet()) {
@@ -125,6 +126,8 @@ public class Immunizations {
               // Assign the NDC details to the immunization entry
               entry.nameNDC = ndcLabel;
               entry.codeStringNDC = ndcCode;
+
+              // Assign the NUVA details to the immunization entry
               CvxNuvaMap.Mapping nuvaMapping = CvxNuvaMap.findByCvx(immunizationKey);
               System.err.println("immunization key: ");
               System.err.println(immunizationKey);
