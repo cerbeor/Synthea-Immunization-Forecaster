@@ -147,6 +147,19 @@ Example CLI override:
               --generate.immunizations.foreign.probability=1.0
 ```
 
+#### How the immunization flows interact
+```mermaid
+flowchart TD
+    A[Encounter start] --> B{Use NIST module?}
+    B -->|Yes (-NistImmunizationModule)| C[NIST forecaster\n-> administer routine vaccines]
+    B -->|No| D[Synthea schedule\n-> administer routine vaccines]
+    C --> E{Foreign immunizations enabled\n& probability hit?}
+    D --> E
+    E -->|Yes| F[Create travel encounter\n+ foreign vaccine]
+    E -->|No| G[No travel vaccine]
+    F --> H[Exporters add foreign org/location\nand travel note to FHIR]
+    G --> H
+```
 
 ### Synthea<sup>TM</sup> GraphViz
 Generate graphical visualizations of Synthea<sup>TM</sup> rules and modules.
