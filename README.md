@@ -142,9 +142,9 @@ Foreign immunization events can be synthesized to represent travel encounters. E
 
 Example CLI override:
 ```
-./run_synthea --config=generate.immunizations.foreign.enabled=true \
-              --config=generate.immunizations.foreign.default_country=CN \
-              --config=generate.immunizations.foreign.probability=0.15
+./run_synthea --generate.immunizations.foreign.enabled=true \
+              --generate.immunizations.foreign.default_country=CN \
+              --generate.immunizations.foreign.probability=0.15
 ```
 
 
