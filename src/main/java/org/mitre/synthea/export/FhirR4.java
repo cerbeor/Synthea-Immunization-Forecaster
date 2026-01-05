@@ -2347,6 +2347,9 @@ public class FhirR4 {
       // Map the vaccine code to a FHIR CodeableConcept using the CVX URI system
       immResource.setVaccineCode(mapCodeToCodeableConcept(immunization.codes.get(0), CVX_URI));
 
+      Reference locationReference = null;
+      Reference performerReference = null;
+
       // Add NDC (National Drug Code) information if available
       if (immunization instanceof HealthRecord.Immunization) {
           HealthRecord.Immunization imm = (HealthRecord.Immunization) immunization;
@@ -2362,6 +2365,28 @@ public class FhirR4 {
                       .setCode(imm.nuvaCode)      // Add the NUVA code
                       .setDisplay(imm.nuvaLabel != null ? imm.nuvaLabel : imm.nuvaCode);    // Add the NUVA display name
           }
+                    // Attach foreign context so IIS/EHR consumers can distinguish travel vaccinations.
+          if (imm.administeringCountry != null) {
+            BundleEntryComponent foreignOrg = buildForeignImmunizationOrganization(bundle, imm);
+            BundleEntryComponent foreignLocation =
+                buildForeignImmunizationLocation(bundle, imm, foreignOrg);
+            if (foreignOrg != null) {
+                  Organization org = (Organization) foreignOrg.getResource();
+                  performerReference = new Reference(foreignOrg.getFullUrl())
+                      .setDisplay(org.getName());
+              }
+              if (foreignLocation != null) {
+                  org.hl7.fhir.r4.model.Location location =
+                      (org.hl7.fhir.r4.model.Location) foreignLocation.getResource();
+                  locationReference = new Reference(foreignLocation.getFullUrl())
+                      .setDisplay(location.getName());
+              }
+              String travelNote = imm.travelNote;
+              if (travelNote == null || travelNote.isEmpty()) {
+                  travelNote = "Documented during travel to " + imm.administeringCountry + ".";
+              }
+              immResource.addNote().setText(travelNote);
+          }
       }
 
       // Set the primary source flag to true, indicating the data is from a primary source
@@ -2374,10 +2399,16 @@ public class FhirR4 {
       immResource.setEncounter(new Reference(encounterEntry.getFullUrl()));
 
       // Set the location of the immunization, if using the US Core IG profile
-      if (USE_US_CORE_IG) {
+      if (locationReference == null && USE_US_CORE_IG) {
           org.hl7.fhir.r4.model.Encounter encounterResource =
                   (org.hl7.fhir.r4.model.Encounter) encounterEntry.getResource();
-          immResource.setLocation(encounterResource.getLocationFirstRep().getLocation());
+          locationReference = encounterResource.getLocationFirstRep().getLocation();
+      }
+      if (locationReference != null) {
+          immResource.setLocation(locationReference);
+      }
+      if (performerReference != null) {
+          immResource.addPerformer().setActor(performerReference);
       }
 
       // Create a new Bundle entry for the immunization and add it to the bundle
@@ -2391,6 +2422,105 @@ public class FhirR4 {
       return immunizationEntry;
   }
 
+    private static BundleEntryComponent buildForeignImmunizationOrganization(Bundle bundle,
+      HealthRecord.Immunization immunization) {
+    String identifierValue = resolveForeignIdentifier(immunization.administeringOrganizationId,
+        "foreign-org", immunization.administeringCountry);
+    if (identifierValue == null) {
+      return null;
+    }
+    BundleEntryComponent existing = findOrganizationByIdentifier(bundle, identifierValue);
+    if (existing != null) {
+      return existing;
+    }
+    // Minimal Organization shell with country to bind Immunization.performer.
+    Organization organization = new Organization();
+    organization.setActive(true);
+    organization.setName("Travel Organization (" + immunization.administeringCountry + ")");
+    organization.addIdentifier()
+        .setSystem(SYNTHEA_IDENTIFIER)
+        .setValue(identifierValue);
+    Address address = new Address();
+    address.setCountry(immunization.administeringCountry);
+    organization.addAddress(address);
+    return newEntry(bundle, organization, identifierValue);
+  }
+
+  private static BundleEntryComponent buildForeignImmunizationLocation(Bundle bundle,
+      HealthRecord.Immunization immunization, BundleEntryComponent organizationEntry) {
+    String identifierValue = resolveForeignIdentifier(immunization.administeringLocationId,
+        "foreign-loc", immunization.administeringCountry);
+    if (identifierValue == null) {
+      return null;
+    }
+    BundleEntryComponent existing = findLocationByIdentifier(bundle, identifierValue);
+    if (existing != null) {
+      return existing;
+    }
+    // Minimal Location shell with country to bind Immunization.location.
+    org.hl7.fhir.r4.model.Location location = new org.hl7.fhir.r4.model.Location();
+    location.setStatus(LocationStatus.ACTIVE);
+    location.setName("Travel Location (" + immunization.administeringCountry + ")");
+    location.addIdentifier()
+        .setSystem(SYNTHEA_IDENTIFIER)
+        .setValue(identifierValue);
+    Address address = new Address();
+    address.setCountry(immunization.administeringCountry);
+    location.setAddress(address);
+    if (organizationEntry != null) {
+      Organization org = (Organization) organizationEntry.getResource();
+      location.setManagingOrganization(
+          new Reference(organizationEntry.getFullUrl()).setDisplay(org.getName()));
+    }
+    return newEntry(bundle, location, identifierValue);
+  }
+
+  private static String resolveForeignIdentifier(String requestedId, String prefix,
+      String countryCode) {
+    if (requestedId != null && !requestedId.isEmpty()) {
+      return requestedId;
+    }
+    if (countryCode == null || countryCode.isEmpty()) {
+      return null;
+    }
+    // Fallback to a stable identifier derived from country when no explicit id is supplied.
+    return prefix + "-" + countryCode.toLowerCase();
+  }
+
+  private static BundleEntryComponent findOrganizationByIdentifier(Bundle bundle,
+      String identifierValue) {
+    for (BundleEntryComponent entry : bundle.getEntry()) {
+      if (entry.getResource() instanceof Organization) {
+        Organization org = (Organization) entry.getResource();
+        for (Identifier identifier : org.getIdentifier()) {
+          if (identifier.hasSystem() && identifier.hasValue()
+              && SYNTHEA_IDENTIFIER.equals(identifier.getSystem())
+              && identifier.getValue().equals(identifierValue)) {
+            return entry;
+          }
+        }
+      }
+    }
+    return null;
+  }
+
+  private static BundleEntryComponent findLocationByIdentifier(Bundle bundle,
+      String identifierValue) {
+    for (BundleEntryComponent entry : bundle.getEntry()) {
+      if (entry.getResource() instanceof org.hl7.fhir.r4.model.Location) {
+        org.hl7.fhir.r4.model.Location location =
+            (org.hl7.fhir.r4.model.Location) entry.getResource();
+        for (Identifier identifier : location.getIdentifier()) {
+          if (identifier.hasSystem() && identifier.hasValue()
+              && SYNTHEA_IDENTIFIER.equals(identifier.getSystem())
+              && identifier.getValue().equals(identifierValue)) {
+            return entry;
+          }
+        }
+      }
+    }
+    return null;
+  }
 
   /**
    * Map the given Medication to a FHIR MedicationRequest resource, and add it to the given Bundle.

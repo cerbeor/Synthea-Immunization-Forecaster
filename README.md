@@ -132,6 +132,22 @@ Some settings can be changed in `./src/main/resources/synthea.properties`.
 
 Synthea<sup>TM</sup> will output patient records in C-CDA and FHIR formats in `./output`.
 
+
+### Enabling foreign immunization generation
+Foreign immunization events can be synthesized to represent travel encounters. Enable them by setting the properties in `src/main/resources/synthea.properties` (or by passing `--config` overrides to `run_synthea`):
+
+- `generate.immunizations.foreign.enabled=true` — turn on foreign immunization generation.
+- `generate.immunizations.foreign.default_country` — destination country code to use for travel encounters (default `CN`).
+- `generate.immunizations.foreign.probability` — probability (0–1) that a patient will receive a foreign immunization (default `0.05`).
+
+Example CLI override:
+```
+./run_synthea --config=generate.immunizations.foreign.enabled=true \
+              --config=generate.immunizations.foreign.default_country=CN \
+              --config=generate.immunizations.foreign.probability=0.15
+```
+
+
 ### Synthea<sup>TM</sup> GraphViz
 Generate graphical visualizations of Synthea<sup>TM</sup> rules and modules.
 ```

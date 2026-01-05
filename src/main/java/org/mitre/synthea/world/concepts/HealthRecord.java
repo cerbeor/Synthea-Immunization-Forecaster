@@ -390,6 +390,15 @@ public class HealthRecord implements Serializable {
     /* Fetch NUVA for CVXs */
     public String nuvaCode;
     public String nuvaLabel;
+
+    // Foreign administration context to help exporters bind to the right resources.
+    public String administeringCountry;
+    public String administeringOrganizationId;
+    public String administeringLocationId;
+    
+    // Note text to capture travel context on export.
+    public String travelNote;
+
   
     /**
      * Constructor for Immunization HealthRecord Entry.
