@@ -151,9 +151,9 @@ Example CLI override:
 ```mermaid
 flowchart TD
     A[Encounter start] --> B{Use NIST module?}
-    B -->|Yes (-NistImmunizationModule)| C[NIST forecaster\n-> administer routine vaccines]
-    B -->|No| D[Synthea schedule\n-> administer routine vaccines]
-    C --> E{Foreign immunizations enabled\n& probability hit?}
+    B -->|Yes: -NistImmunizationModule| C[NIST forecaster\n-> administer routine vaccines]
+    B -->|No: Synthea default| D[Synthea schedule\n-> administer routine vaccines]
+    C --> E{Foreign immunizations enabled\nand probability hit?}
     D --> E
     E -->|Yes| F[Create travel encounter\n+ foreign vaccine]
     E -->|No| G[No travel vaccine]
