@@ -144,20 +144,20 @@ Example CLI override:
 ```
 ./run_synthea --generate.immunizations.foreign.enabled=true \
               --generate.immunizations.foreign.default_country=CN \
-              --generate.immunizations.foreign.probability=1.0
+              --generate.immunizations.foreign.probability=0.5
 ```
 
 #### How the immunization flows interact
 ```mermaid
 flowchart TD
     A[Encounter start] --> B{Use NIST module?}
-    B -->|Yes: -NistImmunizationModule| C[NIST forecaster\n-> administer routine vaccines]
-    B -->|No: Synthea default| D[Synthea schedule\n-> administer routine vaccines]
+    B -->|Yes: -NistImmunizationModule| C[NIST forecaster -> administer routine vaccines]
+    B -->|No: Synthea default| D[Synthea schedule -> administer routine vaccines]
     C --> E{Foreign immunizations enabled\nand probability hit?}
     D --> E
-    E -->|Yes| F[Create travel encounter\n+ foreign vaccine]
+    E -->|Yes| F[Create travel encounter + foreign vaccine]
     E -->|No| G[No travel vaccine]
-    F --> H[Exporters add foreign org/location\nand travel note to FHIR]
+    F --> H[Exporters add foreign organization/location and travel note to FHIR]
     G --> H
 ```
 
