@@ -144,7 +144,7 @@ Example CLI override:
 ```
 ./run_synthea --generate.immunizations.foreign.enabled=true \
               --generate.immunizations.foreign.default_country=CN \
-              --generate.immunizations.foreign.probability=0.15
+              --generate.immunizations.foreign.probability=1.0
 ```
 
 

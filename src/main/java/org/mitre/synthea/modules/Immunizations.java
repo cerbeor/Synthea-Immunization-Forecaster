@@ -84,16 +84,8 @@ public class Immunizations {
    *                      Used to determine the patient's age and assess immunization due dates.
    */
   @SuppressWarnings({ "unchecked", "rawtypes" })
-  public static void performEncounterWithNistCDS(Person person, long encounterDate) {
-
-     // Reading patient history
-    Map<String, List<Long>> immunizationsGiven;
-    if (person.attributes.containsKey(IMMUNIZATIONS)) {
-      immunizationsGiven = (Map<String, List<Long>>) person.attributes.get(IMMUNIZATIONS);
-    } else {
-      immunizationsGiven = new HashMap<String, List<Long>>();
-      person.attributes.put(IMMUNIZATIONS, immunizationsGiven);
-    }
+  public static void performEncounterWithNistCDS(Person person, long encounterDate,
+      Map<String, List<Long>> immunizationsGiven) {
 
     try {
       // Check if the patient should receive an immunization
@@ -525,11 +517,15 @@ public class Immunizations {
       Gson g = new Gson();
     }
 
+    Map<String, List<Long>> immunizationsGiven = getOrCreateImmunizationsGiven(person);
+
     // Check if the NIST immunization module is used
     if (usingNistImmunizationModule){
-      performEncounterWithNistCDS(person,encounterDate);
+      performEncounterWithNistCDS(person, encounterDate, immunizationsGiven);
+      // Allow foreign travel immunizations even when using the NIST forecaster.
+      maybeGenerateForeignImmunization(person, encounterDate, immunizationsGiven);
     } else {
-      performEncounterSyntheaVersion(person,encounterDate);
+      performEncounterSyntheaVersion(person, encounterDate, immunizationsGiven);
     }
   }
 
@@ -540,15 +536,8 @@ public class Immunizations {
    * @param time - the current simulation time.
    */
   @SuppressWarnings({ "unchecked", "rawtypes" })
-  public static void performEncounterSyntheaVersion(Person person, long time){
-    Map<String, List<Long>> immunizationsGiven;
-    if (person.attributes.containsKey(IMMUNIZATIONS)) {
-      immunizationsGiven = (Map<String, List<Long>>) person.attributes.get(IMMUNIZATIONS);
-    } else {
-      immunizationsGiven = new HashMap<String, List<Long>>();
-      person.attributes.put(IMMUNIZATIONS, immunizationsGiven);
-    }
-
+  public static void performEncounterSyntheaVersion(Person person, long time,
+      Map<String, List<Long>> immunizationsGiven){
     for (String immunization : immunizationSchedule.keySet()) {
       int series = immunizationDue(immunization, person, time, immunizationsGiven);
       if (series > 0) {
@@ -564,6 +553,16 @@ public class Immunizations {
       }
     }
     maybeGenerateForeignImmunization(person, time, immunizationsGiven);
+  }
+
+  @SuppressWarnings("unchecked")
+  private static Map<String, List<Long>> getOrCreateImmunizationsGiven(Person person) {
+    if (person.attributes.containsKey(IMMUNIZATIONS)) {
+      return (Map<String, List<Long>>) person.attributes.get(IMMUNIZATIONS);
+    }
+    Map<String, List<Long>> immunizationsGiven = new HashMap<String, List<Long>>();
+    person.attributes.put(IMMUNIZATIONS, immunizationsGiven);
+    return immunizationsGiven;
   }
 
 
