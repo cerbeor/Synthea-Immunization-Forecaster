@@ -2390,7 +2390,7 @@ public class FhirR4 {
       }
 
       // Set the primary source flag to true, indicating the data is from a primary source
-      immResource.setPrimarySource(true);
+      immResource.setPrimarySource(true); // Recorded by the administering organization or not
 
       // Link the immunization to the patient
       immResource.setPatient(new Reference(personEntry.getFullUrl()));
