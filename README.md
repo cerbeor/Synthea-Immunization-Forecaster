@@ -161,6 +161,26 @@ flowchart TD
     G --> H
 ```
 
+### Docker
+
+Build the container image:
+
+```sh
+docker build -t synthea .
+```
+
+Run Synthea (output will be written to a local `output/` directory):
+
+```sh
+docker run --rm -v "$PWD/output:/opt/synthea/output" synthea -p 10
+```
+
+You can pass any of the usual CLI options after the image name, for example:
+
+```sh
+docker run --rm -v "$PWD/output:/opt/synthea/output" synthea -NistImmunizationModule -p 50
+```
+
 ### Synthea<sup>TM</sup> GraphViz
 Generate graphical visualizations of Synthea<sup>TM</sup> rules and modules.
 ```
