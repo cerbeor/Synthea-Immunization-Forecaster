@@ -186,6 +186,7 @@ You can pass any of the usual Command-Line Interface (CLI) options after the ima
 
 ```sh
 docker run --rm -v "$PWD/output:/opt/synthea/output" synthea -NistImmunizationModule -p 50
+docker run --rm -v "$PWD/output:/opt/synthea/output" synthea -NistImmunizationModule -p 2 --generate.immunizations.foreign.enabled=true --generate.immunizations.foreign.default_country=CN --generate.immunizations.foreign.probability=0.5
 ```
 
 ### Synthea<sup>TM</sup> GraphViz
