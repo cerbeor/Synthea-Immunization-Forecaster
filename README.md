@@ -174,7 +174,13 @@ Run Synthea (output will be written to a local `output/` directory):
 ```sh
 docker run --rm -v "$PWD/output:/opt/synthea/output" synthea -p 10
 ```
-
+Command breakdown:
+| Element | Meaning |
+| --- | --- |
+| `--rm` | Remove the container after execution. |
+| `-v "$PWD/output:/opt/synthea/output"` | Map container output → host `output/` directory. |
+| `synthea` | Image name. |
+| `-p 10` | CLI argument passed to the container entrypoint. |
 You can pass any of the usual CLI options after the image name, for example:
 
 ```sh
