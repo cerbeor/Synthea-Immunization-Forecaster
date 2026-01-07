@@ -181,7 +181,8 @@ Command breakdown:
 | `-v "$PWD/output:/opt/synthea/output"` | Map container output → host `output/` directory. |
 | `synthea` | Image name. |
 | `-p 10` | CLI argument passed to the container entrypoint. |
-You can pass any of the usual CLI options after the image name, for example:
+
+You can pass any of the usual Command-Line Interface (CLI) options after the image name, for example:
 
 ```sh
 docker run --rm -v "$PWD/output:/opt/synthea/output" synthea -NistImmunizationModule -p 50
