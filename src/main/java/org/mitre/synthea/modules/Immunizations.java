@@ -62,14 +62,17 @@ public class Immunizations {
   private static CodeMap codeMap = CodeMapBuilder.INSTANCE.getDefaultCodeMap();
 
   // Toggle and defaults for synthesizing foreign immunization events.
-  private static final boolean FOREIGN_IMMUNIZATIONS_ENABLED =
-      Config.getAsBoolean("generate.immunizations.foreign.enabled", false);
-  private static final String FOREIGN_IMMUNIZATION_COUNTRY =
-      Config.get("generate.immunizations.foreign.default_country", "CN");
-  private static final double FOREIGN_IMMUNIZATION_PROBABILITY =
-      Config.getAsDouble("generate.immunizations.foreign.probability", 0.0);
-  private static final Map<String, List<ForeignVaccineOption>> FOREIGN_VACCINE_OPTIONS =
-      buildForeignVaccineOptions();
+  private static boolean isForeignImmunizationsEnabled() {
+    return Config.getAsBoolean("generate.immunizations.foreign.enabled", false);
+  }
+
+  private static String getForeignImmunizationCountry() {
+    return Config.get("generate.immunizations.foreign.default_country", "CN");
+  }
+
+  private static double getForeignImmunizationProbability() {
+    return Config.getAsDouble("generate.immunizations.foreign.probability", 0.0);
+  }
 
   @SuppressWarnings({ "unchecked", "rawtypes" })
   private static final Map<String, Map> immunizationSchedule = loadImmunizationSchedule();
@@ -373,11 +376,11 @@ public class Immunizations {
   }
 
   // Build a fixed set of foreign vaccine options keyed by country for travel scenarios.
-  private static Map<String, List<ForeignVaccineOption>> buildForeignVaccineOptions() {
-    Map<String, List<ForeignVaccineOption>> destinationVaccines = new HashMap<>();
-    destinationVaccines.put(FOREIGN_IMMUNIZATION_COUNTRY,
-        Collections.unmodifiableList(defaultForeignVaccines()));
-    return Collections.unmodifiableMap(destinationVaccines);
+  private static List<ForeignVaccineOption> buildForeignVaccineOptions(String destinationCountry) {
+    if (destinationCountry == null || destinationCountry.isEmpty()) {
+      return Collections.emptyList();
+    }
+    return Collections.unmodifiableList(defaultForeignVaccines());
   }
 
   // Default set of vaccines that can be administered abroad when enabled.
@@ -403,15 +406,16 @@ public class Immunizations {
   @SuppressWarnings("rawtypes")
   private static void maybeGenerateForeignImmunization(Person person, long time,
       Map<String, List<Long>> immunizationsGiven) {
-    if (!FOREIGN_IMMUNIZATIONS_ENABLED
-        || FOREIGN_IMMUNIZATION_PROBABILITY <= 0
-        || person.rand() >= FOREIGN_IMMUNIZATION_PROBABILITY) {
+    String destinationCountry = getForeignImmunizationCountry();
+    double probability = getForeignImmunizationProbability();
+    if (!isForeignImmunizationsEnabled()
+        || probability <= 0
+        || person.rand() >= probability) {
       return;
     }
 
     // Randomly select a destination-specific vaccine based on configured options.
-    List<ForeignVaccineOption> options = FOREIGN_VACCINE_OPTIONS.getOrDefault(
-        FOREIGN_IMMUNIZATION_COUNTRY, Collections.emptyList());
+    List<ForeignVaccineOption> options = buildForeignVaccineOptions(destinationCountry);
     if (options.isEmpty()) {
       return;
     }
@@ -425,8 +429,8 @@ public class Immunizations {
     // Create a synthetic travel encounter to anchor the foreign immunization.
     HealthRecord.Encounter travelEncounter =
         person.record.encounterStart(travelTime, HealthRecord.EncounterType.OUTPATIENT);
-    travelEncounter.name = "Travel Encounter - " + FOREIGN_IMMUNIZATION_COUNTRY;
-    travelEncounter.provider = buildForeignProvider(FOREIGN_IMMUNIZATION_COUNTRY);
+    travelEncounter.name = "Travel Encounter - " + destinationCountry;
+    travelEncounter.provider = buildForeignProvider(destinationCountry);
     travelEncounter.reason = new Code("http://snomed.info/sct", "171149006",
         "Travel vaccination");
 
@@ -436,11 +440,11 @@ public class Immunizations {
     entry.codes.add(new HealthRecord.Code("http://hl7.org/fhir/sid/cvx",
             selection.getCvxCode(), selection.getDisplay()));
     entry.series = history.size();
-    entry.administeringCountry = FOREIGN_IMMUNIZATION_COUNTRY;
-    entry.administeringOrganizationId = buildForeignOrganizationId(person);
-    entry.administeringLocationId = buildForeignLocationId(person);
+    entry.administeringCountry = destinationCountry;
+    entry.administeringOrganizationId = buildForeignOrganizationId(person, destinationCountry);
+    entry.administeringLocationId = buildForeignLocationId(person, destinationCountry);
     entry.travelNote = "Immunization administered during travel to "
-        + FOREIGN_IMMUNIZATION_COUNTRY + ".";
+        + destinationCountry + ".";
     addNuvaCoding(entry, selection.getCvxCode());
 
     travelEncounter.end(travelTime + TimeUnit.MINUTES.toMillis(30));
@@ -464,24 +468,24 @@ public class Immunizations {
   }
 
   // Generate (and cache) a deterministic-looking foreign organization identifier per person.
-  private static String buildForeignOrganizationId(Person person) {
-    String key = "foreign_org_" + FOREIGN_IMMUNIZATION_COUNTRY;
+  private static String buildForeignOrganizationId(Person person, String destinationCountry) {
+    String key = "foreign_org_" + destinationCountry;
     if (person.attributes.containsKey(key)) {
       return (String) person.attributes.get(key);
     }
-    String id = "org-" + FOREIGN_IMMUNIZATION_COUNTRY.toLowerCase() + "-"
+    String id = "org-" + destinationCountry.toLowerCase() + "-"
         + person.randUUID().toString();
     person.attributes.put(key, id);
     return id;
   }
 
   // Generate (and cache) a deterministic-looking foreign location identifier per person.
-  private static String buildForeignLocationId(Person person) {
-    String key = "foreign_location_" + FOREIGN_IMMUNIZATION_COUNTRY;
+  private static String buildForeignLocationId(Person person, String destinationCountry) {
+    String key = "foreign_location_" + destinationCountry;
     if (person.attributes.containsKey(key)) {
       return (String) person.attributes.get(key);
     }
-    String id = "loc-" + FOREIGN_IMMUNIZATION_COUNTRY.toLowerCase() + "-"
+    String id = "loc-" + destinationCountry.toLowerCase() + "-"
         + person.randUUID().toString();
     person.attributes.put(key, id);
     return id;
