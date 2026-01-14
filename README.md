@@ -147,15 +147,6 @@ Example CLI override:
               --generate.immunizations.foreign.probability=0.5
 ```
 
-### Enabling foreign immunization generation and the NistImmunizationModule at the same time
-Example:
-```
-./run_synthea -NistImmunizationModule -p 2 \
-  --config=generate.immunizations.foreign.enabled=true \
-  --config=generate.immunizations.foreign.probability=1.0 \
-  --config=generate.immunizations.foreign.default_country=CN
-```
-
 #### How the immunization flows interact
 ```mermaid
 flowchart TD
