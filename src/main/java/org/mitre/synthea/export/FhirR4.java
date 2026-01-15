@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -516,6 +517,57 @@ public class FhirR4 {
     }
     return bundle;
   }
+
+    public static Optional<String> getTravelSummaryText(Person person) {
+    List<Encounter> travelEncounters = new ArrayList<>();
+    for (Encounter encounter : person.record.encounters) {
+      if (encounter.name != null && encounter.name.startsWith(TRAVEL_ENCOUNTER_PREFIX)) {
+        travelEncounters.add(encounter);
+      }
+    }
+
+    if (travelEncounters.isEmpty()) {
+      return Optional.empty();
+    }
+
+    return Optional.of(buildTravelSummaryText(travelEncounters));
+  }
+
+  private static String buildTravelSummaryText(List<Encounter> travelEncounters) {
+    StringBuilder summary = new StringBuilder();
+    summary.append("Travel Summary\n");
+    for (Encounter encounter : travelEncounters) {
+      String destination = encounter.name.substring(TRAVEL_ENCOUNTER_PREFIX.length()).trim();
+      summary.append("- Destination: ").append(destination).append('\n');
+      summary.append("  Dates: ")
+          .append(Utilities.convertTimeToString(encounter.start))
+          .append(" to ")
+          .append(Utilities.convertTimeToString(encounter.stop))
+          .append('\n');
+      if (encounter.immunizations.isEmpty()) {
+        summary.append("  Vaccinations: None recorded\n");
+      } else {
+        summary.append("  Vaccinations:\n");
+        for (HealthRecord.Entry immunization : encounter.immunizations) {
+          String label = immunization.type;
+          if (!immunization.codes.isEmpty()) {
+            HealthRecord.Code code = immunization.codes.get(0);
+            if (code.display != null && !code.display.isEmpty()) {
+              label = code.display;
+            }
+          }
+          summary.append("    - ")
+              .append(label)
+              .append(" (")
+              .append(Utilities.convertTimeToString(immunization.start))
+              .append(")\n");
+        }
+      }
+      summary.append('\n');
+    }
+    return summary.toString();
+  }
+
 
   /**
    * Convert the given Person into a JSON String, containing a FHIR Bundle of the Person and the
@@ -2799,6 +2851,7 @@ public class FhirR4 {
       new Code("SNOMED-CT", "33633005", "Prescription of drug (procedure)");
   private static final CodeableConcept PRESCRIPTION_OF_DRUG_CC =
       mapCodeToCodeableConcept(PRESCRIPTION_OF_DRUG_CODE, SNOMED_URI);
+  private static final String TRAVEL_ENCOUNTER_PREFIX = "Travel Encounter - ";
 
   /**
    * Map the given Report to a FHIR DiagnosticReport resource, and add it to the given Bundle.

@@ -164,12 +164,25 @@ Foreign immunization events can be synthesized to represent travel encounters. E
 - `generate.immunizations.foreign.enabled=true` — turn on foreign immunization generation.
 - `generate.immunizations.foreign.default_country` — destination country code to use for travel encounters (default `CN`).
 - `generate.immunizations.foreign.probability` — probability (0–1) that a patient will receive a foreign immunization (default `0.05`).
+- `generate.immunizations.foreign.travel.start_days.min` — minimum days after an encounter before a travel encounter can start (default `1`).
+- `generate.immunizations.foreign.travel.start_days.max` — maximum days after an encounter before a travel encounter can start (default `14`).
+- `generate.immunizations.foreign.travel.duration_days.min` — minimum travel duration in days (default `3`).
+- `generate.immunizations.foreign.travel.duration_days.max` — maximum travel duration in days (default `21`).
+- `generate.immunizations.foreign.travel.vaccine.max_count` — maximum number of vaccines given per travel encounter (default `3`).
+- `generate.immunizations.foreign.travel.vaccine.multi_probability` — probability (0–1) that more than one vaccine is given during travel (default `0.45`).
+- Travel immunizations are scheduled at least 1 day apart from any other immunization events.
 
 Example CLI override:
 ```
 ./run_synthea --generate.immunizations.foreign.enabled=true \
               --generate.immunizations.foreign.default_country=CN \
-              --generate.immunizations.foreign.probability=0.5
+              --generate.immunizations.foreign.probability=0.15 \
+              --generate.immunizations.foreign.travel.start_days.min=2 \
+              --generate.immunizations.foreign.travel.start_days.max=10 \
+              --generate.immunizations.foreign.travel.duration_days.min=5 \
+              --generate.immunizations.foreign.travel.duration_days.max=30 \
+              --generate.immunizations.foreign.travel.vaccine.max_count=4 \
+              --generate.immunizations.foreign.travel.vaccine.multi_probability=0.6
 ```
 
 #### How the immunization flows interact

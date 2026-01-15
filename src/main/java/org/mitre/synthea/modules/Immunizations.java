@@ -392,6 +392,46 @@ public class Immunizations {
     return vaccines;
   }
 
+  private static final int TRAVEL_START_MIN_DAYS = 1;
+  private static final int TRAVEL_START_MAX_DAYS = 14;
+  private static final int TRAVEL_DURATION_MIN_DAYS = 3;
+  private static final int TRAVEL_DURATION_MAX_DAYS = 21;
+  private static final int MAX_TRAVEL_VACCINES = 3;
+  private static final double MULTI_VACCINATION_TRAVEL_PROBABILITY = 0.45;
+  private static final long TRAVEL_IMMUNIZATION_MIN_SPACING =
+      TimeUnit.DAYS.toMillis(1);
+
+  private static int getTravelStartMinDays() {
+    return Config.getAsInteger("generate.immunizations.foreign.travel.start_days.min",
+        TRAVEL_START_MIN_DAYS);
+  }
+
+  private static int getTravelStartMaxDays() {
+    return Config.getAsInteger("generate.immunizations.foreign.travel.start_days.max",
+        TRAVEL_START_MAX_DAYS);
+  }
+
+  private static int getTravelDurationMinDays() {
+    return Config.getAsInteger("generate.immunizations.foreign.travel.duration_days.min",
+        TRAVEL_DURATION_MIN_DAYS);
+  }
+
+  private static int getTravelDurationMaxDays() {
+    return Config.getAsInteger("generate.immunizations.foreign.travel.duration_days.max",
+        TRAVEL_DURATION_MAX_DAYS);
+  }
+
+  private static int getTravelMaxVaccines() {
+    return Config.getAsInteger("generate.immunizations.foreign.travel.vaccine.max_count",
+        MAX_TRAVEL_VACCINES);
+  }
+
+  private static double getTravelMultiVaccineProbability() {
+    return Config.getAsDouble("generate.immunizations.foreign.travel.vaccine.multi_probability",
+        MULTI_VACCINATION_TRAVEL_PROBABILITY);
+  }
+
+
   // Populate an option, preferring NUVA labels when present for clarity.
   private static void addForeignOption(List<ForeignVaccineOption> vaccines, String cvxCode,
       String fallbackLabel) {
@@ -401,6 +441,76 @@ public class Immunizations {
       label = mapping.getLabel();
     }
     vaccines.add(new ForeignVaccineOption(cvxCode, label));
+  }
+
+    private static long randomTravelStartOffset(Person person) {
+    int minDays = getTravelStartMinDays();
+    int maxDays = Math.max(minDays, getTravelStartMaxDays());
+    int span = maxDays - minDays + 1;
+    int days = minDays + person.randInt(span);
+    return TimeUnit.DAYS.toMillis(days);
+  }
+
+  private static long randomTravelDuration(Person person) {
+    int minDays = getTravelDurationMinDays();
+    int maxDays = Math.max(minDays, getTravelDurationMaxDays());
+    int span = maxDays - minDays + 1;
+    int days = minDays + person.randInt(span);
+    return TimeUnit.DAYS.toMillis(days);
+  }
+
+  private static long findTravelImmunizationTime(Person person, long travelStart,
+      long travelEnd, Map<String, List<Long>> immunizationsGiven) {
+    long travelWindow = Math.max(0, travelEnd - travelStart);
+    long travelHours = Math.max(1, TimeUnit.MILLISECONDS.toHours(travelWindow));
+    int attempts = Math.max(10, (int) travelHours * 2);
+    long selectedTime = travelStart;
+    for (int attempt = 0; attempt < attempts; attempt++) {
+      long candidateTime = travelStart + TimeUnit.HOURS.toMillis(person.randInt((int) travelHours));
+      if (isTravelTimeSpaced(candidateTime, immunizationsGiven)) {
+        return candidateTime;
+      }
+      selectedTime = candidateTime;
+    }
+    return selectedTime;
+  }
+
+  private static boolean isTravelTimeSpaced(long candidateTime,
+      Map<String, List<Long>> immunizationsGiven) {
+    for (List<Long> history : immunizationsGiven.values()) {
+      for (Long time : history) {
+        if (Math.abs(candidateTime - time) < TRAVEL_IMMUNIZATION_MIN_SPACING) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  private static int travelVaccineCount(Person person, int optionsCount) {
+    int maxConfigured = Math.max(1, getTravelMaxVaccines());
+    int maxOptions = Math.min(optionsCount, maxConfigured);
+    if (maxOptions <= 1) {
+      return 1;
+    }
+    double probability = getTravelMultiVaccineProbability();
+    if (probability < 0) {
+      probability = 0;
+    } else if (probability > 1) {
+      probability = 1;
+    }
+    if (person.rand() < probability) {
+      return 2 + person.randInt(maxOptions - 1);
+    }
+    return 1;
+  }
+
+  private static List<ForeignVaccineOption> selectTravelVaccines(Person person,
+      List<ForeignVaccineOption> options) {
+    int count = travelVaccineCount(person, options.size());
+    List<ForeignVaccineOption> choices = new ArrayList<>(options);
+    Collections.shuffle(choices, new Random(person.randInt()));
+    return choices.subList(0, Math.min(count, choices.size()));
   }
 
   @SuppressWarnings("rawtypes")
@@ -420,34 +530,41 @@ public class Immunizations {
       return;
     }
 
-    ForeignVaccineOption selection = options.get(person.randInt(options.size()));
-    long travelTime = time + TimeUnit.MINUTES.toMillis(10);
-    List<Long> history = immunizationsGiven.computeIfAbsent(
-        selection.getCvxCode(), k -> new ArrayList<Long>());
-    history.add(travelTime);
+    long travelStart = time + randomTravelStartOffset(person);
+    long travelDuration = randomTravelDuration(person);
+    long travelEnd = travelStart + travelDuration;
 
     // Create a synthetic travel encounter to anchor the foreign immunization.
     HealthRecord.Encounter travelEncounter =
-        person.record.encounterStart(travelTime, HealthRecord.EncounterType.OUTPATIENT);
+        person.record.encounterStart(travelStart, HealthRecord.EncounterType.OUTPATIENT);
     travelEncounter.name = "Travel Encounter - " + destinationCountry;
     travelEncounter.provider = buildForeignProvider(destinationCountry);
     travelEncounter.reason = new Code("http://snomed.info/sct", "171149006",
         "Travel vaccination");
 
-    // Record the immunization with foreign context identifiers for exporters.
-    HealthRecord.Immunization entry = person.record.immunization(travelTime,
-            selection.getCvxCode());
-    entry.codes.add(new HealthRecord.Code("http://hl7.org/fhir/sid/cvx",
-            selection.getCvxCode(), selection.getDisplay()));
-    entry.series = history.size();
-    entry.administeringCountry = destinationCountry;
-    entry.administeringOrganizationId = buildForeignOrganizationId(person, destinationCountry);
-    entry.administeringLocationId = buildForeignLocationId(person, destinationCountry);
-    entry.travelNote = "Immunization administered during travel to "
-        + destinationCountry + ".";
-    addNuvaCoding(entry, selection.getCvxCode());
+    List<ForeignVaccineOption> selections = selectTravelVaccines(person, options);
+    for (ForeignVaccineOption selection : selections) {
+      long immunizationTime = findTravelImmunizationTime(person, travelStart, travelEnd,
+          immunizationsGiven);
+      List<Long> history = immunizationsGiven.computeIfAbsent(
+          selection.getCvxCode(), k -> new ArrayList<Long>());
+      history.add(immunizationTime);
 
-    travelEncounter.end(travelTime + TimeUnit.MINUTES.toMillis(30));
+      // Record the immunization with foreign context identifiers for exporters.
+      HealthRecord.Immunization entry = person.record.immunization(immunizationTime,
+          selection.getCvxCode());
+      entry.codes.add(new HealthRecord.Code("http://hl7.org/fhir/sid/cvx",
+          selection.getCvxCode(), selection.getDisplay()));
+      entry.series = history.size();
+      entry.administeringCountry = destinationCountry;
+      entry.administeringOrganizationId = buildForeignOrganizationId(person, destinationCountry);
+      entry.administeringLocationId = buildForeignLocationId(person, destinationCountry);
+      entry.travelNote = "Immunization administered during travel to "
+          + destinationCountry + ".";
+      addNuvaCoding(entry, selection.getCvxCode());
+    }
+
+    travelEncounter.end(travelEnd);
   }
 
   // Create a placeholder provider object to represent a foreign administering organization.

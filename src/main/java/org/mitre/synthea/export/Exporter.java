@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
@@ -306,6 +307,12 @@ public abstract class Exporter {
         String bundleJson = parser.encodeResourceToString(bundle);
         Path outFilePath = outDirectory.toPath().resolve(filename(person, fileTag, "json"));
         writeNewFile(outFilePath, bundleJson);
+      }
+      Optional<String> travelSummary = FhirR4.getTravelSummaryText(person);
+      if (travelSummary.isPresent()) {
+        Path outFilePath = outDirectory.toPath().resolve(
+            filename(person, fileTag + "_travel_summary", "txt"));
+        writeNewFile(outFilePath, travelSummary.get());
       }
       FhirGroupExporterR4.addPatient((String) person.attributes.get(Person.ID));
     }
