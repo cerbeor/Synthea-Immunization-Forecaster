@@ -3,11 +3,11 @@ package org.mitre.synthea.modules;
 import com.google.gson.Gson;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.hl7.fhir.r4.model.*;
-import org.hl7.fhir.r4.model.DateType;
 import org.mitre.synthea.codebase.CodeMap;
 import org.mitre.synthea.codebase.CodeMapBuilder;
 import org.mitre.synthea.codebase.mapping.Combo;
@@ -15,8 +15,11 @@ import org.mitre.synthea.codebase.mapping.NDC;
 import org.mitre.synthea.codebase.reference.CodesetType;
 import org.mitre.synthea.helpers.Attributes;
 import org.mitre.synthea.helpers.Attributes.Inventory;
+import org.mitre.synthea.helpers.Config;
 import org.mitre.synthea.helpers.Utilities;
 import org.mitre.synthea.world.agents.Person;
+import org.mitre.synthea.world.agents.Provider;
+import org.mitre.synthea.world.agents.Provider.ProviderType;
 import org.mitre.synthea.world.concepts.HealthRecord;
 import org.mitre.synthea.world.concepts.HealthRecord.Code;
 
@@ -58,6 +61,19 @@ public class Immunizations {
   /** CodeMap object for vaccines combination check */
   private static CodeMap codeMap = CodeMapBuilder.INSTANCE.getDefaultCodeMap();
 
+  // Toggle and defaults for synthesizing foreign immunization events.
+  private static boolean isForeignImmunizationsEnabled() {
+    return Config.getAsBoolean("generate.immunizations.foreign.enabled", false);
+  }
+
+  private static String getForeignImmunizationCountry() {
+    return Config.get("generate.immunizations.foreign.default_country", "CN");
+  }
+
+  private static double getForeignImmunizationProbability() {
+    return Config.getAsDouble("generate.immunizations.foreign.probability", 0.0);
+  }
+
   @SuppressWarnings({ "unchecked", "rawtypes" })
   private static final Map<String, Map> immunizationSchedule = loadImmunizationSchedule();
 
@@ -71,16 +87,8 @@ public class Immunizations {
    *                      Used to determine the patient's age and assess immunization due dates.
    */
   @SuppressWarnings({ "unchecked", "rawtypes" })
-  public static void performEncounterWithNistCDS(Person person, long encounterDate) {
-
-     // Reading patient history
-    Map<String, List<Long>> immunizationsGiven;
-    if (person.attributes.containsKey(IMMUNIZATIONS)) {
-      immunizationsGiven = (Map<String, List<Long>>) person.attributes.get(IMMUNIZATIONS);
-    } else {
-      immunizationsGiven = new HashMap<String, List<Long>>();
-      person.attributes.put(IMMUNIZATIONS, immunizationsGiven);
-    }
+  public static void performEncounterWithNistCDS(Person person, long encounterDate,
+      Map<String, List<Long>> immunizationsGiven) {
 
     try {
       // Check if the patient should receive an immunization
@@ -94,6 +102,7 @@ public class Immunizations {
           // Check for combination of vaccines
           HashMap<org.mitre.synthea.codebase.generated.Code, NDC> cvxMap = checkForCombination(immunizationRecommendation, encounterDate, agePatient);
           // Check if the patient should receive vaccines
+          //System.err.println("immunization key: ");
           if (!cvxMap.isEmpty()){
             // For all vaccines that have to be administered
             for (Map.Entry<org.mitre.synthea.codebase.generated.Code, NDC> entryMap : cvxMap.entrySet()) {
@@ -126,9 +135,20 @@ public class Immunizations {
               // Assign the NDC details to the immunization entry
               entry.nameNDC = ndcLabel;
               entry.codeStringNDC = ndcCode;
+
+              // Assign the NUVA details to the immunization entry
+              CvxNuvaMap.Mapping nuvaMapping = CvxNuvaMap.findByCvx(immunizationKey);
+              // System.err.println("immunization key: ");
+              // System.err.println(immunizationKey);
+              if (nuvaMapping != null) {
+                entry.nuvaCode = nuvaMapping.getNuvaCode();
+                entry.nuvaLabel = nuvaMapping.getLabel();
+              }
+              else {
+                System.err.println("no nuva mapping");
+              }
             }
           }
-
         }
       }
 
@@ -346,6 +366,149 @@ public class Immunizations {
     }
   }
 
+  // Apply NUVA mapping to the immunization entry when a CVX mapping exists.
+  private static void addNuvaCoding(HealthRecord.Immunization entry, String cvxCode) {
+    CvxNuvaMap.Mapping nuvaMapping = CvxNuvaMap.findByCvx(cvxCode);
+    if (nuvaMapping != null) {
+      entry.nuvaCode = nuvaMapping.getNuvaCode();
+      entry.nuvaLabel = nuvaMapping.getLabel();
+    }
+  }
+
+  // Build a fixed set of foreign vaccine options keyed by country for travel scenarios.
+  private static List<ForeignVaccineOption> buildForeignVaccineOptions(String destinationCountry) {
+    if (destinationCountry == null || destinationCountry.isEmpty()) {
+      return Collections.emptyList();
+    }
+    return Collections.unmodifiableList(defaultForeignVaccines());
+  }
+
+  // Default set of vaccines that can be administered abroad when enabled.
+  private static List<ForeignVaccineOption> defaultForeignVaccines() {
+    List<ForeignVaccineOption> vaccines = new ArrayList<>();
+    addForeignOption(vaccines, "41", "Typhoid polysaccharide vaccine, unspecified");
+    addForeignOption(vaccines, "56", "Dengue vaccine, unspecified");
+    addForeignOption(vaccines, "188", "Shingles vaccine, unspecified");
+    return vaccines;
+  }
+
+  // Populate an option, preferring NUVA labels when present for clarity.
+  private static void addForeignOption(List<ForeignVaccineOption> vaccines, String cvxCode,
+      String fallbackLabel) {
+    String label = fallbackLabel;
+    CvxNuvaMap.Mapping mapping = CvxNuvaMap.findByCvx(cvxCode);
+    if (mapping != null && mapping.getLabel() != null && !mapping.getLabel().isEmpty()) {
+      label = mapping.getLabel();
+    }
+    vaccines.add(new ForeignVaccineOption(cvxCode, label));
+  }
+
+  @SuppressWarnings("rawtypes")
+  private static void maybeGenerateForeignImmunization(Person person, long time,
+      Map<String, List<Long>> immunizationsGiven) {
+    String destinationCountry = getForeignImmunizationCountry();
+    double probability = getForeignImmunizationProbability();
+    if (!isForeignImmunizationsEnabled()
+        || probability <= 0
+        || person.rand() >= probability) {
+      return;
+    }
+
+    // Randomly select a destination-specific vaccine based on configured options.
+    List<ForeignVaccineOption> options = buildForeignVaccineOptions(destinationCountry);
+    if (options.isEmpty()) {
+      return;
+    }
+
+    ForeignVaccineOption selection = options.get(person.randInt(options.size()));
+    long travelTime = time + TimeUnit.MINUTES.toMillis(10);
+    List<Long> history = immunizationsGiven.computeIfAbsent(
+        selection.getCvxCode(), k -> new ArrayList<Long>());
+    history.add(travelTime);
+
+    // Create a synthetic travel encounter to anchor the foreign immunization.
+    HealthRecord.Encounter travelEncounter =
+        person.record.encounterStart(travelTime, HealthRecord.EncounterType.OUTPATIENT);
+    travelEncounter.name = "Travel Encounter - " + destinationCountry;
+    travelEncounter.provider = buildForeignProvider(destinationCountry);
+    travelEncounter.reason = new Code("http://snomed.info/sct", "171149006",
+        "Travel vaccination");
+
+    // Record the immunization with foreign context identifiers for exporters.
+    HealthRecord.Immunization entry = person.record.immunization(travelTime,
+            selection.getCvxCode());
+    entry.codes.add(new HealthRecord.Code("http://hl7.org/fhir/sid/cvx",
+            selection.getCvxCode(), selection.getDisplay()));
+    entry.series = history.size();
+    entry.administeringCountry = destinationCountry;
+    entry.administeringOrganizationId = buildForeignOrganizationId(person, destinationCountry);
+    entry.administeringLocationId = buildForeignLocationId(person, destinationCountry);
+    entry.travelNote = "Immunization administered during travel to "
+        + destinationCountry + ".";
+    addNuvaCoding(entry, selection.getCvxCode());
+
+    travelEncounter.end(travelTime + TimeUnit.MINUTES.toMillis(30));
+  }
+
+  // Create a placeholder provider object to represent a foreign administering organization.
+  private static Provider buildForeignProvider(String destinationCountry) {
+    Provider provider = new Provider();
+    provider.name = destinationCountry + " Travel Clinic";
+    provider.address = "1 International Way";
+    provider.city = "Travel City";
+    provider.state = destinationCountry;
+    provider.zip = "000000";
+    provider.phone = "+0-000-000-0000";
+    provider.type = ProviderType.PRIMARY;
+    provider.institutional = false;
+    provider.servicesProvided.add(HealthRecord.EncounterType.OUTPATIENT);
+    provider.getLonLat().setLocation(0.0, 0.0);
+    provider.attributes.put("country_code", destinationCountry);
+    return provider;
+  }
+
+  // Generate (and cache) a deterministic-looking foreign organization identifier per person.
+  private static String buildForeignOrganizationId(Person person, String destinationCountry) {
+    String key = "foreign_org_" + destinationCountry;
+    if (person.attributes.containsKey(key)) {
+      return (String) person.attributes.get(key);
+    }
+    String id = "org-" + destinationCountry.toLowerCase() + "-"
+        + person.randUUID().toString();
+    person.attributes.put(key, id);
+    return id;
+  }
+
+  // Generate (and cache) a deterministic-looking foreign location identifier per person.
+  private static String buildForeignLocationId(Person person, String destinationCountry) {
+    String key = "foreign_location_" + destinationCountry;
+    if (person.attributes.containsKey(key)) {
+      return (String) person.attributes.get(key);
+    }
+    String id = "loc-" + destinationCountry.toLowerCase() + "-"
+        + person.randUUID().toString();
+    person.attributes.put(key, id);
+    return id;
+  }
+
+  private static final class ForeignVaccineOption {
+    private final String cvxCode;
+    private final String display;
+
+    private ForeignVaccineOption(String cvxCode, String display) {
+      this.cvxCode = cvxCode;
+      this.display = display;
+    }
+
+    String getCvxCode() {
+      return cvxCode;
+    }
+
+    String getDisplay() {
+      return display;
+    }
+  }
+
   /**
    * Administer vaccines to the person at the state time according to the
    * required immunization schedule.
@@ -358,11 +521,15 @@ public class Immunizations {
       Gson g = new Gson();
     }
 
+    Map<String, List<Long>> immunizationsGiven = getOrCreateImmunizationsGiven(person);
+
     // Check if the NIST immunization module is used
     if (usingNistImmunizationModule){
-      performEncounterWithNistCDS(person,encounterDate);
+      performEncounterWithNistCDS(person, encounterDate, immunizationsGiven);
+      // Allow foreign travel immunizations even when using the NIST forecaster.
+      maybeGenerateForeignImmunization(person, encounterDate, immunizationsGiven);
     } else {
-      performEncounterSyntheaVersion(person,encounterDate);
+      performEncounterSyntheaVersion(person, encounterDate, immunizationsGiven);
     }
   }
 
@@ -373,15 +540,8 @@ public class Immunizations {
    * @param time - the current simulation time.
    */
   @SuppressWarnings({ "unchecked", "rawtypes" })
-  public static void performEncounterSyntheaVersion(Person person, long time){
-    Map<String, List<Long>> immunizationsGiven;
-    if (person.attributes.containsKey(IMMUNIZATIONS)) {
-      immunizationsGiven = (Map<String, List<Long>>) person.attributes.get(IMMUNIZATIONS);
-    } else {
-      immunizationsGiven = new HashMap<String, List<Long>>();
-      person.attributes.put(IMMUNIZATIONS, immunizationsGiven);
-    }
-
+  public static void performEncounterSyntheaVersion(Person person, long time,
+      Map<String, List<Long>> immunizationsGiven){
     for (String immunization : immunizationSchedule.keySet()) {
       int series = immunizationDue(immunization, person, time, immunizationsGiven);
       if (series > 0) {
@@ -393,8 +553,20 @@ public class Immunizations {
                 code.get("code").toString(), code.get("display").toString());
         entry.codes.add(immCode);
         entry.series = series;
+        addNuvaCoding(entry, immCode.code);
       }
     }
+    maybeGenerateForeignImmunization(person, time, immunizationsGiven);
+  }
+
+  @SuppressWarnings("unchecked")
+  private static Map<String, List<Long>> getOrCreateImmunizationsGiven(Person person) {
+    if (person.attributes.containsKey(IMMUNIZATIONS)) {
+      return (Map<String, List<Long>>) person.attributes.get(IMMUNIZATIONS);
+    }
+    Map<String, List<Long>> immunizationsGiven = new HashMap<String, List<Long>>();
+    person.attributes.put(IMMUNIZATIONS, immunizationsGiven);
+    return immunizationsGiven;
   }
 
 

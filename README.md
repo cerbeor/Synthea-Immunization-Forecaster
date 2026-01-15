@@ -157,6 +157,63 @@ Some settings can be changed in `./src/main/resources/synthea.properties`.
 
 Synthea<sup>TM</sup> will output patient records in C-CDA and FHIR formats in `./output`.
 
+
+### Enabling foreign immunization generation
+Foreign immunization events can be synthesized to represent travel encounters. Enable them by setting the properties in `src/main/resources/synthea.properties` (or by passing `--config` overrides to `run_synthea`):
+
+- `generate.immunizations.foreign.enabled=true` — turn on foreign immunization generation.
+- `generate.immunizations.foreign.default_country` — destination country code to use for travel encounters (default `CN`).
+- `generate.immunizations.foreign.probability` — probability (0–1) that a patient will receive a foreign immunization (default `0.05`).
+
+Example CLI override:
+```
+./run_synthea --generate.immunizations.foreign.enabled=true \
+              --generate.immunizations.foreign.default_country=CN \
+              --generate.immunizations.foreign.probability=0.5
+```
+
+#### How the immunization flows interact
+```mermaid
+flowchart TD
+    A[Encounter start] --> B{Use NIST module?}
+    B -->|Yes: -NistImmunizationModule| C[NIST forecaster -> administer routine vaccines]
+    B -->|No: Synthea default| D[Synthea schedule -> administer routine vaccines]
+    C --> E{Foreign immunizations enabled\nand probability hit?}
+    D --> E
+    E -->|Yes| F[Create travel encounter + foreign vaccine]
+    E -->|No| G[No travel vaccine]
+    F --> H[Exporters add foreign organization/location and travel note to FHIR]
+    G --> H
+```
+
+### Docker
+
+Build the container image:
+
+```sh
+docker build -t synthea .
+```
+
+Run Synthea (output will be written to a local `output/` directory):
+
+```sh
+docker run --rm -v "$PWD/output:/opt/synthea/output" synthea -p 10
+```
+Command breakdown:
+| Element | Meaning |
+| --- | --- |
+| `--rm` | Remove the container after execution. |
+| `-v "$PWD/output:/opt/synthea/output"` | Map container output → host `output/` directory. |
+| `synthea` | Image name. |
+| `-p 10` | CLI argument passed to the container entrypoint. |
+
+You can pass any of the usual Command-Line Interface (CLI) options after the image name, for example:
+
+```sh
+docker run --rm -v "$PWD/output:/opt/synthea/output" synthea -NistImmunizationModule -p 50
+docker run --rm -v "$PWD/output:/opt/synthea/output" synthea -NistImmunizationModule -p 2 --generate.immunizations.foreign.enabled=true --generate.immunizations.foreign.default_country=CN --generate.immunizations.foreign.probability=0.5
+```
+
 ### Synthea<sup>TM</sup> GraphViz
 Generate graphical visualizations of Synthea<sup>TM</sup> rules and modules.
 ```
